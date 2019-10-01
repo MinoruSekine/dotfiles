@@ -3,7 +3,7 @@
 (setq backup-directory-alist '((".*" . "~/.emacs-backup-files")))
 
 ;; Setup packages if not installed yet.
-(defvar my-packages '(flycheck magit))
+(defvar my-packages '(flycheck magit elisp-lint))
 
 (require 'package)
 (add-to-list 'package-archives
