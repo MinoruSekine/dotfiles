@@ -17,3 +17,8 @@
 (dolist (p my-packages)
   (when (not (package-installed-p p))
     (package-install p)))
+
+;; Start server for emacsclient, if not running yet.
+(require 'server)
+(unless (server-running-p)
+  (server-start))
