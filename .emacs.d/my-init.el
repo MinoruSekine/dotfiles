@@ -22,3 +22,7 @@
 (require 'server)
 (unless (server-running-p)
   (server-start))
+
+;; Default directory
+(setq default-directry "~/")
+(setq command-line-default-directory "~/")
