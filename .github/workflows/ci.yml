@@ -1,0 +1,25 @@
+name: CI
+
+on: [pull_request]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-16.04]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install Emacs
+      run: |
+        sudo add-apt-repository ppa:kelleyk/emacs
+        sudo apt update
+        sudo apt install emacs26
+    - name: Install elisp-lint
+      run: |
+        emacs -Q --batch -l ./.github/workflows/install-elisp-lint.el -f install-elisp-lint-batch
+    - name: Lint
+      run: |
+        make -k -j lint
