@@ -18,6 +18,12 @@
   (when (not (package-installed-p p))
     (package-install p)))
 
+;; Semantic mode
+(semantic-mode 1)
+(global-semantic-idle-scheduler-mode 1)
+(global-semantic-idle-completions-mode 1)
+(global-semantic-idle-summary-mode 1)
+
 ;; Start server for emacsclient, if not running yet.
 (require 'server)
 (unless (server-running-p)
