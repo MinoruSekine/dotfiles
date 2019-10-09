@@ -6,7 +6,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, ubuntu-16.04, windows-latest]
+        os: [ubuntu-latest, ubuntu-16.04, windows-latest, macOS-latest]
 
     runs-on: ${{ matrix.os }}
 
@@ -26,6 +26,10 @@ jobs:
         scoop bucket add extras
         scoop install emacs
       shell: pwsh
+    - name: Install Emacs (macOS)
+      if: contains(matrix.os, 'macOS')
+      run: |
+        brew cask install emacs
     - name: Install elisp-lint
       run: |
         export PATH=$PATH:$HOME/scoop/shims
