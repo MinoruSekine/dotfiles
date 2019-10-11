@@ -23,14 +23,14 @@
 	    ))
 
 (defun my-emacs-server-setup ()
-  ;; Start server for emacsclient, if not running yet.
+  "Setup Emacs server."
   (require 'server)
   (unless (server-running-p)
     (server-start))
   )
 
 (defun my-semantic-mode-setup ()
-  ;; Semantic mode
+  "Setup semantic mode."
   (semantic-mode 1)
   (global-semantic-idle-scheduler-mode 1)
   (global-semantic-idle-completions-mode 1)
@@ -38,13 +38,12 @@
   )
 
 (defun my-backup-directory-setup ()
-  ;; Make backup files not into original file dir,
-  ;; but into specified single dir.
+  "Setup directories for backup files."
   (setq backup-directory-alist '((".*" . "~/.emacs-backup-files")))
   )
 
 (defun my-default-directory-to-home-setup ()
-  ;; Default directory
+  "Setup default directories."
   (setq default-directry "~/")
   (setq command-line-default-directory "~/")
   )
