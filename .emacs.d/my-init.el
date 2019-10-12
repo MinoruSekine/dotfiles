@@ -25,6 +25,7 @@
 	    (my-semantic-mode-setup)
 	    (my-backup-directory-setup)
 	    (my-default-directory-to-home-setup)
+	    (my-completion-case-sensitivity-setup)
 	    ))
 
 (defun my-c++-mode-setup ()
@@ -56,4 +57,10 @@
   "Setup default directories."
   (setq default-directry "~/")
   (setq command-line-default-directory "~/")
+  )
+
+(defun my-completion-case-sensitivity-setup ()
+  "Setup case sensitivity on completion."
+  (setq read-buffer-completion-ignore-case t)
+  (setq read-file-name-completion-ignore-case t)
   )
