@@ -14,6 +14,11 @@
   (when (not (package-installed-p p))
     (package-install p)))
 
+(add-hook 'after-init-hook
+	  (lambda ()
+	    (my-c++-mode-setup)
+	    ))
+
 (add-hook 'emacs-startup-hook
 	  (lambda ()
 	    (my-emacs-server-setup)
@@ -21,6 +26,11 @@
 	    (my-backup-directory-setup)
 	    (my-default-directory-to-home-setup)
 	    ))
+
+(defun my-c++-mode-setup ()
+  "Setup c++ mode."
+  (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+  )
 
 (defun my-emacs-server-setup ()
   "Setup Emacs server."
