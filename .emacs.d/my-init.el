@@ -16,13 +16,13 @@
 
 (add-hook 'after-init-hook
 	  (lambda ()
+	    (my-semantic-mode-setup)
 	    (my-c++-mode-setup)
 	    ))
 
 (add-hook 'emacs-startup-hook
 	  (lambda ()
 	    (my-emacs-server-setup)
-	    (my-semantic-mode-setup)
 	    (my-backup-directory-setup)
 	    (my-default-directory-to-home-setup)
 	    (my-completion-case-sensitivity-setup)
