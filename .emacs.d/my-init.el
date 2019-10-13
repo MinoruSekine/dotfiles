@@ -16,6 +16,7 @@
 
 (add-hook 'after-init-hook
 	  (lambda ()
+	    (my-gui-setup)
 	    (my-semantic-mode-setup)
 	    (my-c++-mode-setup)
 	    ))
@@ -27,6 +28,13 @@
 	    (my-default-directory-to-home-setup)
 	    (my-completion-case-sensitivity-setup)
 	    ))
+
+(defun my-gui-setup ()
+  "Setup if runs on GUI."
+  (when (window-system)
+    (tool-bar-mode 0)
+    )
+  )
 
 (defun my-c++-mode-setup ()
   "Setup c++ mode."
