@@ -22,6 +22,7 @@
 (add-hook 'after-init-hook
 	  (lambda ()
 	    (my-gui-setup)
+	    (my-general-mode-line-setup)
 	    (my-semantic-mode-setup)
 	    (my-c++-mode-setup)
 	    ))
@@ -34,6 +35,11 @@
 	    (my-completion-case-sensitivity-setup)
 	    (my-yasnippet-setup)
 	    ))
+
+(defun my-general-mode-line-setup ()
+  (setq column-number-mode t)
+  (setq line-number-mode t)
+  )
 
 (defun my-gui-setup ()
   "Setup if runs on GUI."
