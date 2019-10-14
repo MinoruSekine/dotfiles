@@ -1,5 +1,8 @@
 ;; Setup packages if not installed yet.
-(defvar my-packages '(flycheck magit elisp-lint yaml-mode))
+(defvar my-packages '(elisp-lint
+		      flycheck
+		      magit
+		      yaml-mode))
 
 (require 'package)
 (add-to-list
