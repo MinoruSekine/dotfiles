@@ -2,7 +2,9 @@
 (defvar my-packages '(elisp-lint
 		      flycheck
 		      magit
-		      yaml-mode))
+		      yaml-mode
+		      yasnippet
+		      yasnippet-snippets))
 
 (require 'package)
 (add-to-list
@@ -30,6 +32,7 @@
 	    (my-backup-directory-setup)
 	    (my-default-directory-to-home-setup)
 	    (my-completion-case-sensitivity-setup)
+	    (my-yasnippet-setup)
 	    ))
 
 (defun my-gui-setup ()
@@ -74,4 +77,9 @@
   "Setup case sensitivity on completion."
   (setq read-buffer-completion-ignore-case t)
   (setq read-file-name-completion-ignore-case t)
+  )
+
+(defun my-yasnippet-setup ()
+  "Setup yasnippet mode"
+  (yas-global-mode 1)
   )
