@@ -3,6 +3,7 @@
 		      flycheck
 		      google-c-style
 		      magit
+		      markdown-mode
 		      yaml-mode
 		      yasnippet
 		      yasnippet-snippets))
