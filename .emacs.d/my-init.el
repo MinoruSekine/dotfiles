@@ -1,7 +1,9 @@
 ;; Setup packages if not installed yet.
 (defvar my-packages '(elisp-lint
 		      flycheck
+		      google-c-style
 		      magit
+		      markdown-mode
 		      yaml-mode
 		      yasnippet
 		      yasnippet-snippets))
@@ -9,7 +11,9 @@
 (require 'package)
 (add-to-list
  'package-archives
- '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+ '("melpa" . "https://melpa.org/packages/")
+ '("melpa-stable" . "https://stable.melpa.org/packages/")
+ )
 (package-initialize)
 
 (when (not package-archive-contents)
