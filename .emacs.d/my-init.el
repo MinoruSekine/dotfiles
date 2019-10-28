@@ -43,6 +43,7 @@
 (defun my-general-mode-line-setup ()
   (setq column-number-mode t)
   (setq line-number-mode t)
+  (which-function-mode 1)
   )
 
 (defun my-gui-setup ()
