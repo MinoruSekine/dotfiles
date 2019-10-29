@@ -19,9 +19,16 @@
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-(dolist (p my-packages)
-  (when (not (package-installed-p p))
-    (package-install p)))
+(require 'cl)  ;; To use remove-if-not.
+(defvar my-not-yet-installed-packages
+  (remove-if-not (lambda (p) (not (package-installed-p p)))
+		 my-packages))
+
+(when (and my-not-yet-installed-packages)
+  (package-refresh-contents))
+
+(dolist (p my-not-yet-installed-packages)
+  (package-install p))
 
 (add-hook 'after-init-hook
 	  (lambda ()
