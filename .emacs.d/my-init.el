@@ -1,9 +1,11 @@
 ;; Setup packages if not installed yet.
-(defvar my-packages '(elisp-lint
+(defvar my-packages '(color-identifiers-mode
+		      elisp-lint
 		      flycheck
 		      google-c-style
 		      magit
 		      markdown-mode
+		      rainbow-delimiters
 		      yaml-mode
 		      yasnippet
 		      yasnippet-snippets))
@@ -36,6 +38,10 @@
 	    (my-general-mode-line-setup)
 	    (my-semantic-mode-setup)
 	    (my-c++-mode-setup)
+	    (my-compilation-mode-setup)
+	    (my-font-lock-set-up)
+	    (my-rainbow-delimiters-mode-setup)
+	    (global-color-identifiers-mode t)
 	    ))
 
 (add-hook 'emacs-startup-hook
@@ -100,4 +106,28 @@
 (defun my-yasnippet-setup ()
   "Setup yasnippet mode"
   (yas-global-mode 1)
+  )
+
+(defun my-compilation-mode-setup ()
+  "Setup compilation mode"
+  (setq compilation-scroll-output t)
+  )
+
+(defun my-font-lock-set-up ()
+  "Setup font-lock"
+  (setq jit-lock-defer-time 0.05)
+  )
+
+(defun my-rainbow-delimiters-mode-setup ()
+  "Setup rainbow-delimiters-mode"
+  (add-hook 'c-mode-hook 'rainbow-delimiters-mode)
+  (add-hook 'c++-mode-hook 'rainbow-delimiters-mode)
+  (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
+  )
+
+(defun my-flycheck-mode-setup ()
+  (setq flycheck-cppcheck-standards "c++11")
+  (setq flycheck-clang-language-standard "c++11")
+  (setq flycheck-gcc-language-standard "c++11")
+  (global-flycheck-mode t)
   )
