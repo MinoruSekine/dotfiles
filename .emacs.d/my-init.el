@@ -5,6 +5,7 @@
 		      google-c-style
 		      magit
 		      markdown-mode
+		      powershell
 		      rainbow-delimiters
 		      yaml-mode
 		      yasnippet
