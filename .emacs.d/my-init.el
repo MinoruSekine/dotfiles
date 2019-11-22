@@ -42,6 +42,7 @@
 	    (my-compilation-mode-setup)
 	    (my-font-lock-set-up)
 	    (my-rainbow-delimiters-mode-setup)
+	    (my-flycheck-mode-setup)
 	    (global-color-identifiers-mode t)
 	    ))
 
@@ -127,7 +128,7 @@
   )
 
 (defun my-flycheck-mode-setup ()
-  (setq flycheck-cppcheck-standards "c++11")
+  (setq flycheck-cppcheck-standards '("c++11"))
   (setq flycheck-clang-language-standard "c++11")
   (setq flycheck-gcc-language-standard "c++11")
   (global-flycheck-mode t)
