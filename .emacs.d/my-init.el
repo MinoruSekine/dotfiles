@@ -65,12 +65,15 @@
   "Setup if runs on GUI."
   (when (window-system)
     (tool-bar-mode 0)
+    (load-theme 'tsdh-light t)
     )
   )
 
 (defun my-c++-mode-setup ()
   "Setup c++ mode."
   (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+  (font-lock-add-keywords 'c++-mode
+			  '(("[ \t]+$" . 'trailing-whitespace)))
   )
 
 (defun my-emacs-server-setup ()
