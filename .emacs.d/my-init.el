@@ -71,6 +71,8 @@
 (defun my-c++-mode-setup ()
   "Setup c++ mode."
   (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+  (font-lock-add-keywords 'c++-mode
+			  '(("[ \t]+$" . 'trailing-whitespace)))
   )
 
 (defun my-emacs-server-setup ()
