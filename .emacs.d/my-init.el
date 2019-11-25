@@ -44,6 +44,7 @@
 	    (my-rainbow-delimiters-mode-setup)
 	    (my-flycheck-mode-setup)
 	    (global-color-identifiers-mode t)
+	    (setq-default indent-tabs-mode nil)
 	    ))
 
 (add-hook 'emacs-startup-hook
