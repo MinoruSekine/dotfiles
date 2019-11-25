@@ -65,6 +65,7 @@
   "Setup if runs on GUI."
   (when (window-system)
     (tool-bar-mode 0)
+    (load-theme 'tsdh-light t)
     )
   )
 
