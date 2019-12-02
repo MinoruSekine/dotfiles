@@ -1,5 +1,6 @@
 ;; Setup packages if not installed yet.
 (defvar my-packages '(color-identifiers-mode
+		      color-moccur
 		      elisp-lint
 		      flycheck
 		      google-c-style
@@ -54,6 +55,7 @@
 	    (my-default-directory-to-home-setup)
 	    (my-completion-case-sensitivity-setup)
 	    (my-yasnippet-setup)
+	    (my-mocuur-setup)
 	    ))
 
 (defun my-general-mode-line-setup ()
@@ -136,4 +138,13 @@
   (setq flycheck-clang-language-standard "c++11")
   (setq flycheck-gcc-language-standard "c++11")
   (global-flycheck-mode t)
+  )
+
+(defun my-mocuur-setup ()
+  (with-eval-after-load 'color-moccur
+    (add-to-list 'dmoccur-exclusion-mask "\\.o$")
+    (add-to-list 'dmoccur-exclusion-mask "\\.[a-z]?obj$")
+    (add-to-list 'dmoccur-exclusion-mask "\\..?pch\\(\\.[a-z]+\\)?$")
+    (add-to-list 'dmoccur-exclusion-mask "\\.p?db$")
+    )
   )
