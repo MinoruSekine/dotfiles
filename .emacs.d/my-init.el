@@ -1,5 +1,6 @@
 ;; Setup packages if not installed yet.
 (defvar my-packages '(color-identifiers-mode
+		      color-moccur
 		      elisp-lint
 		      flycheck
 		      google-c-style
@@ -44,7 +45,6 @@
 	    (my-rainbow-delimiters-mode-setup)
 	    (my-flycheck-mode-setup)
 	    (global-color-identifiers-mode t)
-	    (setq-default indent-tabs-mode nil)
 	    ))
 
 (add-hook 'emacs-startup-hook
@@ -54,6 +54,7 @@
 	    (my-default-directory-to-home-setup)
 	    (my-completion-case-sensitivity-setup)
 	    (my-yasnippet-setup)
+	    (my-mocuur-setup)
 	    ))
 
 (defun my-general-mode-line-setup ()
@@ -75,6 +76,10 @@
   (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
   (font-lock-add-keywords 'c++-mode
 			  '(("[ \t]+$" . 'trailing-whitespace)))
+  (add-hook 'c++-mode-hook
+	    '(lambda()
+	       (setq indent-tabs-mode nil)
+	       ))
   )
 
 (defun my-emacs-server-setup ()
@@ -136,4 +141,13 @@
   (setq flycheck-clang-language-standard "c++11")
   (setq flycheck-gcc-language-standard "c++11")
   (global-flycheck-mode t)
+  )
+
+(defun my-mocuur-setup ()
+  (with-eval-after-load 'color-moccur
+    (add-to-list 'dmoccur-exclusion-mask "\\.o$")
+    (add-to-list 'dmoccur-exclusion-mask "\\.[a-z]?obj$")
+    (add-to-list 'dmoccur-exclusion-mask "\\..?pch\\(\\.[a-z]+\\)?$")
+    (add-to-list 'dmoccur-exclusion-mask "\\.p?db$")
+    )
   )
