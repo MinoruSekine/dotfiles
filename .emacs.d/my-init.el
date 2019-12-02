@@ -45,7 +45,6 @@
 	    (my-rainbow-delimiters-mode-setup)
 	    (my-flycheck-mode-setup)
 	    (global-color-identifiers-mode t)
-	    (setq-default indent-tabs-mode nil)
 	    ))
 
 (add-hook 'emacs-startup-hook
@@ -77,6 +76,10 @@
   (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
   (font-lock-add-keywords 'c++-mode
 			  '(("[ \t]+$" . 'trailing-whitespace)))
+  (add-hook 'c++-mode-hook
+	    '(lambda()
+	       (setq indent-tabs-mode nil)
+	       ))
   )
 
 (defun my-emacs-server-setup ()
