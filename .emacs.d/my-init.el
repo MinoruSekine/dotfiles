@@ -73,7 +73,14 @@
 
 (defun my-c++-mode-setup ()
   "Setup c++ mode."
+  (add-to-list 'magic-mode-alist
+	       '("\\(.\\|\n\\)*\n@implementation" . objc-mode))
+  (add-to-list 'magic-mode-alist
+	       '("\\(.\\|\n\\)*\n@interface" . objc-mode))
+  (add-to-list 'magic-mode-alist
+	       '("\\(.\\|\n\\)*\n@protocol" . objc-mode))
   (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+  (add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode))
   (font-lock-add-keywords 'c++-mode
 			  '(("[ \t]+$" . 'trailing-whitespace)))
   (add-hook 'c++-mode-hook
