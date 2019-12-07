@@ -68,6 +68,7 @@
   (when (window-system)
     (tool-bar-mode 0)
     (load-theme 'tsdh-light t)
+    (setq-default indicate-buffer-boundaries 'left)
     )
   )
 
@@ -98,6 +99,7 @@
 
 (defun my-semantic-mode-setup ()
   "Setup semantic mode."
+  (setq semantic-idle-work-parse-neighboring-files-flag t)
   (semantic-mode 1)
   (global-semantic-idle-scheduler-mode 1)
   (global-semantic-idle-completions-mode 1)
