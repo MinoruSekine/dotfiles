@@ -61,6 +61,9 @@
   (setq column-number-mode t)
   (setq line-number-mode t)
   (which-function-mode 1)
+  (add-hook 'emacs-lisp-mode-hook
+	    (lambda()
+	      (setq mode-name "Elisp")))
   )
 
 (defun my-gui-setup ()
