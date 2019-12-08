@@ -60,6 +60,7 @@
 (defun my-general-mode-line-setup ()
   (setq column-number-mode t)
   (setq line-number-mode t)
+  (display-time-mode 1)
   (which-function-mode 1)
   (add-hook 'emacs-lisp-mode-hook
 	    (lambda()
