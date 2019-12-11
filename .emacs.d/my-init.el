@@ -36,6 +36,7 @@
 
 (add-hook 'after-init-hook
 	  (lambda ()
+	    (my-general-visibility-setup)
 	    (my-gui-setup)
 	    (my-general-mode-line-setup)
 	    (my-semantic-mode-setup)
@@ -56,6 +57,10 @@
 	    (my-yasnippet-setup)
 	    (my-mocuur-setup)
 	    ))
+
+(defun my-general-visibility-setup ()
+  (show-paren-mode t)
+  )
 
 (defun my-general-mode-line-setup ()
   (setq column-number-mode t)
