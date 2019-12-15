@@ -1,5 +1,6 @@
 ;; Setup packages if not installed yet.
-(defvar my-packages '(color-identifiers-mode
+(defvar my-packages '(beacon
+		      color-identifiers-mode
 		      color-moccur
 		      elisp-lint
 		      flycheck
@@ -60,6 +61,12 @@
 
 (defun my-general-visibility-setup ()
   (show-paren-mode t)
+  (setq show-paren-style 'mixed)
+  (setq show-paren-when-point-inside-paren t)
+  (setq show-paren-when-point-in-periphery t)
+  (beacon-mode t)
+  (setq beacon-color "yellow")
+  (setq beacon-blink-duration 0.1)
   )
 
 (defun my-general-mode-line-setup ()
@@ -149,9 +156,7 @@
 
 (defun my-rainbow-delimiters-mode-setup ()
   "Setup rainbow-delimiters-mode"
-  (add-hook 'c-mode-hook 'rainbow-delimiters-mode)
-  (add-hook 'c++-mode-hook 'rainbow-delimiters-mode)
-  (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
+  (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
   (require 'cl-lib)
   (require 'color)
   (with-eval-after-load 'rainbow-delimiters
