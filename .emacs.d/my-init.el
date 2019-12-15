@@ -60,6 +60,9 @@
 
 (defun my-general-visibility-setup ()
   (show-paren-mode t)
+  (setq show-paren-style 'mixed)
+  (setq show-paren-when-point-inside-paren t)
+  (setq show-paren-when-point-in-periphery t)
   )
 
 (defun my-general-mode-line-setup ()
