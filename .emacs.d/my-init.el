@@ -1,5 +1,6 @@
 ;; Setup packages if not installed yet.
-(defvar my-packages '(color-identifiers-mode
+(defvar my-packages '(beacon
+		      color-identifiers-mode
 		      color-moccur
 		      elisp-lint
 		      flycheck
@@ -63,6 +64,9 @@
   (setq show-paren-style 'mixed)
   (setq show-paren-when-point-inside-paren t)
   (setq show-paren-when-point-in-periphery t)
+  (beacon-mode t)
+  (setq beacon-color "yellow")
+  (setq beacon-blink-duration 0.1)
   )
 
 (defun my-general-mode-line-setup ()
