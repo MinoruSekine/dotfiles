@@ -149,9 +149,7 @@
 
 (defun my-rainbow-delimiters-mode-setup ()
   "Setup rainbow-delimiters-mode"
-  (add-hook 'c-mode-hook 'rainbow-delimiters-mode)
-  (add-hook 'c++-mode-hook 'rainbow-delimiters-mode)
-  (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
+  (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
   (require 'cl-lib)
   (require 'color)
   (with-eval-after-load 'rainbow-delimiters
