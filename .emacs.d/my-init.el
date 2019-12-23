@@ -80,7 +80,7 @@
   )
 
 (defun my-gui-setup ()
-  "Setup if runs on GUI."
+  "Setup if Emacs is running on GUI."
   (when (window-system)
     (tool-bar-mode 0)
     (load-theme 'tsdh-light t)
