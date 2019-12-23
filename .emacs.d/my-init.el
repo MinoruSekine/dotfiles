@@ -169,6 +169,7 @@
   )
 
 (defun my-flycheck-mode-setup ()
+  "Setup flycheck mode."
   (setq flycheck-cppcheck-standards '("c++11"))
   (setq flycheck-clang-language-standard "c++11")
   (setq flycheck-gcc-language-standard "c++11")
@@ -176,6 +177,7 @@
   )
 
 (defun my-mocuur-setup ()
+  "Setup moccur."
   (with-eval-after-load 'color-moccur
     (add-to-list 'dmoccur-exclusion-mask "\\.o$")
     (add-to-list 'dmoccur-exclusion-mask "\\.[a-z]?obj$")
