@@ -140,22 +140,22 @@
   )
 
 (defun my-yasnippet-setup ()
-  "Setup yasnippet mode"
+  "Setup yasnippet mode."
   (yas-global-mode 1)
   )
 
 (defun my-compilation-mode-setup ()
-  "Setup compilation mode"
+  "Setup compilation mode."
   (setq compilation-scroll-output t)
   )
 
 (defun my-font-lock-set-up ()
-  "Setup font-lock"
+  "Setup font-lock."
   (setq jit-lock-defer-time 0.05)
   )
 
 (defun my-rainbow-delimiters-mode-setup ()
-  "Setup rainbow-delimiters-mode"
+  "Setup rainbow-delimiters-mode."
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
   (require 'cl-lib)
   (require 'color)
