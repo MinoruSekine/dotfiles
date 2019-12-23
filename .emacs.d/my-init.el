@@ -80,7 +80,7 @@
   )
 
 (defun my-gui-setup ()
-  "Setup if runs on GUI."
+  "Setup if Emacs is running on GUI."
   (when (window-system)
     (tool-bar-mode 0)
     (load-theme 'tsdh-light t)
@@ -140,22 +140,22 @@
   )
 
 (defun my-yasnippet-setup ()
-  "Setup yasnippet mode"
+  "Setup yasnippet mode."
   (yas-global-mode 1)
   )
 
 (defun my-compilation-mode-setup ()
-  "Setup compilation mode"
+  "Setup compilation mode."
   (setq compilation-scroll-output t)
   )
 
 (defun my-font-lock-set-up ()
-  "Setup font-lock"
+  "Setup font-lock."
   (setq jit-lock-defer-time 0.05)
   )
 
 (defun my-rainbow-delimiters-mode-setup ()
-  "Setup rainbow-delimiters-mode"
+  "Setup rainbow-delimiters-mode."
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
   (require 'cl-lib)
   (require 'color)
@@ -169,6 +169,7 @@
   )
 
 (defun my-flycheck-mode-setup ()
+  "Setup flycheck mode."
   (setq flycheck-cppcheck-standards '("c++11"))
   (setq flycheck-clang-language-standard "c++11")
   (setq flycheck-gcc-language-standard "c++11")
@@ -176,6 +177,7 @@
   )
 
 (defun my-mocuur-setup ()
+  "Setup moccur."
   (with-eval-after-load 'color-moccur
     (add-to-list 'dmoccur-exclusion-mask "\\.o$")
     (add-to-list 'dmoccur-exclusion-mask "\\.[a-z]?obj$")
