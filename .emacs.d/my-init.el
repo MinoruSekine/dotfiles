@@ -60,6 +60,7 @@
 	    ))
 
 (defun my-general-visibility-setup ()
+  "Setup visibility for both -nw and GUI."
   (show-paren-mode t)
   (setq show-paren-style 'mixed)
   (setq show-paren-when-point-inside-paren t)
@@ -70,6 +71,7 @@
   )
 
 (defun my-general-mode-line-setup ()
+  "Set up modeline."
   (setq column-number-mode t)
   (setq line-number-mode t)
   (display-time-mode 1)
@@ -90,12 +92,10 @@
 
 (defun my-c++-mode-setup ()
   "Setup c++ mode."
-  (add-to-list 'magic-mode-alist
-	       '("\\(.\\|\n\\)*\n@implementation" . objc-mode))
-  (add-to-list 'magic-mode-alist
-	       '("\\(.\\|\n\\)*\n@interface" . objc-mode))
-  (add-to-list 'magic-mode-alist
-	       '("\\(.\\|\n\\)*\n@protocol" . objc-mode))
+  (add-to-list
+   'magic-mode-alist
+   '("\\(.\\|\n\\)*\n@\\(implementation\\|interface\\|protocol\\)"
+     . objc-mode))
   (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
   (add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode))
   (font-lock-add-keywords 'c++-mode
@@ -129,7 +129,7 @@
 
 (defun my-default-directory-to-home-setup ()
   "Setup default directories."
-  (setq default-directry "~/")
+  (setq default-directory "~/")
   (setq command-line-default-directory "~/")
   )
 
