@@ -129,7 +129,7 @@
 
 (defun my-default-directory-to-home-setup ()
   "Setup default directories."
-  (setq default-directry "~/")
+  (setq default-directory "~/")
   (setq command-line-default-directory "~/")
   )
 
