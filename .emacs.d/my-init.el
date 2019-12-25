@@ -60,6 +60,7 @@
 	    ))
 
 (defun my-general-visibility-setup ()
+  "Setup visibility for both -nw and GUI."
   (show-paren-mode t)
   (setq show-paren-style 'mixed)
   (setq show-paren-when-point-inside-paren t)
@@ -70,6 +71,7 @@
   )
 
 (defun my-general-mode-line-setup ()
+  "Set up modeline."
   (setq column-number-mode t)
   (setq line-number-mode t)
   (display-time-mode 1)
