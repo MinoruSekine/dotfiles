@@ -1,6 +1,9 @@
 name: CI
 
-on: [pull_request]
+on:
+  pull_request:
+  schedule:
+    - cron:  0 20 * * 6
 
 jobs:
   build:
@@ -41,7 +44,7 @@ jobs:
       shell: bash
 
     - name: Lint
-      run: |
-        export PATH=$PATH:$HOME/scoop/shims
-        make -k -j lint
       shell: bash
+      run: |
+        export PATH=/usr/bin:$PATH:$HOME/scoop/shims
+        make -k -j lint
