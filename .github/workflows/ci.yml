@@ -37,6 +37,12 @@ jobs:
       run: |
         brew cask install emacs
 
+    - name: Test run
+      shell: bash
+      run: |
+        export PATH=/usr/bin:$PATH:$HOME/scoop/shims
+        make -k -j testrun
+
     - name: Install elisp-lint
       run: |
         export PATH=$PATH:$HOME/scoop/shims
