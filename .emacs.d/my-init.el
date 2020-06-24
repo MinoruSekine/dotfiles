@@ -7,6 +7,7 @@
 		      google-c-style
 		      magit
 		      markdown-mode
+		      package-utils
 		      powershell
 		      rainbow-delimiters
 		      yaml-mode
