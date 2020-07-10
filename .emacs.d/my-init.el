@@ -38,6 +38,7 @@
 
 (add-hook 'after-init-hook
 	  (lambda ()
+	    (my-environment-variable-setup)
 	    (my-general-visibility-setup)
 	    (my-gui-setup)
 	    (my-general-mode-line-setup)
@@ -59,6 +60,11 @@
 	    (my-yasnippet-setup)
 	    (my-mocuur-setup)
 	    ))
+
+(defun my-environment-variable-setup ()
+  ;;; Pager in Emacs (eshell, terms, ...)
+  (setenv "PAGER" "")
+  )
 
 (defun my-general-visibility-setup ()
   "Setup visibility for both -nw and GUI."
