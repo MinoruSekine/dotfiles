@@ -62,6 +62,7 @@
 	    ))
 
 (defun my-environment-variable-setup ()
+  "Set up environment variables."
   ;;; Pager in Emacs (eshell, terms, ...)
   (setenv "PAGER" "")
   )
