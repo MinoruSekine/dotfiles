@@ -39,6 +39,7 @@
 (add-hook 'after-init-hook
 	  (lambda ()
 	    (my-environment-variable-setup)
+	    (my-language-setup)
 	    (my-general-visibility-setup)
 	    (my-gui-setup)
 	    (my-general-mode-line-setup)
@@ -65,6 +66,12 @@
   "Set up environment variables."
   ;;; Pager in Emacs (eshell, terms, ...)
   (setenv "PAGER" "")
+  )
+
+(defun my-language-setup ()
+  "Set up about language."
+  (set-language-environment "Japanese")
+  (prefer-coding-system 'utf-8)
   )
 
 (defun my-general-visibility-setup ()
