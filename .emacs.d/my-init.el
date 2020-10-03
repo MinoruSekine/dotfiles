@@ -162,6 +162,7 @@
 (defun my-compilation-mode-setup ()
   "Setup compilation mode."
   (setq compilation-scroll-output t)
+  (setq compile-command "time nice make -k -j ")
   )
 
 (defun my-font-lock-set-up ()
