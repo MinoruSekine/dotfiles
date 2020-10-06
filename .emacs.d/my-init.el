@@ -43,7 +43,7 @@
 	    (my-general-visibility-setup)
 	    (my-gui-setup)
 	    (my-general-mode-line-setup)
-	    (my-semantic-mode-setup)
+	    (my-ede-and-semantic-mode-setup)
 	    (my-c++-mode-setup)
 	    (my-compilation-mode-setup)
 	    (my-font-lock-set-up)
@@ -128,10 +128,14 @@
     (server-start))
   )
 
-(defun my-semantic-mode-setup ()
-  "Setup semantic mode."
+(defun my-ede-and-semantic-mode-setup ()
+  "Setup ede and semantic mode."
   (setq semantic-idle-work-parse-neighboring-files-flag t)
+  (global-ede-mode t)
   (semantic-mode 1)
+  (when (file-directory-p "/usr/local/include/")
+    (semantic-add-system-include "/usr/local/include/" 'c-mode)
+    (semantic-add-system-include "/usr/local/include/" 'c++-mode))
   (global-semantic-idle-scheduler-mode 1)
   (global-semantic-idle-completions-mode 1)
   (global-semantic-idle-summary-mode 1)
