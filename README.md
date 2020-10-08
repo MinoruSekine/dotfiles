@@ -8,6 +8,14 @@ This repository includes:
 - Makefile to validate their syntax (lint)
 - Files for GitHub Actions
 
+# Settings for Emacs
+
+## Features
+
+- Install necessary packages with packages.el if not available
+- Independent from tools outside of Emacs
+  - On Windows, it is not necessary to install cygwin, mingw, or compatible something
+
 ## How to use
 
 ### Check out with anyway which you like
