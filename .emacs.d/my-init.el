@@ -31,11 +31,15 @@
     (remove-if-not (lambda (p) (not (package-installed-p p)))
 		   my-packages))
 
-  (when (and my-not-yet-installed-packages)
-    (package-refresh-contents))
-
-  (dolist (p my-not-yet-installed-packages)
-    (package-install p))
+  (when (and my-not-yet-installed-packages
+	     (if noninteractive
+		 (if (boundp 'my-default-install-missing-packages) my-default-install-missing-packages nil)
+	       (y-or-n-p (concat "Install missing packages? : "
+				 (format "%s" my-not-yet-installed-packages)))))
+    (package-refresh-contents)
+    (dolist (p my-not-yet-installed-packages)
+      (package-install p))
+    )
   )
 
 (my-install-missing-packages)
