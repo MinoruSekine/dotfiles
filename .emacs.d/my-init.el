@@ -1,40 +1,48 @@
-;; Setup packages if not installed yet.
-(defvar my-packages '(beacon
-		      color-identifiers-mode
-		      color-moccur
-		      elisp-lint
-		      flycheck
-		      google-c-style
-		      magit
-		      markdown-mode
-		      package-utils
-		      powershell
-		      rainbow-delimiters
-		      yaml-mode
-		      yasnippet
-		      yasnippet-snippets))
+(defun my-install-missing-packages ()
+  "Install missing packages."
+  (defvar my-packages '(beacon
+			color-identifiers-mode
+			color-moccur
+			elisp-lint
+			flycheck
+			google-c-style
+			magit
+			markdown-mode
+			package-utils
+			powershell
+			rainbow-delimiters
+			yaml-mode
+			yasnippet
+			yasnippet-snippets))
 
-(require 'package)
-(add-to-list
- 'package-archives
- '("melpa" . "https://melpa.org/packages/")
- '("melpa-stable" . "https://stable.melpa.org/packages/")
- )
-(package-initialize)
+  (require 'package)
+  (add-to-list
+   'package-archives
+   '("melpa" . "https://melpa.org/packages/")
+   '("melpa-stable" . "https://stable.melpa.org/packages/")
+   )
+  (package-initialize)
 
-(when (not package-archive-contents)
-  (package-refresh-contents))
+  (when (not package-archive-contents)
+    (package-refresh-contents))
 
-(require 'cl)  ;; To use remove-if-not.
-(defvar my-not-yet-installed-packages
-  (remove-if-not (lambda (p) (not (package-installed-p p)))
-		 my-packages))
+  (require 'cl)  ;; To use remove-if-not.
+  (defvar my-not-yet-installed-packages
+    (remove-if-not (lambda (p) (not (package-installed-p p)))
+		   my-packages))
 
-(when (and my-not-yet-installed-packages)
-  (package-refresh-contents))
+  (when (and my-not-yet-installed-packages
+	     (if noninteractive
+		 (if (boundp 'my-default-install-missing-packages) my-default-install-missing-packages nil)
+	       (y-or-n-p (concat "Install missing packages? : "
+				 (format "%s" my-not-yet-installed-packages)))))
+    (package-refresh-contents)
+    (dolist (p my-not-yet-installed-packages)
+      (package-install p))
+    )
+  )
 
-(dolist (p my-not-yet-installed-packages)
-  (package-install p))
+(my-install-missing-packages)
 
 (add-hook 'after-init-hook
 	  (lambda ()
