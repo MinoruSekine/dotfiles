@@ -54,7 +54,7 @@
 	    (my-ede-and-semantic-mode-setup)
 	    (my-c++-mode-setup)
 	    (my-compilation-mode-setup)
-	    (my-font-lock-set-up)
+	    (my-font-lock-setup)
 	    (my-rainbow-delimiters-mode-setup)
 	    (my-flycheck-mode-setup)
 	    (global-color-identifiers-mode t)
@@ -177,7 +177,7 @@
   (setq compile-command "time nice make -k -j ")
   )
 
-(defun my-font-lock-set-up ()
+(defun my-font-lock-setup ()
   "Setup font-lock."
   (setq jit-lock-defer-time 0.05)
   )
