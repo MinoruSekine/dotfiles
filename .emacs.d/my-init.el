@@ -74,6 +74,8 @@
   "Set up environment variables."
   ;;; Pager in Emacs (eshell, terms, ...)
   (setenv "PAGER" "")
+
+  (setq exec-path (append exec-path (parse-colon-path (getenv "PATH"))))
   )
 
 (defun my-language-setup ()
