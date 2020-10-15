@@ -9,6 +9,7 @@
 			magit
 			markdown-mode
 			package-utils
+			plantuml-mode
 			powershell
 			rainbow-delimiters
 			yaml-mode
@@ -68,6 +69,7 @@
 	    (my-flycheck-mode-setup)
 	    (my-yasnippet-setup)
 	    (my-mocuur-setup)
+	    (my-plantuml-mode-setup)
 	    ))
 
 (defun my-environment-variable-setup ()
@@ -215,3 +217,14 @@
     (add-to-list 'dmoccur-exclusion-mask "\\.p?db$")
     )
   )
+
+(defun my-plantuml-mode-setup ()
+  "Setup plantuml-mode."
+  (add-to-list 'auto-mode-alist '("\\.pu\\'" . plantuml-mode))
+  (add-to-list 'auto-mode-alist '("\\.puml\\'" . plantuml-mode))
+  (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
+  (setq plantuml-executable-path (executable-find "plantuml"))
+  (setq plantuml-default-exec-mode 'executable)
+  (setq plantuml-output-type "png")
+  )
+
