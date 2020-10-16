@@ -9,6 +9,7 @@
 			magit
 			markdown-mode
 			package-utils
+			plantuml-mode
 			powershell
 			rainbow-delimiters
 			yaml-mode
@@ -51,12 +52,7 @@
 	    (my-general-visibility-setup)
 	    (my-gui-setup)
 	    (my-general-mode-line-setup)
-	    (my-ede-and-semantic-mode-setup)
-	    (my-c++-mode-setup)
-	    (my-compilation-mode-setup)
-	    (my-font-lock-set-up)
-	    (my-rainbow-delimiters-mode-setup)
-	    (my-flycheck-mode-setup)
+	    (my-font-lock-setup)
 	    (global-color-identifiers-mode t)
 	    ))
 
@@ -66,14 +62,22 @@
 	    (my-backup-directory-setup)
 	    (my-default-directory-to-home-setup)
 	    (my-completion-case-sensitivity-setup)
+	    (my-ede-and-semantic-mode-setup)
+	    (my-c++-mode-setup)
+	    (my-compilation-mode-setup)
+	    (my-rainbow-delimiters-mode-setup)
+	    (my-flycheck-mode-setup)
 	    (my-yasnippet-setup)
 	    (my-mocuur-setup)
+	    (my-plantuml-mode-setup)
 	    ))
 
 (defun my-environment-variable-setup ()
   "Set up environment variables."
   ;;; Pager in Emacs (eshell, terms, ...)
   (setenv "PAGER" "")
+
+  (setq exec-path (append exec-path (parse-colon-path (getenv "PATH"))))
   )
 
 (defun my-language-setup ()
@@ -177,7 +181,7 @@
   (setq compile-command "time nice make -k -j ")
   )
 
-(defun my-font-lock-set-up ()
+(defun my-font-lock-setup ()
   "Setup font-lock."
   (setq jit-lock-defer-time 0.05)
   )
@@ -213,3 +217,14 @@
     (add-to-list 'dmoccur-exclusion-mask "\\.p?db$")
     )
   )
+
+(defun my-plantuml-mode-setup ()
+  "Setup plantuml-mode."
+  (add-to-list 'auto-mode-alist '("\\.pu\\'" . plantuml-mode))
+  (add-to-list 'auto-mode-alist '("\\.puml\\'" . plantuml-mode))
+  (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
+  (setq plantuml-executable-path (executable-find "plantuml"))
+  (setq plantuml-default-exec-mode 'executable)
+  (setq plantuml-output-type "png")
+  )
+
