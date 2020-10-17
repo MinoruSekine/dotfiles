@@ -70,6 +70,7 @@
 	    (my-yasnippet-setup)
 	    (my-mocuur-setup)
 	    (my-plantuml-mode-setup)
+	    (my-dired-setup)
 	    ))
 
 (defun my-environment-variable-setup ()
@@ -229,3 +230,9 @@
   (setq plantuml-output-type "png")
   )
 
+(defun my-dired-setup ()
+  "Setup dired."
+  (when (equal system-type 'darwin)
+    (setq dired-use-ls-dired nil)
+    )
+  )
