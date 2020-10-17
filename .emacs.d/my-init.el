@@ -70,6 +70,7 @@
 	    (my-yasnippet-setup)
 	    (my-mocuur-setup)
 	    (my-plantuml-mode-setup)
+	    (my-dired-setup)
 	    ))
 
 (defun my-environment-variable-setup ()
@@ -224,7 +225,14 @@
   (add-to-list 'auto-mode-alist '("\\.puml\\'" . plantuml-mode))
   (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
   (setq plantuml-executable-path (executable-find "plantuml"))
+  (setq plantuml-options "-charset UTF-8")
   (setq plantuml-default-exec-mode 'executable)
   (setq plantuml-output-type "png")
   )
 
+(defun my-dired-setup ()
+  "Setup dired."
+  (when (equal system-type 'darwin)
+    (setq dired-use-ls-dired nil)
+    )
+  )
