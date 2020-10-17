@@ -224,6 +224,7 @@
   (add-to-list 'auto-mode-alist '("\\.puml\\'" . plantuml-mode))
   (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
   (setq plantuml-executable-path (executable-find "plantuml"))
+  (setq plantuml-options "-charset UTF-8")
   (setq plantuml-default-exec-mode 'executable)
   (setq plantuml-output-type "png")
   )
