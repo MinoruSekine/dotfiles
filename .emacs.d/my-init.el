@@ -1,3 +1,6 @@
+(defvar my-after-ede-setup-hook nil
+  "List of functions to call after setup for EDE.")
+
 (defun my-install-missing-packages ()
   "Install missing packages."
   (defvar my-packages '(beacon
@@ -152,6 +155,7 @@
   (global-semantic-idle-scheduler-mode 1)
   (global-semantic-idle-completions-mode 1)
   (global-semantic-idle-summary-mode 1)
+  (run-hooks 'my-after-ede-setup-hook)
   )
 
 (defun my-backup-directory-setup ()

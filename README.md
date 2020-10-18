@@ -44,3 +44,24 @@ you can link to it instead of your own `~/.emacs.d/init.el`.
 ```
 $ ln -s ~/dotfiles/.emacs.d/my-init.el ~/.emacs.d/init.el
 ```
+
+## Hook
+
+### `my-after-ede-setup-hook`
+This is called after called `(global-ede-mode t)`.
+So environment dependent EDE setup like as `ede-cpp-root-project` can be hooked to here.
+
+```
+(load-file "~/dotfiles/.emacs.d/my-init.el")
+
+;; Settings only for this environment.
+(add-hook 'my-after-ede-setup-hook
+	  (lambda ()
+	    (ede-cpp-root-project "libfixedpointnumber"
+				  :file "~/work/libfixedpointnumber/Makefile"
+				  :include-path '("/include")
+				  :system-include-path '("/usr/local/include/gtest/"
+							 "/usr/local/include/gmock/")
+				  :compile-command "time nice make -k -j check run-test")
+	    ))
+```
