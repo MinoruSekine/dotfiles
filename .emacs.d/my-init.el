@@ -1,6 +1,9 @@
 (defvar my-after-ede-setup-hook nil
   "List of functions to call after setup for EDE.")
 
+(defvar my-gui-setup-hook nil
+  "List of functions to call at initializing Emacs as GUI.")
+
 (defun my-install-missing-packages ()
   "Install missing packages."
   (defvar my-packages '(beacon
@@ -112,13 +115,40 @@
 	      (setq mode-name "Elisp")))
   )
 
+(defun my-func-called-at-gui-initialization (&optional frame)
+  "Function called at GUI initialization."
+  (unless frame (setq frame (selected-frame)))
+  (with-selected-frame frame
+    (when (display-graphic-p)
+      (run-hooks 'my-gui-setup-hook)
+      (modify-frame-parameters frame default-frame-alist)
+      (remove-hook 'after-make-frame-functions #'my-func-called-at-gui-initialization)
+      )
+    )
+  )
+
 (defun my-gui-setup ()
   "Setup if Emacs is running on GUI."
-  (when (window-system)
-    (tool-bar-mode 0)
-    (load-theme 'tsdh-light t)
-    (setq-default indicate-buffer-boundaries 'left)
-    )
+  (add-hook 'my-gui-setup-hook
+	    (lambda()
+	      (tool-bar-mode -1)
+	      (load-theme 'tsdh-light t)
+	      (setq-default indicate-buffer-boundaries 'left)
+	      (when (find-font (font-spec :name "VL ゴシック"))
+		(set-default-font "VL ゴシック-10")
+		(set-frame-font "VL ゴシック-10")
+		(set-fontset-font
+		 (frame-parameter nil 'font)
+		 'japanese-jisx0208
+		 '("VL ゴシック" . "unicode-bmp")
+		 ))
+	      (add-to-list `default-frame-alist '(foreground-color . "black"))
+	      (add-to-list `default-frame-alist '(background-color . "ghost white"))
+	      (add-to-list `default-frame-alist '(cursor-color . "forest green"))
+	      )
+	    )
+  (add-hook 'after-make-frame-functions #'my-func-called-at-gui-initialization t)
+  (my-func-called-at-gui-initialization)
   )
 
 (defun my-c++-mode-setup ()
