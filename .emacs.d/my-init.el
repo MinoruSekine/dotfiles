@@ -135,7 +135,6 @@
 	      (load-theme 'tsdh-light t)
 	      (setq-default indicate-buffer-boundaries 'left)
 	      (when (find-font (font-spec :name "VL ゴシック"))
-		(set-default-font "VL ゴシック-10")
 		(set-frame-font "VL ゴシック-10")
 		(set-fontset-font
 		 (frame-parameter nil 'font)
