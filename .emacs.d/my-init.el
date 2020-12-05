@@ -1,9 +1,6 @@
 (defvar my-after-ede-setup-hook nil
   "List of functions to call after setup for EDE.")
 
-(defvar my-gui-setup-hook nil
-  "List of functions to call at initializing Emacs as GUI.")
-
 (defun my-install-missing-packages ()
   "Install missing packages."
   (defvar my-packages '(beacon
@@ -115,39 +112,30 @@
 	      (setq mode-name "Elisp")))
   )
 
-(defun my-func-called-at-gui-initialization (&optional frame)
-  "Function called at GUI initialization."
-  (unless frame (setq frame (selected-frame)))
+(defun my-after-make-frame-frame-func (frame)
+  "This will be called just after making each frame. It can be done to initialization for GUI."
   (with-selected-frame frame
     (when (display-graphic-p)
-      (run-hooks 'my-gui-setup-hook)
-      (modify-frame-parameters frame default-frame-alist)
-      (remove-hook 'after-make-frame-functions #'my-func-called-at-gui-initialization)
+      (tool-bar-mode -1)
+      (when (find-font (font-spec :name "VL ゴシック"))
+      	(set-frame-font "VL ゴシック-10")
+       	)
       )
     )
   )
 
 (defun my-gui-setup ()
   "Setup if Emacs is running on GUI."
-  (add-hook 'my-gui-setup-hook
-	    (lambda()
-	      (tool-bar-mode -1)
-	      (load-theme 'tsdh-light t)
-	      (setq-default indicate-buffer-boundaries 'left)
-	      (when (find-font (font-spec :name "VL ゴシック"))
-		(set-frame-font "VL ゴシック-10")
-		(set-fontset-font
-		 (frame-parameter nil 'font)
-		 'japanese-jisx0208
-		 '("VL ゴシック" . "unicode-bmp")
-		 ))
-	      (add-to-list `default-frame-alist '(foreground-color . "black"))
-	      (add-to-list `default-frame-alist '(background-color . "ghost white"))
-	      (add-to-list `default-frame-alist '(cursor-color . "forest green"))
-	      )
-	    )
-  (add-hook 'after-make-frame-functions #'my-func-called-at-gui-initialization t)
-  (my-func-called-at-gui-initialization)
+  (setq-default indicate-buffer-boundaries 'left)
+  (add-to-list 'default-frame-alist '(foreground-color . "black"))
+  (add-to-list 'default-frame-alist '(background-color . "ghost white"))
+  (add-to-list 'default-frame-alist '(cursor-color . "forest green"))
+  (when (find-font (font-spec :name "VL ゴシック"))
+    (add-to-list 'default-frame-alist '(font . "VL ゴシック-10"))
+    )
+  ;; Defer following settings if not GUI yet.
+  (add-hook 'after-make-frame-functions 'my-after-make-frame-frame-func)
+  (my-after-make-frame-frame-func (selected-frame))
   )
 
 (defun my-c++-mode-setup ()
