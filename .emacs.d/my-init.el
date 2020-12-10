@@ -1,6 +1,14 @@
 (defvar my-after-ede-setup-hook nil
   "List of functions to call after setup for EDE.")
 
+(defun my-get-default-plantuml-jar-path ()
+  "Get path to plantuml.jar on running environment."
+  (cond ((equal system-type 'darwin)
+	 (substring (shell-command-to-string "echo /usr/local/Cellar/plantuml/*/libexec/plantuml.jar") 0 -1))))
+
+(defvar my-plantuml-jar-path (my-get-default-plantuml-jar-path)
+  "Path of plantuml.jar")
+
 (defun my-install-missing-packages ()
   "Install missing packages."
   (defvar my-packages '(beacon
@@ -245,9 +253,15 @@
   (add-to-list 'auto-mode-alist '("\\.pu\\'" . plantuml-mode))
   (add-to-list 'auto-mode-alist '("\\.puml\\'" . plantuml-mode))
   (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
-  (setq plantuml-executable-path (executable-find "plantuml"))
+  ;; To avoid "No Java runtime present, requesting install." message
+  ;; even if installed OpenJDK by brew.
+  (when (equal system-type 'darwin)
+    (defconst java-path-installed-by-brew "/usr/local/opt/openjdk/bin/java")
+    (when (executable-find java-path-installed-by-brew)
+      (setq plantuml-java-command java-path-installed-by-brew)))
+  (setq plantuml-jar-path my-plantuml-jar-path)
+  (setq plantuml-default-exec-mode 'jar)
   (setq plantuml-options "-charset UTF-8")
-  (setq plantuml-default-exec-mode 'executable)
   (setq plantuml-output-type "png")
   )
 
