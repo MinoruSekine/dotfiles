@@ -7,6 +7,8 @@
 	 (substring (shell-command-to-string "echo /usr/local/Cellar/plantuml/*/libexec/plantuml.jar") 0 -1))
 	((equal system-type 'windows-nt)
 	 (expand-file-name (replace-regexp-in-string "plantuml.cmd\n" "plantuml.jar" (shell-command-to-string "scoop which plantuml"))))
+	((equal system-type 'gnu/linux)
+	 "/usr/share/plantuml/plantuml.jar")
 	))
 
 (defvar my-plantuml-jar-path (my-get-default-plantuml-jar-path)
