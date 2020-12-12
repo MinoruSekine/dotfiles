@@ -4,7 +4,10 @@
 (defun my-get-default-plantuml-jar-path ()
   "Get path to plantuml.jar on running environment."
   (cond ((equal system-type 'darwin)
-	 (substring (shell-command-to-string "echo /usr/local/Cellar/plantuml/*/libexec/plantuml.jar") 0 -1))))
+	 (substring (shell-command-to-string "echo /usr/local/Cellar/plantuml/*/libexec/plantuml.jar") 0 -1))
+	((equal system-type 'windows-nt)
+	 (expand-file-name (replace-regexp-in-string "plantuml.cmd\n" "plantuml.jar" (shell-command-to-string "scoop which plantuml"))))
+	))
 
 (defvar my-plantuml-jar-path (my-get-default-plantuml-jar-path)
   "Path of plantuml.jar")
