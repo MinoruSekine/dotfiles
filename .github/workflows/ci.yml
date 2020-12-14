@@ -28,6 +28,7 @@ jobs:
       run: |
         Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
         iex (New-Object net.webclient).downloadstring('https://get.scoop.sh')
+        scoop update
         scoop bucket add extras
         scoop install emacs
       shell: pwsh
@@ -35,6 +36,7 @@ jobs:
     - name: Install Emacs (macOS)
       if: contains(matrix.os, 'macOS')
       run: |
+        brew update
         brew cask install emacs
 
     - name: Test run
