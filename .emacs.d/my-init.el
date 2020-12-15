@@ -12,7 +12,7 @@
 	))
 
 (defvar my-plantuml-jar-path (my-get-default-plantuml-jar-path)
-  "Path of plantuml.jar")
+  "Path of plantuml.jar.")
 
 (defun my-install-missing-packages ()
   "Install missing packages."
