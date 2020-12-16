@@ -12,7 +12,7 @@
 	))
 
 (defvar my-plantuml-jar-path (my-get-default-plantuml-jar-path)
-  "Path of plantuml.jar")
+  "Path of plantuml.jar.")
 
 (defun my-install-missing-packages ()
   "Install missing packages."
@@ -61,33 +61,35 @@
 
 (my-install-missing-packages)
 
-(add-hook 'after-init-hook
-	  (lambda ()
-	    (my-environment-variable-setup)
-	    (my-language-setup)
-	    (my-general-visibility-setup)
-	    (my-gui-setup)
-	    (my-general-mode-line-setup)
-	    (my-font-lock-setup)
-	    (global-color-identifiers-mode t)
-	    ))
+(defun my-add-hooks (hook-to-add my-list)
+  "Add each function in my-list into hook-to-add."
+  (dolist (itr my-list)
+    (add-hook hook-to-add itr)))
 
-(add-hook 'emacs-startup-hook
-	  (lambda ()
-	    (my-emacs-server-setup)
-	    (my-backup-directory-setup)
-	    (my-default-directory-to-home-setup)
-	    (my-completion-case-sensitivity-setup)
-	    (my-ede-and-semantic-mode-setup)
-	    (my-c++-mode-setup)
-	    (my-compilation-mode-setup)
-	    (my-rainbow-delimiters-mode-setup)
-	    (my-flycheck-mode-setup)
-	    (my-yasnippet-setup)
-	    (my-mocuur-setup)
-	    (my-plantuml-mode-setup)
-	    (my-dired-setup)
-	    ))
+(defvar my-after-init-func-list '(my-environment-variable-setup
+				  my-language-setup
+				  my-general-visibility-setup
+				  my-gui-setup
+				  my-general-mode-line-setup
+				  my-font-lock-setup
+				  my-color-identifiers-mode-setup
+				  ))
+(my-add-hooks 'after-init-hook my-after-init-func-list)
+
+(defvar my-emacs-startup-func-list '(my-emacs-server-setup
+				     my-backup-directory-setup
+				     my-default-directory-to-home-setup
+				     my-completion-case-sensitivity-setup
+				     my-ede-and-semantic-mode-setup
+				     my-c++-mode-setup
+				     my-compilation-mode-setup
+				     my-rainbow-delimiters-mode-setup
+				     my-flycheck-mode-setup
+				     my-yasnippet-setup
+				     my-mocuur-setup
+				     my-plantuml-mode-setup
+				     my-dired-setup))
+(my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list)
 
 (defun my-environment-variable-setup ()
   "Set up environment variables."
@@ -276,4 +278,9 @@
   (when (equal system-type 'darwin)
     (setq dired-use-ls-dired nil)
     )
+  )
+
+(defun my-color-identifiers-mode-setup ()
+  "Setup color-identifiers-mode."
+  (global-color-identifiers-mode t)
   )
