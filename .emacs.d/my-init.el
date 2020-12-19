@@ -4,9 +4,15 @@
 (defun my-get-default-plantuml-jar-path ()
   "Get path to plantuml.jar on running environment."
   (cond ((equal system-type 'darwin)
-	 (substring (shell-command-to-string "echo /usr/local/Cellar/plantuml/*/libexec/plantuml.jar") 0 -1))
+	 (substring (shell-command-to-string
+		     "echo /usr/local/Cellar/plantuml/*/libexec/plantuml.jar")
+		    0
+		    -1))
 	((equal system-type 'windows-nt)
-	 (expand-file-name (replace-regexp-in-string "plantuml.cmd\n" "plantuml.jar" (shell-command-to-string "scoop which plantuml"))))
+	 (expand-file-name (replace-regexp-in-string
+			    "plantuml.cmd\n"
+			    "plantuml.jar"
+			    (shell-command-to-string "scoop which plantuml"))))
 	((equal system-type 'gnu/linux)
 	 "/usr/share/plantuml/plantuml.jar")
 	))
@@ -50,9 +56,11 @@
 
   (when (and my-not-yet-installed-packages
 	     (if noninteractive
-		 (if (boundp 'my-default-install-missing-packages) my-default-install-missing-packages nil)
+		 (if (boundp 'my-default-install-missing-packages)
+		     my-default-install-missing-packages nil)
 	       (y-or-n-p (concat "Install missing packages? : "
-				 (format "%s" my-not-yet-installed-packages)))))
+				 (format "%s"
+					 my-not-yet-installed-packages)))))
     (package-refresh-contents)
     (dolist (p my-not-yet-installed-packages)
       (package-install p))
@@ -76,19 +84,20 @@
 				  ))
 (my-add-hooks 'after-init-hook my-after-init-func-list)
 
-(defvar my-emacs-startup-func-list '(my-emacs-server-setup
-				     my-backup-directory-setup
-				     my-default-directory-to-home-setup
-				     my-completion-case-sensitivity-setup
-				     my-ede-and-semantic-mode-setup
-				     my-c++-mode-setup
-				     my-compilation-mode-setup
-				     my-rainbow-delimiters-mode-setup
-				     my-flycheck-mode-setup
-				     my-yasnippet-setup
-				     my-mocuur-setup
-				     my-plantuml-mode-setup
-				     my-dired-setup))
+(defvar my-emacs-startup-func-list
+  '(my-emacs-server-setup
+    my-backup-directory-setup
+    my-default-directory-to-home-setup
+    my-completion-case-sensitivity-setup
+    my-ede-and-semantic-mode-setup
+    my-c++-mode-setup
+    my-compilation-mode-setup
+    my-rainbow-delimiters-mode-setup
+    my-flycheck-mode-setup
+    my-yasnippet-setup
+    my-mocuur-setup
+    my-plantuml-mode-setup
+    my-dired-setup))
 (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list)
 
 (defun my-environment-variable-setup ()
@@ -128,7 +137,7 @@
   )
 
 (defun my-after-make-frame-frame-func (frame)
-  "This will be called just after making each frame. It can be done to initialization for GUI."
+  "Called just after making each frame. It can intialize for GUI."
   (with-selected-frame frame
     (when (display-graphic-p)
       (tool-bar-mode -1)
@@ -142,14 +151,18 @@
 (defun my-gui-setup ()
   "Setup if Emacs is running on GUI."
   (setq-default indicate-buffer-boundaries 'left)
-  (add-to-list 'default-frame-alist '(foreground-color . "black"))
-  (add-to-list 'default-frame-alist '(background-color . "ghost white"))
-  (add-to-list 'default-frame-alist '(cursor-color . "forest green"))
+  (add-to-list 'default-frame-alist
+	       '(foreground-color . "black"))
+  (add-to-list 'default-frame-alist
+	       '(background-color . "ghost white"))
+  (add-to-list 'default-frame-alist
+	       '(cursor-color . "forest green"))
   (when (find-font (font-spec :name "VL ゴシック"))
     (add-to-list 'default-frame-alist '(font . "VL ゴシック-10"))
     )
   ;; Defer following settings if not GUI yet.
-  (add-hook 'after-make-frame-functions 'my-after-make-frame-frame-func)
+  (add-hook 'after-make-frame-functions
+	    'my-after-make-frame-frame-func)
   (my-after-make-frame-frame-func (selected-frame))
   )
 
@@ -263,7 +276,8 @@
   ;; To avoid "No Java runtime present, requesting install." message
   ;; even if installed OpenJDK by brew.
   (when (equal system-type 'darwin)
-    (defconst java-path-installed-by-brew "/usr/local/opt/openjdk/bin/java")
+    (defconst java-path-installed-by-brew
+      "/usr/local/opt/openjdk/bin/java")
     (when (executable-find java-path-installed-by-brew)
       (setq plantuml-java-command java-path-installed-by-brew)))
   (when (file-exists-p my-plantuml-jar-path)
