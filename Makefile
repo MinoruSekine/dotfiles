@@ -4,6 +4,7 @@ lint: elisp-lint-all
 
 testrun: testrun-emacs
 
+# Rules for Emacs.
 EMACS_CMD=emacs
 elisp-lint-all: .emacs.d/my-init.el
 	$(EMACS_CMD) -Q --batch --eval "(progn(package-initialize)(require 'elisp-lint)(elisp-lint-file \"$(realpath $+)\"))"
