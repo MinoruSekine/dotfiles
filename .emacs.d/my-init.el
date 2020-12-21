@@ -269,6 +269,9 @@
   (when (file-exists-p my-plantuml-jar-path)
     (setq plantuml-jar-path my-plantuml-jar-path))
   (setq plantuml-default-exec-mode 'jar)
+  (with-eval-after-load 'plantuml
+    (setq plantuml-java-args
+	  (delete "-Djava.awt.headless=true" plantuml-java-args)))
   (setq plantuml-options "-charset UTF-8")
   (setq plantuml-output-type "png")
   )
