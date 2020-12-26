@@ -288,6 +288,7 @@
 	  (delete "-Djava.awt.headless=true" plantuml-java-args)))
   (setq plantuml-options "-charset UTF-8")
   (setq plantuml-output-type "png")
+  (setq plantuml-indent-level 2)
   )
 
 (defun my-dired-setup ()
