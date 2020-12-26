@@ -42,8 +42,7 @@ jobs:
       if: contains(matrix.os, 'macOS')
       run: |
         brew update
-        brew install shellcheck
-        brew cask install emacs
+        brew install shellcheck emacs
 
     - name: Test run
       shell: bash
