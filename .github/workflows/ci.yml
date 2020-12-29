@@ -52,11 +52,13 @@ jobs:
         make -k -j testrun
 
     - name: Install elisp-lint
+      if: contains(matrix.os, 'ubuntu-latest')
       run: |
         emacs -Q --batch -l ./.github/workflows/install-elisp-lint.el -f install-elisp-lint-batch
       shell: bash
 
     - name: Lint
+      if: contains(matrix.os, 'ubuntu-latest')
       shell: bash
       run: |
         make -k -j lint
