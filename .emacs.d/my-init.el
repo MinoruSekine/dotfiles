@@ -100,7 +100,8 @@
     my-yasnippet-setup
     my-mocuur-setup
     my-plantuml-mode-setup
-    my-dired-setup))
+    my-dired-setup
+    my-eshell-setup))
 (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list)
 
 ;;; Functions for initializing Emacs.
@@ -307,3 +308,12 @@
   "Setup color-identifiers-mode."
   (global-color-identifiers-mode t)
   )
+
+(defun my-eshell-setup ()
+  "Setup eshell."
+  (eval-after-load 'eshell
+    '(progn
+       (require 'em-term)
+       ;;; It is extra necessary to disable pager if you need.
+       (add-to-list 'eshell-visual-subcommands
+		    '("git" "diff" "help" "log" "show")))))
