@@ -137,7 +137,7 @@
 	      (setq mode-name "Elisp")))
   )
 
-(defun my-after-make-frame-frame-func (frame)
+(defun my-after-make-frame-func (frame)
   "Called just after making each frame. It can intialize for GUI."
   (with-selected-frame frame
     (when (display-graphic-p)
@@ -163,8 +163,8 @@
     )
   ;; Defer following settings if not GUI yet.
   (add-hook 'after-make-frame-functions
-	    'my-after-make-frame-frame-func)
-  (my-after-make-frame-frame-func (selected-frame))
+	    'my-after-make-frame-func)
+  (my-after-make-frame-func (selected-frame))
   )
 
 (defun my-c++-mode-setup ()
