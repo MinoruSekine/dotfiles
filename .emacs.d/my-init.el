@@ -1,6 +1,4 @@
-(defvar my-after-ede-setup-hook nil
-  "List of functions to call after setup for EDE.")
-
+;;; Internal helper functions.
 (defun my-get-default-plantuml-jar-path ()
   "Get path to plantuml.jar on running environment."
   (cond ((equal system-type 'darwin)
@@ -17,9 +15,19 @@
 	 "/usr/share/plantuml/plantuml.jar")
 	))
 
+(defun my-add-hooks (hook-to-add my-list)
+  "Add each function in my-list into hook-to-add."
+  (dolist (itr my-list)
+    (add-hook hook-to-add itr)))
+
+;;; Customizable variables.
+(defvar my-after-ede-setup-hook nil
+  "List of functions to call after setup for EDE.")
+
 (defvar my-plantuml-jar-path (my-get-default-plantuml-jar-path)
   "Path of plantuml.jar.")
 
+;;; Main processes.
 (defun my-install-missing-packages ()
   "Install missing packages."
   (defvar my-packages '(beacon
@@ -69,11 +77,6 @@
 
 (my-install-missing-packages)
 
-(defun my-add-hooks (hook-to-add my-list)
-  "Add each function in my-list into hook-to-add."
-  (dolist (itr my-list)
-    (add-hook hook-to-add itr)))
-
 (defvar my-after-init-func-list '(my-environment-variable-setup
 				  my-language-setup
 				  my-general-visibility-setup
@@ -100,6 +103,7 @@
     my-dired-setup))
 (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list)
 
+;;; Functions for initializing Emacs.
 (defun my-environment-variable-setup ()
   "Set up environment variables."
   ;;; Pager in Emacs (eshell, terms, ...)
