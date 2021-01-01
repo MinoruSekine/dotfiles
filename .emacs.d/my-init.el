@@ -1,6 +1,4 @@
-(defvar my-after-ede-setup-hook nil
-  "List of functions to call after setup for EDE.")
-
+;;; Internal helper functions.
 (defun my-get-default-plantuml-jar-path ()
   "Get path to plantuml.jar on running environment."
   (cond ((equal system-type 'darwin)
@@ -17,9 +15,19 @@
 	 "/usr/share/plantuml/plantuml.jar")
 	))
 
+(defun my-add-hooks (hook-to-add my-list)
+  "Add each function in my-list into hook-to-add."
+  (dolist (itr my-list)
+    (add-hook hook-to-add itr)))
+
+;;; Customizable variables.
+(defvar my-after-ede-setup-hook nil
+  "List of functions to call after setup for EDE.")
+
 (defvar my-plantuml-jar-path (my-get-default-plantuml-jar-path)
   "Path of plantuml.jar.")
 
+;;; Main processes.
 (defun my-install-missing-packages ()
   "Install missing packages."
   (defvar my-packages '(beacon
@@ -69,11 +77,6 @@
 
 (my-install-missing-packages)
 
-(defun my-add-hooks (hook-to-add my-list)
-  "Add each function in my-list into hook-to-add."
-  (dolist (itr my-list)
-    (add-hook hook-to-add itr)))
-
 (defvar my-after-init-func-list '(my-environment-variable-setup
 				  my-language-setup
 				  my-general-visibility-setup
@@ -97,9 +100,11 @@
     my-yasnippet-setup
     my-mocuur-setup
     my-plantuml-mode-setup
-    my-dired-setup))
+    my-dired-setup
+    my-eshell-setup))
 (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list)
 
+;;; Functions for initializing Emacs.
 (defun my-environment-variable-setup ()
   "Set up environment variables."
   ;;; Pager in Emacs (eshell, terms, ...)
@@ -137,7 +142,7 @@
 	      (setq mode-name "Elisp")))
   )
 
-(defun my-after-make-frame-frame-func (frame)
+(defun my-after-make-frame-func (frame)
   "Called just after making each frame. It can intialize for GUI."
   (with-selected-frame frame
     (when (display-graphic-p)
@@ -163,8 +168,8 @@
     )
   ;; Defer following settings if not GUI yet.
   (add-hook 'after-make-frame-functions
-	    'my-after-make-frame-frame-func)
-  (my-after-make-frame-frame-func (selected-frame))
+	    'my-after-make-frame-func)
+  (my-after-make-frame-func (selected-frame))
   )
 
 (defun my-c++-mode-setup ()
@@ -303,3 +308,12 @@
   "Setup color-identifiers-mode."
   (global-color-identifiers-mode t)
   )
+
+(defun my-eshell-setup ()
+  "Setup eshell."
+  (eval-after-load 'eshell
+    '(progn
+       (require 'em-term)
+       ;;; It is extra necessary to disable pager if you need.
+       (add-to-list 'eshell-visual-subcommands
+		    '("git" "diff" "help" "log" "show")))))
