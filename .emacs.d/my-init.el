@@ -101,7 +101,8 @@
     my-mocuur-setup
     my-plantuml-mode-setup
     my-dired-setup
-    my-eshell-setup))
+    my-eshell-setup
+    my-emacs-lisp-mode-setup))
 (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list)
 
 ;;; Functions for initializing Emacs.
@@ -317,3 +318,12 @@
        ;;; It is extra necessary to disable pager if you need.
        (add-to-list 'eshell-visual-subcommands
 		    '("git" "diff" "help" "log" "show")))))
+
+(defun my-emacs-lisp-mode-setup ()
+  "Setup Emacs Lisp mode."
+  (add-hook 'emacs-lisp-mode-hook
+	    '(lambda()
+	       (setq indent-tabs-mode nil)
+	       )
+	    )
+  )
