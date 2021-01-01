@@ -2,18 +2,18 @@
 (defun my-get-default-plantuml-jar-path ()
   "Get path to plantuml.jar on running environment."
   (cond ((equal system-type 'darwin)
-	 (substring (shell-command-to-string
-		     "echo /usr/local/Cellar/plantuml/*/libexec/plantuml.jar")
-		    0
-		    -1))
-	((equal system-type 'windows-nt)
-	 (expand-file-name (replace-regexp-in-string
-			    "plantuml.cmd\n"
-			    "plantuml.jar"
-			    (shell-command-to-string "scoop which plantuml"))))
-	((equal system-type 'gnu/linux)
-	 "/usr/share/plantuml/plantuml.jar")
-	))
+         (substring (shell-command-to-string
+                     "echo /usr/local/Cellar/plantuml/*/libexec/plantuml.jar")
+                    0
+                    -1))
+        ((equal system-type 'windows-nt)
+         (expand-file-name (replace-regexp-in-string
+                            "plantuml.cmd\n"
+                            "plantuml.jar"
+                            (shell-command-to-string "scoop which plantuml"))))
+        ((equal system-type 'gnu/linux)
+         "/usr/share/plantuml/plantuml.jar")
+        ))
 
 (defun my-add-hooks (hook-to-add my-list)
   "Add each function in my-list into hook-to-add."
@@ -31,20 +31,20 @@
 (defun my-install-missing-packages ()
   "Install missing packages."
   (defvar my-packages '(beacon
-			color-identifiers-mode
-			color-moccur
-			elisp-lint
-			flycheck
-			google-c-style
-			magit
-			markdown-mode
-			package-utils
-			plantuml-mode
-			powershell
-			rainbow-delimiters
-			yaml-mode
-			yasnippet
-			yasnippet-snippets))
+                        color-identifiers-mode
+                        color-moccur
+                        elisp-lint
+                        flycheck
+                        google-c-style
+                        magit
+                        markdown-mode
+                        package-utils
+                        plantuml-mode
+                        powershell
+                        rainbow-delimiters
+                        yaml-mode
+                        yasnippet
+                        yasnippet-snippets))
 
   (require 'package)
   (add-to-list
@@ -60,15 +60,15 @@
   (require 'cl)  ;; To use remove-if-not.
   (defvar my-not-yet-installed-packages
     (remove-if-not (lambda (p) (not (package-installed-p p)))
-		   my-packages))
+                   my-packages))
 
   (when (and my-not-yet-installed-packages
-	     (if noninteractive
-		 (if (boundp 'my-default-install-missing-packages)
-		     my-default-install-missing-packages nil)
-	       (y-or-n-p (concat "Install missing packages? : "
-				 (format "%s"
-					 my-not-yet-installed-packages)))))
+             (if noninteractive
+                 (if (boundp 'my-default-install-missing-packages)
+                     my-default-install-missing-packages nil)
+               (y-or-n-p (concat "Install missing packages? : "
+                                 (format "%s"
+                                         my-not-yet-installed-packages)))))
     (package-refresh-contents)
     (dolist (p my-not-yet-installed-packages)
       (package-install p))
@@ -78,13 +78,13 @@
 (my-install-missing-packages)
 
 (defvar my-after-init-func-list '(my-environment-variable-setup
-				  my-language-setup
-				  my-general-visibility-setup
-				  my-gui-setup
-				  my-general-mode-line-setup
-				  my-font-lock-setup
-				  my-color-identifiers-mode-setup
-				  ))
+                                  my-language-setup
+                                  my-general-visibility-setup
+                                  my-gui-setup
+                                  my-general-mode-line-setup
+                                  my-font-lock-setup
+                                  my-color-identifiers-mode-setup
+                                  ))
 (my-add-hooks 'after-init-hook my-after-init-func-list)
 
 (defvar my-emacs-startup-func-list
@@ -112,7 +112,7 @@
   (setenv "PAGER" "")
 
   (setq exec-path (append exec-path
-			  (parse-colon-path (getenv "PATH"))))
+                          (parse-colon-path (getenv "PATH"))))
   )
 
 (defun my-language-setup ()
@@ -139,8 +139,8 @@
   (display-time-mode 1)
   (which-function-mode 1)
   (add-hook 'emacs-lisp-mode-hook
-	    (lambda()
-	      (setq mode-name "Elisp")))
+            (lambda()
+              (setq mode-name "Elisp")))
   )
 
 (defun my-after-make-frame-func (frame)
@@ -149,8 +149,8 @@
     (when (display-graphic-p)
       (tool-bar-mode -1)
       (when (find-font (font-spec :name "VL ゴシック"))
-      	(set-frame-font "VL ゴシック-10")
-       	)
+        (set-frame-font "VL ゴシック-10")
+        )
       )
     )
   )
@@ -159,17 +159,17 @@
   "Setup if Emacs is running on GUI."
   (setq-default indicate-buffer-boundaries 'left)
   (add-to-list 'default-frame-alist
-	       '(foreground-color . "black"))
+               '(foreground-color . "black"))
   (add-to-list 'default-frame-alist
-	       '(background-color . "ghost white"))
+               '(background-color . "ghost white"))
   (add-to-list 'default-frame-alist
-	       '(cursor-color . "forest green"))
+               '(cursor-color . "forest green"))
   (when (find-font (font-spec :name "VL ゴシック"))
     (add-to-list 'default-frame-alist '(font . "VL ゴシック-10"))
     )
   ;; Defer following settings if not GUI yet.
   (add-hook 'after-make-frame-functions
-	    'my-after-make-frame-func)
+            'my-after-make-frame-func)
   (my-after-make-frame-func (selected-frame))
   )
 
@@ -182,11 +182,11 @@
   (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
   (add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode))
   (font-lock-add-keywords 'c++-mode
-			  '(("[ \t]+$" . 'trailing-whitespace)))
+                          '(("[ \t]+$" . 'trailing-whitespace)))
   (add-hook 'c++-mode-hook
-	    '(lambda()
-	       (setq indent-tabs-mode nil)
-	       ))
+            '(lambda()
+               (setq indent-tabs-mode nil)
+               ))
   )
 
 (defun my-emacs-server-setup ()
@@ -253,7 +253,7 @@
      for index from 1 to rainbow-delimiters-max-face-count
      do
      (let ((face (intern (format "rainbow-delimiters-depth-%d-face"
-				 index))))
+                                 index))))
        (cl-callf color-saturate-name (face-foreground face) 30))))
   )
 
@@ -292,7 +292,7 @@
   (setq plantuml-default-exec-mode 'jar)
   (with-eval-after-load 'plantuml
     (setq plantuml-java-args
-	  (delete "-Djava.awt.headless=true" plantuml-java-args)))
+          (delete "-Djava.awt.headless=true" plantuml-java-args)))
   (setq plantuml-options "-charset UTF-8")
   (setq plantuml-output-type "png")
   (setq plantuml-indent-level 2)
@@ -317,13 +317,13 @@
        (require 'em-term)
        ;;; It is extra necessary to disable pager if you need.
        (add-to-list 'eshell-visual-subcommands
-		    '("git" "diff" "help" "log" "show")))))
+                    '("git" "diff" "help" "log" "show")))))
 
 (defun my-emacs-lisp-mode-setup ()
   "Setup Emacs Lisp mode."
   (add-hook 'emacs-lisp-mode-hook
-	    '(lambda()
-	       (setq indent-tabs-mode nil)
-	       )
-	    )
+            '(lambda()
+               (setq indent-tabs-mode nil)
+               )
+            )
   )
