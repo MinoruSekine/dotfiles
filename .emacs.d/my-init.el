@@ -20,6 +20,12 @@
   (dolist (itr my-list)
     (add-hook hook-to-add itr)))
 
+(defun my-is-network-connection-available ()
+  "Get network connection is available or not."
+  ;; The local loop back device may always be included
+  ;; in return of network-interface-list.
+  (>= (length (network-interface-list)) 2))
+
 ;;; Customizable variables.
 (defvar my-after-ede-setup-hook nil
   "List of functions to call after setup for EDE.")
@@ -75,7 +81,9 @@
     )
   )
 
-(my-install-missing-packages)
+(if (my-is-network-connection-available)
+    (my-install-missing-packages)
+  (display-warning 'my-init "Network connection may not be available."))
 
 (defvar my-after-init-func-list '(my-environment-variable-setup
                                   my-language-setup
