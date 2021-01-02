@@ -16,7 +16,7 @@
         ))
 
 (defun my-add-hooks (hook-to-add my-list)
-  "Add each function in my-list into hook-to-add."
+  "Add each function in MY-LIST into HOOK-TO-ADD ."
   (dolist (itr my-list)
     (add-hook hook-to-add itr)))
 
@@ -144,7 +144,7 @@
   )
 
 (defun my-after-make-frame-func (frame)
-  "Called just after making each frame. It can intialize for GUI."
+  "Called just after making each frame with FRAME as made frame."
   (with-selected-frame frame
     (when (display-graphic-p)
       (tool-bar-mode -1)
