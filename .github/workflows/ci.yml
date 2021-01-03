@@ -33,11 +33,11 @@ jobs:
         
     - name: Install supplementals (Windows)
       if: contains(matrix.os, 'windows')
-      shell: bash
+      shell: pwsh
       run: |
         scoop update
         scoop bucket add extras
-        scoop install emacs shellcheck
+        ./.github/workflows/scoop_install_apps.ps1 ./.github/workflows/scoop_apps_to_install.txt
 
     - name: Install supplementals (macOS)
       if: contains(matrix.os, 'macOS')
