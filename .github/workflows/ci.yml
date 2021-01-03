@@ -29,19 +29,13 @@ jobs:
         sudo apt update
         sudo apt install --no-install-recommends emacs26
 
-    - name: Create hash of apps' ver to install (Windows)
-      shell: pwsh
-      if: contains(matrix.os, 'windows')
-      run: ./.github/workflows/scoop_to_install_ver_list.ps1 ./.github/workflows/scoop_apps_to_install.txt out/apps_ver_to_install.txt
-
     - name: Cache apps installed by scoop (Windows)
       id: cache-installed-apps
       if: contains(matrix.os, 'windows')
       uses: actions/cache@v2
       with:
         path: ~/scoop
-        key: ${{ runner.os }}-${{ hashFiles('out/installed_apps_ver.txt') }}
-        restore-key: ${{ runner.os }}-${{ hashFiles('out/apps_ver_to_install.txt') }}
+        key: ${{ runner.os }}-${{ hashFiles('./.github/workflows/scoop_apps_to_install.txt') }}
 
     - name: Setup scoop (Windows)
       uses: MinoruSekine/setup-scoop@v1
@@ -54,7 +48,6 @@ jobs:
         scoop update
         scoop bucket add extras
         ./.github/workflows/scoop_install_apps.ps1 ./.github/workflows/scoop_apps_to_install.txt
-        ./.github/workflows/scoop_installed_apps_ver_list.ps1 ./.github/workflows/scoop_apps_to_install.txt out/installed_apps_ver.txt
 
     - name: Install supplementals (macOS)
       if: contains(matrix.os, 'macOS')
