@@ -38,15 +38,29 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('./.github/workflows/scoop_apps_to_install.txt') }}
 
     - name: Setup scoop (Windows)
-      uses: MinoruSekine/setup-scoop@v1
+      uses: MinoruSekine/setup-scoop@feature/add_some_processes
       if: steps.cache-installed-apps.outputs.cache-hit != 'true' && contains(matrix.os, 'windows')
-        
+      with:
+        install_scoop: true
+        add_extras_bucket: true
+        scoop_update: true
+        scoop_checkup: true
+        update_path: true
+
+    - name: Setup scoop PATH (Windows)
+      uses: MinoruSekine/setup-scoop@feature/add_some_processes
+      if: steps.cache-installed-apps.outputs.cache-hit == 'true' && contains(matrix.os, 'windows')
+      with:
+        install_scoop: false
+        add_extras_bucket: false
+        scoop_update: false
+        scoop_checkup: false
+        update_path: true
+
     - name: Install supplementals (Windows)
       if: steps.cache-installed-apps.outputs.cache-hit != 'true' && contains(matrix.os, 'windows')
       shell: pwsh
       run: |
-        scoop update
-        scoop bucket add extras
         ./.github/workflows/scoop_install_apps.ps1 ./.github/workflows/scoop_apps_to_install.txt
 
     - name: Install supplementals (macOS)
