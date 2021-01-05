@@ -16,9 +16,15 @@
         ))
 
 (defun my-add-hooks (hook-to-add my-list)
-  "Add each function in my-list into hook-to-add."
+  "Add each function in MY-LIST into HOOK-TO-ADD ."
   (dolist (itr my-list)
     (add-hook hook-to-add itr)))
+
+(defun my-is-network-connection-available ()
+  "Get network connection is available or not."
+  ;; The local loop back device may always be included
+  ;; in return of network-interface-list.
+  (>= (length (network-interface-list)) 2))
 
 ;;; Customizable variables.
 (defvar my-after-ede-setup-hook nil
@@ -75,7 +81,9 @@
     )
   )
 
-(my-install-missing-packages)
+(if (my-is-network-connection-available)
+    (my-install-missing-packages)
+  (display-warning 'my-init "Network connection may not be available."))
 
 (defvar my-after-init-func-list '(my-environment-variable-setup
                                   my-language-setup
@@ -144,7 +152,7 @@
   )
 
 (defun my-after-make-frame-func (frame)
-  "Called just after making each frame. It can intialize for GUI."
+  "Called just after making each frame with FRAME as made frame."
   (with-selected-frame frame
     (when (display-graphic-p)
       (tool-bar-mode -1)
