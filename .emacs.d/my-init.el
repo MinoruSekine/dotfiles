@@ -26,12 +26,19 @@
   ;; in return of network-interface-list.
   (>= (length (network-interface-list)) 2))
 
+(defun my-join-path (dir file-name)
+  "Join FILE-NAME string into DIR with right path delimiter."
+  (concat (file-name-as-directory dir) file-name))
+
 ;;; Customizable variables.
 (defvar my-after-ede-setup-hook nil
   "List of functions to call after setup for EDE.")
 
 (defvar my-plantuml-jar-path (my-get-default-plantuml-jar-path)
   "Path of plantuml.jar.")
+
+(defvar my-emacs-wiki-elisp-dir-root (expand-file-name "~/.emacs.d/emacs-wiki")
+  "Path to install elisps from Emacs Wiki.")
 
 ;;; Main processes.
 (defun my-install-missing-packages ()
@@ -81,8 +88,42 @@
     )
   )
 
+(defun my-emacs-wiki-elisp-file-name (elisp-name)
+  "Filename of ELISP-NAME installed from Emacs Wiki."
+  (concat elisp-name ".el"))
+
+(defun my-emacs-wiki-elisp-dir (elisp-name)
+  "Directory for ELISP-NAME installed from Emacs Wiki."
+  (my-join-path my-emacs-wiki-elisp-dir-root elisp-name))
+
+(defun my-emacs-wiki-elisp-path (elisp-name)
+  "Path for ELISP-NAME installed from Emacs Wiki."
+  (my-join-path (my-emacs-wiki-elisp-dir elisp-name) (my-emacs-wiki-elisp-file-name elisp-name)))
+
+(defun my-emacs-wiki-elisp-url (elisp-name)
+  "URL for ELISP-NAME installed from Emacs Wiki."
+  (concat "https://www.emacswiki.org/emacs/download/" (my-emacs-wiki-elisp-file-name elisp-name)))
+
+(defun my-emacs-wiki-is-elisp-installed (elisp-name)
+  "Get ELISP-NAME form Emacs Wiki installed or not."
+  (file-exists-p (my-emacs-wiki-elisp-path elisp-name)))
+
+(defun my-setup-elisp-from-emacs-wiki ()
+  "Install missing elisp from Emacs Wiki and set 'load-path'."
+  (defvar my-elisp '("tempbuf"))
+  (dolist (p my-elisp)
+    (defconst this-elisp-dir (my-emacs-wiki-elisp-dir p))
+    (unless (my-emacs-wiki-is-elisp-installed p)
+      (defconst this-elisp-file (my-emacs-wiki-elisp-path p))
+      (unless (file-directory-p this-elisp-dir)
+        (make-directory this-elisp-dir t))
+      (url-copy-file (my-emacs-wiki-elisp-url p) this-elisp-file t)
+      (byte-compile-file this-elisp-file))
+    (add-to-list 'load-path this-elisp-dir)))
+
 (if (my-is-network-connection-available)
-    (my-install-missing-packages)
+    (progn (my-install-missing-packages)
+           (my-setup-elisp-from-emacs-wiki))
   (display-warning 'my-init "Network connection may not be available."))
 
 (defvar my-after-init-func-list '(my-environment-variable-setup
@@ -110,7 +151,8 @@
     my-plantuml-mode-setup
     my-dired-setup
     my-eshell-setup
-    my-emacs-lisp-mode-setup))
+    my-emacs-lisp-mode-setup
+    my-tempbuf-mode-setup))
 (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list)
 
 ;;; Functions for initializing Emacs.
@@ -335,3 +377,9 @@
                )
             )
   )
+
+(defun my-tempbuf-mode-setup ()
+  "Setup tempbuf-mode."
+  (require 'tempbuf)
+  (add-hook 'dired-mode-hook 'turn-on-tempbuf-mode)
+  (add-hook 'magit-mode-hook 'turn-on-tempbuf-mode))
