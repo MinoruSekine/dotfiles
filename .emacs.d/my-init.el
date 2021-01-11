@@ -196,14 +196,12 @@
 (defun my-after-make-frame-func (frame)
   "Called just after making each frame with FRAME as made frame."
   (with-selected-frame frame
-    (when (display-graphic-p)
-      (tool-bar-mode -1)
-      (when (find-font (font-spec :name "VL ゴシック"))
-        (set-frame-font "VL ゴシック-10")
-        )
-      )
-    )
-  )
+    (cond ((display-graphic-p)
+           (tool-bar-mode -1)
+           (when (find-font (font-spec :name "VL ゴシック"))
+             (set-frame-font "VL ゴシック-10")))
+          (t
+           (menu-bar-mode -1)))))
 
 (defun my-gui-setup ()
   "Setup if Emacs is running on GUI."
