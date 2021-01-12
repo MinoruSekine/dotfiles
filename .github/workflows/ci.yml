@@ -1,5 +1,10 @@
 name: CI
 
+env:
+  apps_for_windows: "emacs shellcheck"
+  cache-version: v1
+  hash_seed_file_path: "./.github/workflows/cache_seed_file_for_scoop.txt"
+
 on:
   pull_request:
   schedule:
@@ -29,16 +34,20 @@ jobs:
         sudo apt update
         sudo apt install --no-install-recommends emacs26
 
+    - name: Create cache seed file (Windows)
+      if: contains(matrix.os, 'windows')
+      run: echo ${{ env.apps_for_windows }} >> ${{ env.hash_seed_file_path }}
+
     - name: Cache apps installed by scoop (Windows)
       id: cache-installed-apps
       if: contains(matrix.os, 'windows')
       uses: actions/cache@v2
       with:
         path: ~/scoop
-        key: ${{ runner.os }}-${{ hashFiles('./.github/workflows/scoop_apps_to_install.txt') }}
+        key: cache_version_${{ env.cache-version }}-${{ runner.os }}-${{ hashFiles(env.hash_seed_file_path) }}
 
     - name: Setup scoop (Windows)
-      uses: MinoruSekine/setup-scoop@feature/add_some_processes
+      uses: MinoruSekine/setup-scoop@main
       if: steps.cache-installed-apps.outputs.cache-hit != 'true' && contains(matrix.os, 'windows')
       with:
         install_scoop: true
@@ -47,8 +56,15 @@ jobs:
         scoop_checkup: true
         update_path: true
 
-    - name: Setup scoop PATH (Windows)
-      uses: MinoruSekine/setup-scoop@feature/add_some_processes
+    - name: Install supplementals (Windows)
+      if: steps.cache-installed-apps.outputs.cache-hit != 'true' && contains(matrix.os, 'windows')
+      run: |
+        scoop install ${{ env.apps_for_windows }}
+        scoop cleanup
+        scoop cache rm "*"
+
+    - name: Set PATH for scoop if using cache (Windows)
+      uses: MinoruSekine/setup-scoop@main
       if: steps.cache-installed-apps.outputs.cache-hit == 'true' && contains(matrix.os, 'windows')
       with:
         install_scoop: false
@@ -56,12 +72,6 @@ jobs:
         scoop_update: false
         scoop_checkup: false
         update_path: true
-
-    - name: Install supplementals (Windows)
-      if: steps.cache-installed-apps.outputs.cache-hit != 'true' && contains(matrix.os, 'windows')
-      shell: pwsh
-      run: |
-        ./.github/workflows/scoop_install_apps.ps1 ./.github/workflows/scoop_apps_to_install.txt
 
     - name: Install supplementals (macOS)
       if: contains(matrix.os, 'macOS')
