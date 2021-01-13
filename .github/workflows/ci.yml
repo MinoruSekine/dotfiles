@@ -45,8 +45,10 @@ jobs:
 
     - name: Install supplementals (macOS)
       if: contains(matrix.os, 'macOS')
+      env:
+        HOMEBREW_NO_AUTO_UPDATE: 1
       run: |
-        brew update
+        brew update --preinstall
         brew install shellcheck
         rm -f /usr/local/bin/2to3
         brew install emacs
