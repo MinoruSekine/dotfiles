@@ -7,12 +7,30 @@ on:
 
 env:
   os_for_lint: ubuntu-latest
+  apps_to_install: shellcheck
 
 jobs:
   build:
     strategy:
       matrix:
         os: [ubuntu-latest, ubuntu-16.04, windows-latest, macOS-latest]
+        include:
+          - os: ubuntu-latest
+            package_update_command: sudo add-apt-repository ppa:kelleyk/emacs; sudo apt update
+            package_install_command: sudo apt install --no-install-recommends
+            emacs_package_name: emacs26
+          - os: ubuntu-16.04
+            package_update_command: sudo add-apt-repository ppa:kelleyk/emacs; sudo apt update
+            package_install_command: sudo apt install --no-install-recommends
+            emacs_package_name: emacs26
+          - os: windows-latest
+            package_update_command: ':'
+            package_install_command: scoop install
+            emacs_package_name: emacs
+          - os: macOS-latest
+            package_update_command: brew update --preinstall; rm -f /usr/local/bin/2to3
+            package_install_command: brew install
+            emacs_package_name: emacs
 
     runs-on: ${{ matrix.os }}
 
@@ -24,13 +42,6 @@ jobs:
 
     - uses: actions/checkout@v1
 
-    - name: Install supplementals (Ubuntu)
-      if: contains(matrix.os, 'ubuntu')
-      run: |
-        sudo add-apt-repository ppa:kelleyk/emacs
-        sudo apt update
-        sudo apt install --no-install-recommends emacs26
-
     - name: Install scoop (Windows)
       uses: MinoruSekine/setup-scoop@main
       if: contains(matrix.os, 'windows')
@@ -40,21 +51,14 @@ jobs:
         scoop_update: 'true'
         scoop_checkup: 'false'
         update_path: 'true'
-        
-    - name: Install supplementals (Windows)
-      if: contains(matrix.os, 'windows')
-      shell: bash
-      run: scoop install emacs shellcheck
 
-    - name: Install supplementals (macOS)
-      if: contains(matrix.os, 'macOS')
+    - name: Install supplementals
       env:
         HOMEBREW_NO_AUTO_UPDATE: 1
+      shell: bash
       run: |
-        brew update --preinstall
-        brew install shellcheck
-        rm -f /usr/local/bin/2to3
-        brew install emacs
+        ${{ matrix.package_update_command }}
+        ${{ matrix.package_install_command }} ${{ env.apps_to_install }} ${{ matrix.emacs_package_name }}
 
     - name: Test run
       shell: bash
@@ -64,11 +68,9 @@ jobs:
     - name: Install elisp-lint
       if: contains(matrix.os, env.os_for_lint)
       shell: bash
-      run: |
-        emacs -Q --batch -l ./.github/workflows/install-elisp-lint.el -f install-elisp-lint-batch
+      run: emacs -Q --batch -l ./.github/workflows/install-elisp-lint.el -f install-elisp-lint-batch
 
     - name: Lint
       if: contains(matrix.os, env.os_for_lint)
       shell: bash
-      run: |
-        make -k -j lint
+      run: make -k -j lint
