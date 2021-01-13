@@ -5,6 +5,9 @@ on:
   schedule:
     - cron:  0 20 * * 6
 
+env:
+  os_for_lint: ubuntu-latest
+
 jobs:
   build:
     strategy:
@@ -59,13 +62,13 @@ jobs:
         make -k -j testrun
 
     - name: Install elisp-lint
-      if: contains(matrix.os, 'ubuntu-latest')
+      if: contains(matrix.os, env.os_for_lint)
       shell: bash
       run: |
         emacs -Q --batch -l ./.github/workflows/install-elisp-lint.el -f install-elisp-lint-batch
 
     - name: Lint
-      if: contains(matrix.os, 'ubuntu-latest')
+      if: contains(matrix.os, env.os_for_lint)
       shell: bash
       run: |
         make -k -j lint
