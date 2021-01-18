@@ -65,3 +65,28 @@ So environment dependent EDE setup like as `ede-cpp-root-project` can be hooked 
 				  :compile-command "time nice make -k -j check run-test")
 	    ))
 ```
+
+# Supplemental scripts
+
+## For `.profile`
+
+- Scripts in `.profile` support configuration in `~/.profile`
+
+### How to use each script
+
+
+- Add the following line into your `.profile`
+  - As case of `keychain_init.sh`
+    and this repository checked out to `~/`...
+
+```
+. "$HOME/dotfiles/.profile/keychain_init.sh"
+```
+
+### `.profile/emacs_daemon.sh`
+
+- Launch Emacs as daemon mode only if not launched yet
+
+### `.profile/keychain_init.sh`
+
+- Initialize [keychain](https://www.funtoo.org/Keychain) for ssh
