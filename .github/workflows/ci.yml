@@ -55,6 +55,7 @@ jobs:
     - name: Install supplementals
       env:
         HOMEBREW_NO_AUTO_UPDATE: 1
+        HOMEBREW_NO_INSTALL_CLEANUP: 1
       shell: bash
       run: |
         ${{ matrix.package_update_command }}
