@@ -9,6 +9,8 @@ on:
 env:
   os_for_lint: ubuntu-latest
   packages_to_install: shellcheck
+  cache_version: v0
+  cache_hash_seed_file_path: './.github/workflows/cache_seed_file_for_scoop.txt'
 
 jobs:
   build:
@@ -20,18 +22,26 @@ jobs:
             package_update_command: sudo add-apt-repository ppa:kelleyk/emacs; sudo apt update
             package_install_command: sudo apt install --no-install-recommends
             emacs_package_name: emacs26
+            to_cache_dir: ''
+            skip_install_if_restore_cache: false
           - os: ubuntu-16.04
             package_update_command: sudo add-apt-repository ppa:kelleyk/emacs; sudo apt update
             package_install_command: sudo apt install --no-install-recommends
             emacs_package_name: emacs26
+            to_cache_dir: ''
+            skip_install_if_restore_cache: false
           - os: windows-latest
             package_update_command: ':'
             package_install_command: scoop install
             emacs_package_name: emacs
+            to_cache_dir: '~/scoop'
+            skip_install_if_restore_cache: true
           - os: macOS-latest
             package_update_command: brew update --preinstall; rm -f /usr/local/bin/2to3
             package_install_command: brew install
             emacs_package_name: emacs
+            to_cache_dir: '~/Library/Caches/Homebrew'
+            skip_install_if_restore_cache: false
 
     runs-on: ${{ matrix.os }}
 
@@ -43,9 +53,21 @@ jobs:
 
     - uses: actions/checkout@v1
 
+    - name: Create cache seed file
+      if: matrix.to_cache_dir != ''
+      run: echo ${{ env.packages_to_install }} >> ${{ env.cache_hash_seed_file_path }}
+
+    - name: Restore cache if available
+      id: restore_cache
+      if: matrix.to_cache_dir != ''
+      uses: actions/cache@v2
+      with:
+        path: ${{ matrix.to_cache_dir }}
+        key: cache_version_${{ env.cache_version }}-${{ runner.os }}-${{ hashFiles(env.cache_hash_seed_file_path) }}
+
     - name: Install scoop (Windows)
       uses: MinoruSekine/setup-scoop@main
-      if: contains(matrix.os, 'windows')
+      if: contains(matrix.os, 'windows') && steps.restore_cache.outputs.cache-hit != 'true'
       with:
         install_scoop: 'true'
         add_extras_bucket: 'true'
@@ -53,7 +75,18 @@ jobs:
         scoop_checkup: 'false'
         update_path: 'true'
 
+    - name: Setup scoop PATH (Windows)
+      uses: MinoruSekine/setup-scoop@main
+      if: contains(matrix.os, 'windows') && steps.restore_cache.outputs.cache-hit == 'true'
+      with:
+        install_scoop: 'false'
+        add_extras_bucket: 'false'
+        scoop_update: 'false'
+        scoop_checkup: 'false'
+        update_path: 'true'
+
     - name: Install supplementals
+      if: steps.restore_cache.outputs.cache-hit != 'true' || !matrix.skip_install_if_restore_cache
       env:
         HOMEBREW_NO_AUTO_UPDATE: 1
         HOMEBREW_NO_INSTALL_CLEANUP: 1
