@@ -7,7 +7,7 @@ on:
 
 env:
   os_for_lint: ubuntu-latest
-  apps_to_install: shellcheck
+  packages_to_install: shellcheck
 
 jobs:
   build:
@@ -59,7 +59,7 @@ jobs:
       shell: bash
       run: |
         ${{ matrix.package_update_command }}
-        ${{ matrix.package_install_command }} ${{ env.apps_to_install }} ${{ matrix.emacs_package_name }}
+        ${{ matrix.package_install_command }} ${{ env.packages_to_install }} ${{ matrix.emacs_package_name }}
 
     - name: Test run
       shell: bash
