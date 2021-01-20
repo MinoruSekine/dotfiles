@@ -4,6 +4,7 @@ on:
   pull_request:
   schedule:
     - cron:  0 20 * * 6
+  workflow_dispatch:
 
 env:
   os_for_lint: ubuntu-latest
