@@ -24,24 +24,28 @@ jobs:
             emacs_package_name: emacs26
             to_cache_dir: ''
             skip_install_if_restore_cache: false
+            post_install_supplementals_process: ''
           - os: ubuntu-16.04
             package_update_command: sudo add-apt-repository ppa:kelleyk/emacs; sudo apt update
             package_install_command: sudo apt install --no-install-recommends
             emacs_package_name: emacs26
             to_cache_dir: ''
             skip_install_if_restore_cache: false
+            post_install_supplementals_process: ''
           - os: windows-latest
             package_update_command: ':'
             package_install_command: scoop install
             emacs_package_name: emacs
             to_cache_dir: '~/scoop'
             skip_install_if_restore_cache: true
+            post_install_supplementals_process: ''
           - os: macOS-latest
             package_update_command: brew update --preinstall; rm -f /usr/local/bin/2to3
             package_install_command: brew install
             emacs_package_name: emacs
             to_cache_dir: '~/Library/Caches/Homebrew'
             skip_install_if_restore_cache: false
+            post_install_supplementals_process: 'brew cleanup -s'
 
     runs-on: ${{ matrix.os }}
 
@@ -94,6 +98,10 @@ jobs:
       run: |
         ${{ matrix.package_update_command }}
         ${{ matrix.package_install_command }} ${{ env.packages_to_install }} ${{ matrix.emacs_package_name }}
+
+    - name: Post install supplementals process
+      if: matrix.post_install_supplementals_process != ''
+      run: ${{ matrix.post_install_supplementals_process }}
 
     - name: Check version of Emacs
       run: emacs --version
