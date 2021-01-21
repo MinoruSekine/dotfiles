@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  os_for_lint: ubuntu-latest
+  os_for_lint: ubuntu-20.04
   packages_to_install: shellcheck
   cache_version: v0
   cache_hash_seed_file_path: './.github/workflows/cache_seed_file_for_scoop.txt'
@@ -16,9 +16,9 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, ubuntu-16.04, windows-latest, macOS-latest]
+        os: [ubuntu-20.04, ubuntu-16.04, windows-latest, macOS-latest]
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-20.04
             package_update_command: sudo add-apt-repository ppa:kelleyk/emacs; sudo apt update
             package_install_command: sudo apt install --no-install-recommends
             emacs_package_name: emacs26
