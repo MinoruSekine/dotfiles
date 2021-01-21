@@ -95,6 +95,9 @@ jobs:
         ${{ matrix.package_update_command }}
         ${{ matrix.package_install_command }} ${{ env.packages_to_install }} ${{ matrix.emacs_package_name }}
 
+    - name: Check version of Emacs
+      run: emacs --version
+
     - name: Test run
       shell: bash
       run: |
