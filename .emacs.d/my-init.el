@@ -70,7 +70,8 @@
   (when (not package-archive-contents)
     (package-refresh-contents))
 
-  (require 'cl)  ;; To use remove-if-not.
+  (unless (fboundp 'remove-if-not)
+    (require 'cl))
   (defvar my-not-yet-installed-packages
     (remove-if-not (lambda (p) (not (package-installed-p p)))
                    my-packages))
