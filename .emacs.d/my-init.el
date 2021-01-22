@@ -235,6 +235,8 @@
   (add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode))
   (font-lock-add-keywords 'c++-mode
                           '(("[ \t]+$" . 'trailing-whitespace)))
+  (font-lock-add-keywords 'c-mode
+                          '(("[ \t]+$" . 'trailing-whitespace)))
   (add-hook 'c++-mode-hook
             '(lambda()
                (setq indent-tabs-mode nil)
