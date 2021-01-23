@@ -226,11 +226,17 @@
   "Setup c++ mode."
   (add-to-list
    'magic-mode-alist
-   '("\\(.\\|\n\\)*\n@\\(implementation\\|interface\\|protocol\\)"
+   '("\\(.\\|\n\\)\\{0,1024\\}\n\\(class\\|constexpr\\|namespace\\|template\\|auto\\)"
+     . c++-mode))
+  (add-to-list
+   'magic-mode-alist
+   '("\\(.\\|\n\\)\\{0,1024\\}\n@\\(implementation\\|interface\\|protocol\\)"
      . objc-mode))
-  (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+  (add-to-list 'auto-mode-alist '("\\.h\\'" . c-mode))
   (add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode))
   (font-lock-add-keywords 'c++-mode
+                          '(("[ \t]+$" . 'trailing-whitespace)))
+  (font-lock-add-keywords 'c-mode
                           '(("[ \t]+$" . 'trailing-whitespace)))
   (add-hook 'c++-mode-hook
             '(lambda()
