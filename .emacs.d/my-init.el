@@ -224,14 +224,18 @@
 
 (defun my-c++-mode-setup ()
   "Setup c++ mode."
-  (add-to-list
-   'magic-mode-alist
-   '("\\(.\\|\n\\)\\{0,1024\\}\n\\(class\\|constexpr\\|namespace\\|template\\|auto\\)"
-     . c++-mode))
-  (add-to-list
-   'magic-mode-alist
-   '("\\(.\\|\n\\)\\{0,1024\\}\n@\\(implementation\\|interface\\|protocol\\)"
-     . objc-mode))
+  (add-to-list 'magic-mode-alist
+               `(,(lambda ()
+                    (and (string= (file-name-extension buffer-file-name) "h")
+                         (re-search-forward "\\<\\(class\\|constexpr\\|namespace\\|template\\|auto\\)\\>"
+                                            magic-mode-regexp-match-limit t)))
+                 . c++-mode))
+  (add-to-list 'magic-mode-alist
+               `(,(lambda ()
+                    (and (string= (file-name-extension buffer-file-name) "h")
+                         (re-search-forward "@\\<\\(implementation\\|interface\\|protocol\\)\\>"
+                                            magic-mode-regexp-match-limit t)))
+                 . objc-mode))
   (add-to-list 'auto-mode-alist '("\\.h\\'" . c-mode))
   (add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode))
   (font-lock-add-keywords 'c++-mode
