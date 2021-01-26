@@ -367,6 +367,7 @@
 (defun my-color-identifiers-mode-setup ()
   "Setup color-identifiers-mode."
   (global-color-identifiers-mode t)
+  (run-with-idle-timer 1 t #'color-identifiers:refresh)
   )
 
 (defun my-eshell-setup ()
