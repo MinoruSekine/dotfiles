@@ -40,7 +40,7 @@ jobs:
             skip_install_if_restore_cache: true
             post_process_for_cache: ''
           - os: macOS-latest
-            package_update_command: brew untap homebrew/bundle homebrew/services adoptopenjdk/openjdk; brew update --preinstall; rm -f /usr/local/bin/2to3
+            package_update_command: brew untap homebrew/bundle homebrew/services adoptopenjdk/openjdk; rm -f /usr/local/bin/2to3
             package_install_command: brew install
             emacs_package_name: emacs
             to_cache_dir: '~/Library/Caches/Homebrew'
