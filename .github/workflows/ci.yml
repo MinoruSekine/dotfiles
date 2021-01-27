@@ -43,9 +43,9 @@ jobs:
             package_update_command: brew untap homebrew/bundle homebrew/services adoptopenjdk/openjdk; rm -f /usr/local/bin/2to3
             package_install_command: brew install
             emacs_package_name: emacs
-            to_cache_dir: '~/Library/Caches/Homebrew'
+            to_cache_dir: ''
             skip_install_if_restore_cache: false
-            post_process_for_cache: 'brew cleanup -s'
+            post_process_for_cache: ''
 
     runs-on: ${{ matrix.os }}
 
