@@ -181,6 +181,7 @@
   (beacon-mode t)
   (setq beacon-color "yellow")
   (setq beacon-blink-duration 0.1)
+  (setq blink-cursor-blinks 0)
   )
 
 (defun my-general-mode-line-setup ()
