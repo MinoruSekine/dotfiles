@@ -203,7 +203,8 @@
            (when (find-font (font-spec :name "VL ゴシック"))
              (set-frame-font "VL ゴシック-10")))
           (t
-           (menu-bar-mode -1)))))
+           (menu-bar-mode -1))))
+  (blink-cursor-mode t))
 
 (defun my-gui-setup ()
   "Setup if Emacs is running on GUI."
