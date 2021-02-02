@@ -241,6 +241,8 @@
   (add-to-list 'auto-mode-alist '("\\.h\\'" . c-mode))
   (add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode))
   (font-lock-add-keywords 'c++-mode
+                          '(("^[^\n]\\{80\\}\\(.*\\)$" 1 font-lock-warning-face prepend)))
+  (font-lock-add-keywords 'c++-mode
                           '(("[ \t]+$" . 'trailing-whitespace)))
   (font-lock-add-keywords 'c-mode
                           '(("[ \t]+$" . 'trailing-whitespace)))
