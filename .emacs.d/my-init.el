@@ -30,6 +30,17 @@
   "Join FILE-NAME string into DIR with right path delimiter."
   (concat (file-name-as-directory dir) file-name))
 
+(defun my-get-elc-path (el-path)
+  "Get .elc path from .el path specified by EL-PATH."
+  (concat (file-name-sans-extension el-path) ".elc"))
+
+
+(defun my-update-byte-compile (el-path)
+  "Byte compile EL-PATH if it is newer than its .elc."
+  (setq my-elc-path (my-get-elc-path el-path))
+  (if (file-newer-than-file-p el-path my-elc-path)
+      (byte-compile-file el-path)))
+
 ;;; Customizable variables.
 (defvar my-after-ede-setup-hook nil
   "List of functions to call after setup for EDE.")
@@ -137,6 +148,7 @@
                                   ))
 (my-add-hooks 'after-init-hook my-after-init-func-list)
 
+(defvar my-init-el-path load-file-name)
 (defvar my-emacs-startup-func-list
   '(my-emacs-server-setup
     my-backup-directory-setup
@@ -153,7 +165,8 @@
     my-dired-setup
     my-eshell-setup
     my-emacs-lisp-mode-setup
-    my-tempbuf-mode-setup))
+    my-tempbuf-mode-setup
+    my-init-el-byte-compile))
 (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list)
 
 ;;; Functions for initializing Emacs.
@@ -398,3 +411,8 @@
   (require 'tempbuf)
   (add-hook 'dired-mode-hook 'turn-on-tempbuf-mode)
   (add-hook 'magit-mode-hook 'turn-on-tempbuf-mode))
+
+(defun my-init-el-byte-compile ()
+  "Byte compile this file if newer than elc."
+  (save-window-excursion
+   (my-update-byte-compile my-init-el-path)))
