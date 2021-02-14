@@ -239,11 +239,18 @@
 
 (defun my-c++-mode-setup ()
   "Setup c++ mode."
+  (defun my-c++-keyword-match-function ()
+    "Find C++ keyword(s)."
+    (re-search-forward "\\<\\(class\\|constexpr\\|namespace\\|template\\|auto\\)\\>"
+                       magic-mode-regexp-match-limit t))
   (add-to-list 'magic-mode-alist
                `(,(lambda ()
                     (and (string= (file-name-extension buffer-file-name) "h")
-                         (re-search-forward "\\<\\(class\\|constexpr\\|namespace\\|template\\|auto\\)\\>"
-                                            magic-mode-regexp-match-limit t)))
+                         (my-c++-keyword-match-function)))
+                 . c++-mode))
+  (add-to-list 'magic-fallback-mode-alist
+               `(,(lambda ()
+                    (my-c++-keyword-match-function))
                  . c++-mode))
   (add-to-list 'magic-mode-alist
                `(,(lambda ()
