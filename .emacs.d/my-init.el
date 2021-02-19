@@ -60,6 +60,7 @@
                         elisp-lint
                         flycheck
                         google-c-style
+                        highlight-doxygen
                         magit
                         markdown-mode
                         package-utils
@@ -195,6 +196,7 @@
   (setq beacon-color "yellow")
   (setq beacon-blink-duration 0.1)
   (setq blink-cursor-blinks 0)
+  (highlight-doxygen-global-mode 1)
   )
 
 (defun my-general-mode-line-setup ()
