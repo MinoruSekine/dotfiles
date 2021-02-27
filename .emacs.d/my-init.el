@@ -67,9 +67,12 @@
                         plantuml-mode
                         powershell
                         rainbow-delimiters
+                        realgud
                         yaml-mode
                         yasnippet
                         yasnippet-snippets))
+  (when (executable-find "lldb")
+    (add-to-list 'my-packages 'realgud-lldb))
 
   (require 'package)
   (add-to-list
@@ -167,6 +170,7 @@
     my-eshell-setup
     my-emacs-lisp-mode-setup
     my-tempbuf-mode-setup
+    my-realgud-setup
     my-init-el-byte-compile))
 (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list)
 
@@ -425,3 +429,8 @@
   "Byte compile this file if newer than elc."
   (save-window-excursion
    (my-update-byte-compile my-init-el-path)))
+
+(defun my-realgud-setup ()
+  "Setup realgud."
+  (when (package-installed-p 'realgud-lldb)
+    (require 'realgud-lldb)))
