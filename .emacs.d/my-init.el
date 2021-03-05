@@ -440,3 +440,15 @@
   "Setup realgud."
   (when (package-installed-p 'realgud-lldb)
     (require 'realgud-lldb)))
+
+;; Utility functions for users.
+(defun my-semanticdb-update-for-directory (dir-path)
+  "Update semanticdb for files under specified DIR-PATH."
+  (interactive "DDirectory which has files for updating semanticdb: ")
+  (let* ((my-semanticdb-update-dir-entries
+          (cl-remove-if (lambda (str) (string-match str "\.\.?")) (directory-files dir-path))))
+    (dolist (itr my-semanticdb-update-dir-entries)
+      (let* ((my-semanticdb-update-dir-entry (my-join-path dir-path itr)))
+	(if (file-directory-p my-semanticdb-update-dir-entry)
+            (my-semanticdb-update-for-directory my-semanticdb-update-dir-entry)
+	  (semanticdb-file-table-object my-semanticdb-update-dir-entry))))))
