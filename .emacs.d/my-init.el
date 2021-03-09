@@ -37,7 +37,7 @@
 
 (defun my-update-byte-compile (el-path)
   "Byte compile EL-PATH if it is newer than its .elc."
-  (setq my-elc-path (my-get-elc-path el-path))
+  (defconst my-elc-path (my-get-elc-path el-path))
   (if (file-newer-than-file-p el-path my-elc-path)
       (byte-compile-file el-path)))
 
