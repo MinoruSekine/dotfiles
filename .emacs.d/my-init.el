@@ -132,8 +132,8 @@
 
 (defun my-setup-elisp-from-emacs-wiki ()
   "Install missing elisp from Emacs Wiki and set 'load-path'."
-  (defvar my-elisp '("tempbuf"))
-  (dolist (p my-elisp)
+  (defvar my-elisp-from-emacs-wiki '("tempbuf"))
+  (dolist (p my-elisp-from-emacs-wiki)
     (defconst this-elisp-dir (my-emacs-wiki-elisp-dir p))
     (unless (my-emacs-wiki-is-elisp-installed p)
       (defconst this-elisp-file (my-emacs-wiki-elisp-path p))
