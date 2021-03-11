@@ -37,7 +37,7 @@
 
 (defun my-update-byte-compile (el-path)
   "Byte compile EL-PATH if it is newer than its .elc."
-  (setq my-elc-path (my-get-elc-path el-path))
+  (defconst my-elc-path (my-get-elc-path el-path))
   (if (file-newer-than-file-p el-path my-elc-path)
       (byte-compile-file el-path)))
 
@@ -132,8 +132,8 @@
 
 (defun my-setup-elisp-from-emacs-wiki ()
   "Install missing elisp from Emacs Wiki and set 'load-path'."
-  (defvar my-elisp '("tempbuf"))
-  (dolist (p my-elisp)
+  (defvar my-elisp-from-emacs-wiki '("tempbuf"))
+  (dolist (p my-elisp-from-emacs-wiki)
     (defconst this-elisp-dir (my-emacs-wiki-elisp-dir p))
     (unless (my-emacs-wiki-is-elisp-installed p)
       (defconst this-elisp-file (my-emacs-wiki-elisp-path p))
