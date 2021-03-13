@@ -4,8 +4,19 @@ lint: elisp-lint-all sh-lint-all
 
 testrun: testrun-emacs
 
-# Rules for Emacs.
+test: test-elisp
+
 EMACS_CMD=emacs
+
+# Rules for unit tests of utility functions in my-init.el.
+TARGET_ELISPS=$(wildcard .emacs.d/test/*.el)
+TESTS_TARGET_ELISP=$(addsuffix .test-elisp, $(TARGET_ELISPS))
+test-elisp: $(TESTS_TARGET_ELISP)
+
+%.test-elisp:
+	$(EMACS_CMD) -Q --batch -l $* --eval '(ert-run-tests-batch-and-exit (quote t))'
+
+# Rules for Emacs.
 elisp-lint-all: .emacs.d/my-init.el
 	$(EMACS_CMD) -Q --batch --eval "(progn(package-initialize)(require 'elisp-lint)(elisp-lint-file \"$(realpath $+)\"))"
 
