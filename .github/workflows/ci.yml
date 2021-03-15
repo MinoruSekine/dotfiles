@@ -123,3 +123,6 @@ jobs:
       if: contains(matrix.os, env.os_for_lint)
       shell: bash
       run: make -k -j lint
+
+    - name: Unit tests for Emacs Lisp
+      run: make -k -j test
