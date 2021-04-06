@@ -98,7 +98,7 @@
                    my-packages))
 
   (when (and my-not-yet-installed-packages
-             (if noninteractive
+             (if (or noninteractive (and (fboundp 'daemonp) (daemonp)))
                  (if (boundp 'my-default-install-missing-packages)
                      my-default-install-missing-packages nil)
                (y-or-n-p (concat "Install missing packages? : "
