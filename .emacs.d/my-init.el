@@ -428,7 +428,8 @@
 (defun my-tempbuf-mode-setup ()
   "Setup tempbuf-mode."
   (require 'tempbuf)
-  (custom-set-variables '(tempbuf-kill-message nil))
+  (custom-set-variables '(tempbuf-kill-message nil)
+                        '(tempbuf-minimum-timeout 300))
   (add-hook 'dired-mode-hook 'turn-on-tempbuf-mode)
   (add-hook 'magit-mode-hook 'turn-on-tempbuf-mode))
 
