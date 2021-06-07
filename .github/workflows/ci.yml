@@ -24,14 +24,14 @@ jobs:
           - os: ubuntu-20.04
             package_update_command: sudo add-apt-repository ppa:kelleyk/emacs; sudo apt update
             package_install_command: sudo apt install --no-install-recommends
-            emacs_package_name: emacs26
+            emacs_package_name: emacs27
             to_cache_dir: ''
             skip_install_if_restore_cache: false
             post_process_for_cache: ''
           - os: ubuntu-16.04
             package_update_command: sudo add-apt-repository ppa:kelleyk/emacs; sudo apt update
             package_install_command: sudo apt install --no-install-recommends
-            emacs_package_name: emacs26
+            emacs_package_name: emacs27
             to_cache_dir: ''
             skip_install_if_restore_cache: false
             post_process_for_cache: ''
