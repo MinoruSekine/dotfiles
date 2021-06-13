@@ -392,6 +392,8 @@
   (setq plantuml-options "-charset UTF-8")
   (setq plantuml-output-type "png")
   (setq plantuml-indent-level 2)
+  (setq plantuml-indent-regexp-activate-start "^\s*\\(activate\s+.+\\|[^\\+]+\\+\\+.*\\)$")
+  (setq plantuml-indent-regexp-activate-end "^\s*\\(deactivate\s+.+\\|return\\(\s+.+\\)?\\)$")
   )
 
 (defun my-dired-setup ()
