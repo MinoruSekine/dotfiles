@@ -8,7 +8,55 @@ This repository includes:
 - Makefile to validate their syntax (lint)
 - Files for GitHub Actions
 
-# Settings for Emacs
+# Summary of contents in this repository
+
+## For Emacs
+
+### `.emacs.d/my-init.el`
+
+- Configurations
+- Installing packages automatically
+  - Official packages
+  - MELPA
+  - Emacs Wiki
+
+#### Configurations
+
+- Backup files
+- Case sensitivity for completion
+- font-lock
+- fonts
+- Emacs server
+- Mode line
+- Sharing configuration for both GUI and CUI Emacs
+
+#### Configurations for modes
+
+- CEDET (semantic)
+- dired
+- emacs-lisp-mode
+- eshell
+- flycheck
+- moccur
+- plantuml-mode
+- rainbow-delimiters-mode
+- tempbuf-mdoe
+
+### `supplemental/windows/emacsdaemon.bat`
+
+- BAT file to launch Emacs as daemon on Windows
+
+## Supplemental scripts for login scripts
+
+### `.profile/emacs_daemon.sh`
+
+- Run Emacs as daemon only if not available
+
+### `.profile/keychain_init.sh`
+
+- Initialize `keychain` for ssh
+
+# Use settings for Emacs
 
 ## Features
 
