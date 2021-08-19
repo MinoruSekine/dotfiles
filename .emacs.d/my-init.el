@@ -8,7 +8,7 @@
                     -1))
         ((equal system-type 'windows-nt)
          (expand-file-name (replace-regexp-in-string
-                            "plantuml.cmd\n"
+                            "plantuml.\\(cmd\\|jar\\)\n"
                             "plantuml.jar"
                             (shell-command-to-string "scoop which plantuml"))))
         ((equal system-type 'gnu/linux)
