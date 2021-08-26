@@ -394,6 +394,11 @@
   (setq plantuml-indent-level 2)
   (setq plantuml-indent-regexp-activate-start "^\s*\\(activate\s+.+\\|[^\\+]+\\+\\+.*\\)$")
   (setq plantuml-indent-regexp-activate-end "^\s*\\(deactivate\s+.+\\|return\\(\s+.+\\)?\\)$")
+  (add-hook 'plantuml-mode-hook
+            '(lambda()
+               (setq indent-tabs-mode nil)
+               ))
+
   )
 
 (defun my-dired-setup ()

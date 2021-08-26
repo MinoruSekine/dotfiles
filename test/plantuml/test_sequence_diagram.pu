@@ -1,0 +1,18 @@
+@startuml
+
+title Test for plantuml-mode settings by initial file
+
+participant Clock
+participant Parent
+participant Child
+
+[->> Clock++ : Alarm is fired
+  Clock -> Parent++ : Wake
+  opt Is school day?
+    Parent -> Child++ : Wake
+    return
+  end opt
+  return
+return
+
+@enduml
