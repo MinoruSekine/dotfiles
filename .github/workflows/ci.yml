@@ -103,6 +103,7 @@ jobs:
       run: emacs --version
 
     - name: Test run
+      if: ${{ !contains(matrix.os, 'windows') }}
       shell: bash
       run: |
         make -k -j testrun
@@ -118,4 +119,5 @@ jobs:
       run: make -k -j lint
 
     - name: Unit tests for Emacs Lisp
+      if: ${{ !contains(matrix.os, 'windows') }}
       run: make -k -j test

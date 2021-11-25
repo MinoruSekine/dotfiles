@@ -14,13 +14,13 @@ TESTS_TARGET_ELISP=$(addsuffix .test-elisp, $(TARGET_ELISPS))
 test-elisp: $(TESTS_TARGET_ELISP)
 
 %.test-elisp:
-	$(EMACS_CMD) -Q --batch -l $* --eval '(ert-run-tests-batch-and-exit (quote t))'
+	$(EMACS_CMD) -Q --batch -l $* --eval '(setq debug-on-error t)' --eval '(ert-run-tests-batch-and-exit (quote t))'
 
 # Rules for Emacs.
 elisp-lint-all: .emacs.d/my-init.el
 	$(EMACS_CMD) -Q --batch --eval "(progn(package-initialize)(require 'elisp-lint)(elisp-lint-file \"$(realpath $+)\"))"
 
-TESTRUN_EMACS_CMD=$(EMACS_CMD) -nw --batch --eval "(setq my-default-install-missing-packages t)" -l $(realpath $+) -f kill-emacs
+TESTRUN_EMACS_CMD=$(EMACS_CMD) -nw --batch --eval '(setq debug-on-error t)' --eval "(setq my-default-install-missing-packages t)" -l $(realpath $+) -f kill-emacs
 testrun-emacs: .emacs.d/my-init.el
 	$(TESTRUN_EMACS_CMD)
 
