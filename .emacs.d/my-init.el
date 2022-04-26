@@ -194,7 +194,10 @@
   "Set up about language."
   (set-language-environment "Japanese")
   (prefer-coding-system 'utf-8)
-  )
+  (cond ((equal system-type 'windows-nt)
+         (setq default-process-coding-system '(undecided-dos . utf-8-unix)))
+        (t
+         (setq default-process-coding-system '(undecided . utf-8-unix)))))
 
 (defun my-general-visibility-setup ()
   "Setup visibility for both -nw and GUI."
