@@ -91,6 +91,13 @@
   (when (not package-archive-contents)
     (package-refresh-contents))
 
+  (when (not (package-installed-p 'gnu-elpa-keyring-update))
+    (let (prev-package-check-signature package-check-signature)
+      (setq package-check-signature nil)
+      (package-refresh-contents)
+      (package-install 'gnu-elpa-keyring-update)
+      (setq package-check-signature prev-package-check-signature)))
+
   (unless (fboundp 'remove-if-not)
     (require 'cl))
   (defvar my-not-yet-installed-packages
