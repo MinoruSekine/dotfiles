@@ -22,6 +22,7 @@ This repository includes:
 
 #### Configurations
 
+- Garbage collection threshold
 - Backup files
 - Case sensitivity for completion
 - font-lock

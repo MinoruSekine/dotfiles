@@ -142,7 +142,13 @@
       (byte-compile-file this-elisp-file))
     (add-to-list 'load-path this-elisp-dir)))
 
+(defun my-gc-setup ()
+  (setq gc-cons-threshold (* 16 1000 1000))
+  (setq garbage-collection-messages t))
+
 ;;; Main processes.
+(my-gc-setup)
+
 (if (my-is-network-connection-available)
     (progn (my-install-missing-packages)
            (my-setup-elisp-from-emacs-wiki))
