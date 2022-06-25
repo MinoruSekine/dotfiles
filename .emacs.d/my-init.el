@@ -47,17 +47,6 @@
 	     (executable-find "sed"))
     (split-string (shell-command-to-string "gcc -x c++ -v -E /dev/null 2>&1 > /dev/null | sed -e '1,/> search starts here:/d' | sed -n '/End of search list./q;p' | sed -e 's/^ *//g'") "\n" t)))
 
-;;; Customizable variables.
-(defvar my-after-ede-setup-hook nil
-  "List of functions to call after setup for EDE.")
-
-(defvar my-plantuml-jar-path (my-get-default-plantuml-jar-path)
-  "Path of plantuml.jar.")
-
-(defvar my-emacs-wiki-elisp-dir-root (expand-file-name "~/.emacs.d/emacs-wiki")
-  "Path to install elisps from Emacs Wiki.")
-
-;;; Main processes.
 (defun my-install-missing-packages ()
   "Install missing packages."
   (defvar my-packages '(beacon
@@ -121,6 +110,9 @@
   "Filename of ELISP-NAME installed from Emacs Wiki."
   (concat elisp-name ".el"))
 
+(defvar my-emacs-wiki-elisp-dir-root (expand-file-name "~/.emacs.d/emacs-wiki")
+  "Path to install elisps from Emacs Wiki.")
+
 (defun my-emacs-wiki-elisp-dir (elisp-name)
   "Directory for ELISP-NAME installed from Emacs Wiki."
   (my-join-path my-emacs-wiki-elisp-dir-root elisp-name))
@@ -150,6 +142,7 @@
       (byte-compile-file this-elisp-file))
     (add-to-list 'load-path this-elisp-dir)))
 
+;;; Main processes.
 (if (my-is-network-connection-available)
     (progn (my-install-missing-packages)
            (my-setup-elisp-from-emacs-wiki))
@@ -301,6 +294,9 @@
     (server-start))
   )
 
+(defvar my-after-ede-setup-hook nil
+  "List of functions to call after setup for EDE.")
+
 (defun my-ede-and-semantic-mode-setup ()
   "Setup ede and semantic mode."
   (setq semantic-idle-work-parse-neighboring-files-flag t)
@@ -380,6 +376,9 @@
     (add-to-list 'dmoccur-exclusion-mask "\\.p?db$")
     )
   )
+
+(defvar my-plantuml-jar-path (my-get-default-plantuml-jar-path)
+  "Path of plantuml.jar.")
 
 (defun my-plantuml-mode-setup ()
   "Setup plantuml-mode."
