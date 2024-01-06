@@ -68,6 +68,8 @@
                         yasnippet-snippets))
   (when (executable-find "lldb")
     (add-to-list 'my-packages 'realgud-lldb))
+  (when (equal system-type 'windows-nt)
+    (add-to-list 'my-packages 'ssh-agency))
 
   (require 'package)
   (add-to-list
