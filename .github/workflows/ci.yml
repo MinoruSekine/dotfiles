@@ -102,6 +102,9 @@ jobs:
     - name: Check version of Emacs
       run: emacs --version
 
+    - name: Check load-path
+      run: ./.github/workflows/show_emacs_loadpath.sh
+
     - name: Test run
       if: ${{ !contains(matrix.os, 'windows') }}
       shell: bash
