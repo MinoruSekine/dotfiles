@@ -51,7 +51,7 @@ jobs:
         git config --global core.autocrlf false
         git config --global core.eol lf
 
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v4
 
     - name: Create cache seed file
       if: matrix.to_cache_dir != ''
@@ -60,7 +60,7 @@ jobs:
     - name: Restore cache if available
       id: restore_cache
       if: matrix.to_cache_dir != ''
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ${{ matrix.to_cache_dir }}
         key: cache_version_${{ env.cache_version }}-${{ runner.os }}-${{ hashFiles(env.cache_hash_seed_file_path) }}
