@@ -163,6 +163,7 @@
                                   my-general-mode-line-setup
                                   my-font-lock-setup
                                   my-color-identifiers-mode-setup
+                                  my-adjust-font-size-setup
                                   ))
 (my-add-hooks 'after-init-hook my-after-init-func-list)
 
@@ -467,6 +468,50 @@
   (when (package-installed-p 'realgud-lldb)
     (require 'realgud-lldb)))
 
+;; Functions to adjust font size for display.
+(defun my-get-display-pixel-width ()
+  "Get width of display in pixel."
+  (nth 3
+       (loop for itr in (display-monitor-attributes-list)
+	     when (> (length (assoc 'frames itr)) 1) return (assoc 'workarea itr))))
+
+(defun my-get-display-mm-width ()
+  "Get width of display in mm."
+  (nth 1
+       (loop for itr in (display-monitor-attributes-list)
+	     when (> (length (assoc 'frames itr)) 1) return (assoc 'mm-size itr))))
+
+(defun my-get-display-inch-width ()
+  "Get width of display in inch."
+  (/ (my-get-display-mm-width) 25.4))
+
+(defun my-get-display-dpi ()
+  "Get DPI of display."
+  (/ (my-get-display-pixel-width) (my-get-display-inch-width)))
+
+(defun my-get-font-zoom-ratio-for-display ()
+  "Get font zoom ratio for display."
+  (max (/ (my-get-display-dpi) 72) 1))
+
+(defun my-adjust-font-size (&optional frame)
+  "Adjust font size for current display which has FRAME."
+  (defconst my-default-face-height 100 "Default face height.")
+  (defconst my-adjusted-face-height (truncate
+                                     (* my-default-face-height
+                                        (my-get-font-zoom-ratio-for-display))))
+  (set-face-attribute 'default frame :height my-adjusted-face-height))
+
+(defun my-adjust-font-size-setup ()
+  "Set up hooks to adjust font size when necessary."
+  (defconst my-enable-adjust-font-size-setup
+    (and (not (equal system-type 'windows-nt))  ;; NTEmacs seems to support high DPI awareness.
+         (display-graphic-p)
+         (display-supports-face-attributes-p :height))
+    "Indicated necessary to adjust font size.")
+  (when my-enable-adjust-font-size-setup
+    (add-function :after after-focus-change-function #'my-adjust-font-size)
+    (add-function :after after-focus-change-function #'my-adjust-font-size)))
+
 ;; Utility functions for users.
 (defun my-semanticdb-update-for-directory (dir-path)
   "Update semanticdb for files under specified DIR-PATH."
@@ -478,3 +523,4 @@
 	(if (file-directory-p my-semanticdb-update-dir-entry)
             (my-semanticdb-update-for-directory my-semanticdb-update-dir-entry)
 	  (semanticdb-file-table-object my-semanticdb-update-dir-entry))))))
+;;; my-init.el ends here
