@@ -1,6 +1,6 @@
 # dotfiles
 
-![](https://github.com/MinoruSekine/dotfiles/workflows/CI/badge.svg?branch=master)
+![](https://github.com/MinoruSekine/dotfiles/actions/workflows/ci.yml/badge.svg?branch=master )
 
 This repository includes:
 
