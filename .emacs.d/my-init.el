@@ -1,4 +1,19 @@
-;;; Internal helper functions.
+;;; my-init.el --- My Emacs initialization codes.
+
+;;; Commentary:
+
+;; This file includes elisp codes to initialize Emacs settings.
+;;   - Install necessary elisp packages if missing
+;;   - Configurations
+;;     - Fonts
+;;     - Visibility
+;;     - Key bindings
+;;     - ...
+;; It will be loaded from ~/.emacs.d/init.el.
+
+;;; Code:
+
+;; Internal helper functions.
 (defun my-get-default-plantuml-jar-path ()
   "Get path to plantuml.jar on running environment."
   (cond ((equal system-type 'darwin)
@@ -164,6 +179,7 @@
                                   my-font-lock-setup
                                   my-color-identifiers-mode-setup
                                   my-adjust-font-size-setup
+                                  my-global-set-key-toggle-input-method
                                   ))
 (my-add-hooks 'after-init-hook my-after-init-func-list)
 
@@ -511,6 +527,22 @@
   (when my-enable-adjust-font-size-setup
     (add-function :after after-focus-change-function #'my-adjust-font-size)
     (add-function :after after-focus-change-function #'my-adjust-font-size)))
+
+;; For this function, add "Accesibility" privilege to Emacs and /usr/bin/osascript.
+(defun my-toggle-input-method-darwin ()
+  "Toggle macOS input method by sending key stroke via AppleScript."
+  (interactive)
+  ;; This elisp funtion sends Cmd + SPC key stroke.
+  ;; If your environment has another key binding to toggle input method,
+  ;; you must modify this.
+  (shell-command-to-string
+   "osascript -e 'tell application \"System Events\"' -e 'key code 49 using command down' -e 'end tell'"))
+
+(defun my-global-set-key-toggle-input-method ()
+  "Set C-¥ key binding as toggling system's input method."
+  (when (equal system-type 'darwin)
+    (global-set-key (kbd "C-\\") nil)
+    (global-set-key (kbd "C-\\") 'my-toggle-input-method-darwin)))
 
 ;; Utility functions for users.
 (defun my-semanticdb-update-for-directory (dir-path)
