@@ -1,4 +1,19 @@
-;;; Internal helper functions.
+;;; my-init.el --- My Emacs initialization codes.
+
+;;; Commentary:
+
+;; This file includes elisp codes to initialize Emacs settings.
+;;   - Install necessary elisp packages if missing
+;;   - Configurations
+;;     - Fonts
+;;     - Visibility
+;;     - Key bindings
+;;     - ...
+;; It will be loaded from ~/.emacs.d/init.el.
+
+;;; Code:
+
+;; Internal helper functions.
 (defun my-get-default-plantuml-jar-path ()
   "Get path to plantuml.jar on running environment."
   (cond ((equal system-type 'darwin)
