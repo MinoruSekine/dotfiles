@@ -305,6 +305,14 @@
   (when (find-font (font-spec :name "VL ゴシック"))
     (add-to-list 'default-frame-alist '(font . "VL ゴシック-10"))
     )
+  (add-to-list 'default-frame-alist
+               `(width . ,(/ 0.3 (my-get-font-zoom-ratio-for-display))))
+  (add-to-list 'default-frame-alist
+               `(height . ,(/ 0.8 (my-get-font-zoom-ratio-for-display))))
+  (add-to-list 'default-frame-alist
+               `(top . 0.1))
+  (add-to-list 'default-frame-alist
+               `(left . 0.2 ))
   ;; Defer following settings if not GUI yet.
   (add-hook 'after-make-frame-functions
             'my-after-make-frame-func)
