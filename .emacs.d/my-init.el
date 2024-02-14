@@ -259,6 +259,40 @@
            (menu-bar-mode -1))))
   (blink-cursor-mode t))
 
+
+;; Functions to adjust font size for display.
+(defun my-get-display-pixel-width ()
+  "Get width of display in pixel."
+  (nth 3
+       (loop for itr in (display-monitor-attributes-list)
+	     when (> (length (assoc 'frames itr)) 1) return (assoc 'workarea itr))))
+
+(defun my-get-display-mm-width ()
+  "Get width of display in mm."
+  (nth 1
+       (loop for itr in (display-monitor-attributes-list)
+	     when (> (length (assoc 'frames itr)) 1) return (assoc 'mm-size itr))))
+
+(defun my-get-display-inch-width ()
+  "Get width of display in inch."
+  (/ (my-get-display-mm-width) 25.4))
+
+(defun my-get-display-dpi ()
+  "Get DPI of display."
+  (/ (my-get-display-pixel-width) (my-get-display-inch-width)))
+
+(defun my-get-font-zoom-ratio-for-display ()
+  "Get font zoom ratio for display."
+  (max (/ (my-get-display-dpi) 72) 1))
+
+(defun my-adjust-font-size (&optional frame)
+  "Adjust font size for current display which has FRAME."
+  (defconst my-default-face-height 100 "Default face height.")
+  (defconst my-adjusted-face-height (truncate
+                                     (* my-default-face-height
+                                        (my-get-font-zoom-ratio-for-display))))
+  (set-face-attribute 'default frame :height my-adjusted-face-height))
+
 (defun my-gui-setup ()
   "Setup if Emacs is running on GUI."
   (setq-default indicate-buffer-boundaries 'left)
@@ -271,6 +305,14 @@
   (when (find-font (font-spec :name "VL ゴシック"))
     (add-to-list 'default-frame-alist '(font . "VL ゴシック-10"))
     )
+  (add-to-list 'default-frame-alist
+               `(width . ,(/ 0.3 (my-get-font-zoom-ratio-for-display))))
+  (add-to-list 'default-frame-alist
+               `(height . ,(/ 0.8 (my-get-font-zoom-ratio-for-display))))
+  (add-to-list 'default-frame-alist
+               `(top . 0.1))
+  (add-to-list 'default-frame-alist
+               `(left . 0.2 ))
   ;; Defer following settings if not GUI yet.
   (add-hook 'after-make-frame-functions
             'my-after-make-frame-func)
@@ -483,39 +525,6 @@
   "Setup realgud."
   (when (package-installed-p 'realgud-lldb)
     (require 'realgud-lldb)))
-
-;; Functions to adjust font size for display.
-(defun my-get-display-pixel-width ()
-  "Get width of display in pixel."
-  (nth 3
-       (loop for itr in (display-monitor-attributes-list)
-	     when (> (length (assoc 'frames itr)) 1) return (assoc 'workarea itr))))
-
-(defun my-get-display-mm-width ()
-  "Get width of display in mm."
-  (nth 1
-       (loop for itr in (display-monitor-attributes-list)
-	     when (> (length (assoc 'frames itr)) 1) return (assoc 'mm-size itr))))
-
-(defun my-get-display-inch-width ()
-  "Get width of display in inch."
-  (/ (my-get-display-mm-width) 25.4))
-
-(defun my-get-display-dpi ()
-  "Get DPI of display."
-  (/ (my-get-display-pixel-width) (my-get-display-inch-width)))
-
-(defun my-get-font-zoom-ratio-for-display ()
-  "Get font zoom ratio for display."
-  (max (/ (my-get-display-dpi) 72) 1))
-
-(defun my-adjust-font-size (&optional frame)
-  "Adjust font size for current display which has FRAME."
-  (defconst my-default-face-height 100 "Default face height.")
-  (defconst my-adjusted-face-height (truncate
-                                     (* my-default-face-height
-                                        (my-get-font-zoom-ratio-for-display))))
-  (set-face-attribute 'default frame :height my-adjusted-face-height))
 
 (defun my-adjust-font-size-setup ()
   "Set up hooks to adjust font size when necessary."
