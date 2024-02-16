@@ -281,9 +281,17 @@
   "Get DPI of display."
   (/ (my-get-display-pixel-width) (my-get-display-inch-width)))
 
+(defun my-is-enabled-adjust-font-size-setup ()
+  "Indicated necessary to adjust font size."
+  (and (not (equal system-type 'windows-nt))  ;; NTEmacs seems to support high DPI awareness.
+       (display-graphic-p)
+       (display-supports-face-attributes-p :height)))
+
 (defun my-get-font-zoom-ratio-for-display ()
   "Get font zoom ratio for display."
-  (max (/ (my-get-display-dpi) 72) 1))
+  (if (my-is-enabled-adjust-font-size-setup)
+      (max (/ (my-get-display-dpi) 72) 1)
+    1))
 
 (defun my-adjust-font-size (&optional frame)
   "Adjust font size for current display which has FRAME."
@@ -292,6 +300,10 @@
                                      (* my-default-face-height
                                         (my-get-font-zoom-ratio-for-display))))
   (set-face-attribute 'default frame :height my-adjusted-face-height))
+
+(defun my-get-relative-frame-size-zoom-ratio ()
+  "Get zoom ratio for frame size relative to display work area size."
+  (/ 1.0 (my-get-font-zoom-ratio-for-display)))
 
 (defun my-gui-setup ()
   "Setup if Emacs is running on GUI."
@@ -306,9 +318,9 @@
     (add-to-list 'default-frame-alist '(font . "VL ゴシック-10"))
     )
   (add-to-list 'default-frame-alist
-               `(width . ,(/ 0.3 (my-get-font-zoom-ratio-for-display))))
+               `(width . ,(* 0.3 (my-get-relative-frame-size-zoom-ratio))))
   (add-to-list 'default-frame-alist
-               `(height . ,(/ 0.8 (my-get-font-zoom-ratio-for-display))))
+               `(height . ,(* 0.8 (my-get-relative-frame-size-zoom-ratio))))
   (add-to-list 'default-frame-alist
                `(top . 0.1))
   (add-to-list 'default-frame-alist
@@ -528,12 +540,7 @@
 
 (defun my-adjust-font-size-setup ()
   "Set up hooks to adjust font size when necessary."
-  (defconst my-enable-adjust-font-size-setup
-    (and (not (equal system-type 'windows-nt))  ;; NTEmacs seems to support high DPI awareness.
-         (display-graphic-p)
-         (display-supports-face-attributes-p :height))
-    "Indicated necessary to adjust font size.")
-  (when my-enable-adjust-font-size-setup
+  (when (my-is-enabled-adjust-font-size-setup)
     (add-function :after after-focus-change-function #'my-adjust-font-size)
     (add-function :after after-focus-change-function #'my-adjust-font-size)))
 
