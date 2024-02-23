@@ -39,6 +39,8 @@ This repository includes:
 - dired
 - emacs-lisp-mode
 - eshell
+  - Disable pager for some commands
+  - Import bash alias
 - flycheck
 - moccur
 - plantuml-mode
