@@ -27,6 +27,8 @@ This repository includes:
 - Case sensitivity for completion
 - font-lock
 - fonts
+  - Adjusting font size for DPI awareness
+- Frame position and size by DPI
 - Emacs server
 - Mode line
 - Sharing configuration for both GUI and CUI Emacs
