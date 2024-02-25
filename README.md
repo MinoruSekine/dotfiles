@@ -27,6 +27,8 @@ This repository includes:
 - Case sensitivity for completion
 - font-lock
 - fonts
+  - Adjusting font size for DPI awareness
+- Frame position and size by DPI
 - Emacs server
 - Mode line
 - Sharing configuration for both GUI and CUI Emacs
@@ -37,6 +39,8 @@ This repository includes:
 - dired
 - emacs-lisp-mode
 - eshell
+  - Disable pager for some commands
+  - Import bash alias
 - flycheck
 - moccur
 - plantuml-mode
