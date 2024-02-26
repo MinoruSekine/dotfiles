@@ -160,6 +160,7 @@
     (add-to-list 'load-path this-elisp-dir)))
 
 (defun my-gc-setup ()
+  "Settings for garbage collection."
   (setq gc-cons-threshold (* 16 1000 1000))
   (setq garbage-collection-messages t))
 
