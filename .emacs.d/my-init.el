@@ -162,7 +162,8 @@
 (defun my-gc-setup ()
   "Settings for garbage collection."
   (setq gc-cons-threshold (* 256 1024 1024))
-  (setq garbage-collection-messages t))
+  (setq garbage-collection-messages t)
+  (run-with-idle-timer 120 nil #'garbage-collect))
 
 ;;; Main processes.
 (my-gc-setup)
