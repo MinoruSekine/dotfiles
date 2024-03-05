@@ -166,14 +166,13 @@
   (run-with-idle-timer 120 nil #'garbage-collect))
 
 ;;; Main processes.
-(my-gc-setup)
-
 (if (my-is-network-connection-available)
     (progn (my-install-missing-packages)
            (my-setup-elisp-from-emacs-wiki))
   (display-warning 'my-init "Network connection may not be available."))
 
-(defvar my-after-init-func-list '(my-environment-variable-setup
+(defvar my-after-init-func-list '(my-gc-setup
+                                  my-environment-variable-setup
                                   my-language-setup
                                   my-general-visibility-setup
                                   my-gui-setup
