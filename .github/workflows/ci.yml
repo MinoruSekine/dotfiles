@@ -66,21 +66,20 @@ jobs:
         key: cache_version_${{ env.cache_version }}-${{ runner.os }}-${{ hashFiles(env.cache_hash_seed_file_path) }}
 
     - name: Install scoop (Windows)
-      uses: MinoruSekine/setup-scoop@v2
+      uses: MinoruSekine/setup-scoop@v3
       if: contains(matrix.os, 'windows') && steps.restore_cache.outputs.cache-hit != 'true'
       with:
         install_scoop: 'true'
-        add_extras_bucket: 'true'
+        buckets: extras
         scoop_update: 'true'
         scoop_checkup: 'false'
         update_path: 'true'
 
     - name: Setup scoop PATH (Windows)
-      uses: MinoruSekine/setup-scoop@v2
+      uses: MinoruSekine/setup-scoop@v3
       if: contains(matrix.os, 'windows') && steps.restore_cache.outputs.cache-hit == 'true'
       with:
         install_scoop: 'false'
-        add_extras_bucket: 'false'
         scoop_update: 'false'
         scoop_checkup: 'false'
         update_path: 'true'
