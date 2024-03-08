@@ -203,6 +203,7 @@
     my-emacs-lisp-mode-setup
     my-tempbuf-mode-setup
     my-realgud-setup
+    my-ssh-agency-setup
     my-init-el-byte-compile))
 (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list)
 
@@ -550,6 +551,18 @@
   "Setup realgud."
   (when (package-installed-p 'realgud-lldb)
     (require 'realgud-lldb)))
+
+(defun my-ssh-key-exists-p ()
+  "Check current user's ssh key(s) exists or not."
+  (and (file-directory-p "~/.ssh")
+       (file-expand-wildcards "~/.ssh/*.pub")))
+
+(defun my-ssh-agency-setup ()
+  "Setup ssh-agency."
+  (when (package-installed-p 'ssh-agency)
+    (with-eval-after-load 'ssh-agency
+      (unless (my-ssh-key-exists-p)
+        (remove-hook 'magit-credential-hook 'ssh-agency-ensure)))))
 
 (defun my-adjust-font-size-setup ()
   "Set up hooks to adjust font size when necessary."
