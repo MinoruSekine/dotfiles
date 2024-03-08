@@ -1,9 +1,0 @@
-@startuml{test.png}
-
-class Parent
-
-class Child
-
-Parent <|-- Child
-
-@enduml
