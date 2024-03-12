@@ -40,7 +40,7 @@ This repository includes:
 - emacs-lisp-mode
 - eshell
   - Disable pager for some commands
-  - Import bash alias
+  - Import bash alias into eshell
 - flycheck
 - moccur
 - plantuml-mode

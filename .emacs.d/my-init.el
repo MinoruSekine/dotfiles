@@ -503,14 +503,22 @@
   (run-with-idle-timer 1 t #'color-identifiers:refresh)
   )
 
+(defun my-get-bash-aliases-with-file (&optional path)
+  "Get bash aliases defined by PATH (if specified)."
+  (let* ((my-prev-bash-env (getenv "BASH_ENV")))
+    (when path
+      (setenv "BASH_ENV" path))
+    (let* ((my-bash-aliases (process-lines "bash" "-c" "alias")))
+      (when path
+        (setenv "BASH_ENV" my-prev-bash-env))
+      my-bash-aliases)))
+
 (defun my-eshell-import-bash-aliases ()
   "Import aliases defined for bash into eshell."
-  (defconst my-bash-aliases-list
-    (process-lines "bash" "-ic" "alias")
-    "List of alias strings defined for bash.")
-  (dolist (itr my-bash-aliases-list nil)
-           (string-match "alias \\([^=]+\\)='\\([^']+\\)'" itr)
-           (eshell/alias (match-string 1 itr) (match-string 2 itr))))
+  (let* ((my-bash-aliases-list (my-get-bash-aliases-with-file "~/.bashrc")))
+    (dolist (itr my-bash-aliases-list nil)
+      (string-match "alias \\([^=]+\\)='\\([^']+\\)'" itr)
+      (eshell/alias (match-string 1 itr) (match-string 2 itr)))))
 
 (defun my-eshell-setup ()
   "Setup eshell."
