@@ -266,13 +266,13 @@
 (defun my-get-display-pixel-width ()
   "Get width of display in pixel."
   (nth 3
-       (loop for itr in (display-monitor-attributes-list)
+       (cl-loop for itr in (display-monitor-attributes-list)
 	     when (> (length (assoc 'frames itr)) 1) return (assoc 'workarea itr))))
 
 (defun my-get-display-mm-width ()
   "Get width of display in mm."
   (nth 1
-       (loop for itr in (display-monitor-attributes-list)
+       (cl-loop for itr in (display-monitor-attributes-list)
 	     when (> (length (assoc 'frames itr)) 1) return (assoc 'mm-size itr))))
 
 (defun my-get-display-inch-width ()
