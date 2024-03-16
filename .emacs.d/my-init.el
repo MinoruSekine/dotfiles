@@ -94,10 +94,10 @@
    )
   (package-initialize)
 
-  (when (not package-archive-contents)
+  (unless package-archive-contents
     (package-refresh-contents))
 
-  (when (not (package-installed-p 'gnu-elpa-keyring-update))
+  (unless (package-installed-p 'gnu-elpa-keyring-update)
     (let (prev-package-check-signature package-check-signature)
       (setq package-check-signature nil)
       (package-refresh-contents)
