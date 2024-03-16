@@ -523,15 +523,13 @@
 
 (defun my-eshell-setup ()
   "Setup eshell."
-  (eval-after-load 'eshell
-    '(progn
-       (require 'em-term)
-       ;;; It is extra necessary to disable pager if you need.
-       (add-to-list 'eshell-visual-subcommands
-                    '("git" "diff" "help" "log" "show"))))
-  (eval-after-load 'em-alias
-    '(progn
-       (my-eshell-import-bash-aliases))))
+  (with-eval-after-load 'eshell
+    (require 'em-term)
+    ;;; It is extra necessary to disable pager if you need.
+    (add-to-list 'eshell-visual-subcommands
+                 '("git" "diff" "help" "log" "show")))
+  (with-eval-after-load 'em-alias
+    (my-eshell-import-bash-aliases)))
 
 (defun my-emacs-lisp-mode-setup ()
   "Setup Emacs Lisp mode."
