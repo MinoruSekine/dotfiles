@@ -94,10 +94,10 @@
    )
   (package-initialize)
 
-  (when (not package-archive-contents)
+  (unless package-archive-contents
     (package-refresh-contents))
 
-  (when (not (package-installed-p 'gnu-elpa-keyring-update))
+  (unless (package-installed-p 'gnu-elpa-keyring-update)
     (let (prev-package-check-signature package-check-signature)
       (setq package-check-signature nil)
       (package-refresh-contents)
@@ -523,15 +523,13 @@
 
 (defun my-eshell-setup ()
   "Setup eshell."
-  (eval-after-load 'eshell
-    '(progn
-       (require 'em-term)
-       ;;; It is extra necessary to disable pager if you need.
-       (add-to-list 'eshell-visual-subcommands
-                    '("git" "diff" "help" "log" "show"))))
-  (eval-after-load 'em-alias
-    '(progn
-       (my-eshell-import-bash-aliases))))
+  (with-eval-after-load 'eshell
+    (require 'em-term)
+    ;;; It is extra necessary to disable pager if you need.
+    (add-to-list 'eshell-visual-subcommands
+                 '("git" "diff" "help" "log" "show")))
+  (with-eval-after-load 'em-alias
+    (my-eshell-import-bash-aliases)))
 
 (defun my-emacs-lisp-mode-setup ()
   "Setup Emacs Lisp mode."
