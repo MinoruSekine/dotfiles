@@ -180,7 +180,6 @@
                                   my-font-lock-setup
                                   my-color-identifiers-mode-setup
                                   my-adjust-font-size-setup
-                                  my-global-set-key-toggle-input-method
                                   ))
 (my-add-hooks 'after-init-hook my-after-init-func-list)
 
@@ -204,6 +203,7 @@
     my-tempbuf-mode-setup
     my-realgud-setup
     my-ssh-agency-setup
+    my-global-set-key-toggle-input-method
     my-init-el-byte-compile))
 (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list)
 
