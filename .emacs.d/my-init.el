@@ -180,7 +180,6 @@
                                   my-font-lock-setup
                                   my-color-identifiers-mode-setup
                                   my-adjust-font-size-setup
-                                  my-global-set-key-toggle-input-method
                                   ))
 (my-add-hooks 'after-init-hook my-after-init-func-list)
 
@@ -204,6 +203,7 @@
     my-tempbuf-mode-setup
     my-realgud-setup
     my-ssh-agency-setup
+    my-global-set-key-toggle-input-method
     my-init-el-byte-compile))
 (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list)
 
@@ -417,9 +417,9 @@
 
 (defun my-compilation-mode-setup ()
   "Setup compilation mode."
-  (setq compilation-scroll-output t)
-  (setq compile-command "time nice make -k -j ")
-  )
+  (with-eval-after-load 'compile
+    (setq compilation-scroll-output t)
+    (setq compile-command "time nice make -k -j ")))
 
 (defun my-font-lock-setup ()
   "Setup font-lock."
