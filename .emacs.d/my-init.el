@@ -204,6 +204,7 @@
     my-realgud-setup
     my-ssh-agency-setup
     my-global-set-key-toggle-input-method
+    my-javascript-setup
     my-init-el-byte-compile))
 (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list)
 
@@ -591,6 +592,12 @@
   (when (equal system-type 'darwin)
     (global-set-key (kbd "C-\\") nil)
     (global-set-key (kbd "C-\\") 'my-toggle-input-method-darwin)))
+
+(defun my-javascript-setup ()
+  "Setup for JavaScript."
+  (add-hook 'js-mode-hook
+            (lambda ()
+              (setq js-indent-level 2))))
 
 ;; Utility functions for users.
 (defun my-semanticdb-update-for-directory (dir-path)
