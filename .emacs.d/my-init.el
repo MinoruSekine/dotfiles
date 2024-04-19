@@ -597,6 +597,7 @@
   "Setup for JavaScript."
   (add-hook 'js-mode-hook
             (lambda ()
+              (setq indent-tabs-mode nil)
               (setq js-indent-level 2))))
 
 ;; Utility functions for users.
