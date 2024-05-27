@@ -22,9 +22,9 @@ jobs:
         os: [ubuntu-latest, windows-latest, macOS-latest]
         include:
           - os: ubuntu-latest
-            package_update_command: sudo add-apt-repository ppa:kelleyk/emacs; sudo apt update
+            package_update_command: sudo add-apt-repository ppa:ubuntu-elisp/ppa; sudo apt update
             package_install_command: sudo apt install --no-install-recommends
-            emacs_package_name: emacs28
+            emacs_package_name: emacs-snapshot
             to_cache_dir: ''
             skip_install_if_restore_cache: false
             post_process_for_cache: ''
