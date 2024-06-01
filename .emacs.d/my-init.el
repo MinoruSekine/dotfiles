@@ -83,6 +83,8 @@
                         yasnippet-snippets))
   (when (executable-find "lldb")
     (add-to-list 'my-packages 'realgud-lldb))
+  (when (executable-find "wakatime-cli")
+    (add-to-list 'my-packages 'wakatime-mode))
   (when (equal system-type 'windows-nt)
     (add-to-list 'my-packages 'ssh-agency))
 
@@ -205,6 +207,7 @@
     my-ssh-agency-setup
     my-global-set-key-toggle-input-method
     my-javascript-setup
+    my-wakatime-setup
     my-init-el-byte-compile))
 (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list)
 
@@ -570,6 +573,11 @@
     (with-eval-after-load 'ssh-agency
       (unless (my-ssh-key-exists-p)
         (remove-hook 'magit-credential-hook 'ssh-agency-ensure)))))
+
+(defun my-wakatime-setup ()
+  "Setup wakatime-mode for Emacs if wakatime available."
+  (when (package-installed-p 'wakatime-mode)
+    (global-wakatime-mode t)))
 
 (defun my-adjust-font-size-setup ()
   "Set up hooks to adjust font size when necessary."
