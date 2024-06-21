@@ -206,6 +206,7 @@
     my-realgud-setup
     my-ssh-agency-setup
     my-global-set-key-toggle-input-method
+    my-backslash-key-setup
     my-javascript-setup
     my-wakatime-setup
     my-init-el-byte-compile))
@@ -600,6 +601,11 @@
   (when (equal system-type 'darwin)
     (global-set-key (kbd "C-\\") nil)
     (global-set-key (kbd "C-\\") 'my-toggle-input-method-darwin)))
+
+(defun my-backslash-key-setup ()
+  "Enable to input backslash by opt+¥ on macOS."
+  (when (and (equal system-type 'darwin) (equal mac-option-modifier 'meta))
+    (define-key global-map [?\M-\\] [?\\])))
 
 (defun my-javascript-setup ()
   "Setup for JavaScript."
