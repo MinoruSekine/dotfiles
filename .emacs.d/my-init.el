@@ -167,6 +167,42 @@
   (setq garbage-collection-messages t)
   (run-with-idle-timer 120 nil #'garbage-collect))
 
+;;; Functions for auto upgrade packages.
+(defun my-get-file-last-modified-datetime (path)
+  "Get last modified date/time of PATH."
+  (file-attribute-modification-time (file-attributes path)))
+
+(defun my-get-last-upgrade-package-file ()
+  "Get path which have packages' last update date/time as last modified date/time."
+  (locate-user-emacs-file ".my-init-el-package-last-upgrade"))
+
+(defun my-touch-file (path)
+  "Create PATH file or update timestamp of PATH like touch command."
+  (write-region "" nil path))
+
+(defun my-auto-upgrade-packages-interval-expired-p ()
+  "Return t if it is necessary to upgrade packages."
+  (or (not (file-exists-p (my-get-last-upgrade-package-file)))
+      (progn (defconst upgrade-interval-days 7)
+	     (defconst last-upgrade-time
+               (my-get-file-last-modified-datetime (my-get-last-upgrade-package-file)))
+	     (defconst days-from-last-upgrade
+               (/ (time-convert (time-subtract (current-time) last-upgrade-time)
+				'integer)
+		  (* 60 60 24)))
+	     (> days-from-last-upgrade upgrade-interval-days))))
+
+(defun my-auto-upgrade-packages ()
+  "Auto upgrade packages if interval expired, interactive, and network available."
+  (when (and (not noninteractive)
+             (my-auto-upgrade-packages-interval-expired-p)
+             (my-is-network-connection-available)
+             (y-or-n-p "Upgrade packages now?"))
+    (progn (package-initialize)
+           (package-refresh-contents)
+           (package-upgrade-all)
+           (my-touch-file (my-get-last-upgrade-package-file)))))
+
 ;;; Main processes.
 (if (my-is-network-connection-available)
     (progn (my-install-missing-packages)
@@ -209,7 +245,8 @@
     my-backslash-key-setup
     my-javascript-setup
     my-wakatime-setup
-    my-init-el-byte-compile))
+    my-init-el-byte-compile
+    my-auto-upgrade-packages))
 (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list)
 
 ;;; Functions for initializing Emacs.
