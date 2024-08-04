@@ -19,6 +19,7 @@ This repository includes:
   - Official packages
   - MELPA
   - Emacs Wiki
+- Periodic upgrade packages at exiting Emacs
 
 #### Configurations
 

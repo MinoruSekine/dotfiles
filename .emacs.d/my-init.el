@@ -245,9 +245,12 @@
     my-backslash-key-setup
     my-javascript-setup
     my-wakatime-setup
-    my-init-el-byte-compile
-    my-auto-upgrade-packages))
+    my-init-el-byte-compile))
 (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list)
+
+(defvar my-kill-emacs-func-list
+  '(my-auto-upgrade-packages))
+(my-add-hooks 'kill-emacs-hook my-kill-emacs-func-list)
 
 ;;; Functions for initializing Emacs.
 (defun my-environment-variable-setup ()
