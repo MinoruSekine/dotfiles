@@ -78,9 +78,7 @@
                         powershell
                         rainbow-delimiters
                         realgud
-                        yaml-mode
-                        yasnippet
-                        yasnippet-snippets))
+                        yaml-mode))
   (when (executable-find "lldb")
     (add-to-list 'my-packages 'realgud-lldb))
   (when (executable-find "wakatime-cli")
@@ -232,7 +230,6 @@
     my-compilation-mode-setup
     my-rainbow-delimiters-mode-setup
     my-flycheck-mode-setup
-    my-yasnippet-setup
     my-mocuur-setup
     my-plantuml-mode-setup
     my-dired-setup
@@ -453,11 +450,6 @@
   "Setup case sensitivity on completion."
   (setq read-buffer-completion-ignore-case t)
   (setq read-file-name-completion-ignore-case t)
-  )
-
-(defun my-yasnippet-setup ()
-  "Setup yasnippet mode."
-  (yas-global-mode 1)
   )
 
 (defun my-compilation-mode-setup ()
