@@ -176,7 +176,9 @@
 
 (defun my-touch-file (path)
   "Create PATH file or update timestamp of PATH like touch command."
-  (write-region "" nil path))
+  (if (file-exists-p path)
+      (set-file-times path)
+    (write-region "" nil path)))
 
 (defun my-auto-upgrade-packages-interval-expired-p ()
   "Return t if it is necessary to upgrade packages."
