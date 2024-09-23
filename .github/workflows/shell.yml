@@ -1,0 +1,28 @@
+name: shell
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  schedule:
+    - cron: 0 20 * * 6
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install supplementals
+        shell: bash
+        run: |
+          sudo add-apt-repository ppa:ubuntu-elisp/ppa; sudo apt update
+          sudo apt install --no-install-recommends shellcheck
+
+      - name: shellcheck
+        if: contains(matrix.os, env.os_for_lint)
+        shell: bash
+        run: make -k -j sh-lint-all
