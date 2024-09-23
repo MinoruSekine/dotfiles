@@ -36,7 +36,7 @@ jobs:
             post_process_for_cache: 'scoop cache rm "*"'
           - os: macOS-latest
             package_update_command: ''
-            package_install_command: brew install
+            package_install_command: brew install --cask
             emacs_package_name: emacs
             to_cache_dir: ''
             skip_install_if_restore_cache: false
