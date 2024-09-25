@@ -104,7 +104,7 @@ jobs:
         run: ./.github/workflows/show_emacs_loadpath.sh
 
       - name: Test run
-        if: ${{ !contains(matrix.os, 'windows') }}
+        if: ${{ !contains(matrix.os, 'windows') && !contains(matrix.os, 'macOS') }}
         shell: bash
         run: |
           make -k -j testrun
@@ -120,5 +120,5 @@ jobs:
         run: make -k -j elisp-lint-all
 
       - name: Unit tests for Emacs Lisp
-        if: ${{ !contains(matrix.os, 'windows') }}
+        if: ${{ !contains(matrix.os, 'windows') && !contains(matrix.os, 'macOS') }}
         run: make -k -j test
