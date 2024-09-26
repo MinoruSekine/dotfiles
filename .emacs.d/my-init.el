@@ -166,31 +166,18 @@
   (run-with-idle-timer 120 nil #'garbage-collect))
 
 ;;; Functions for auto upgrade packages.
-(defun my-get-file-last-modified-datetime (path)
-  "Get last modified date/time of PATH."
-  (file-attribute-modification-time (file-attributes path)))
-
-(defun my-get-last-upgrade-package-file ()
-  "Get path which have packages' last update date/time as last modified date/time."
-  (locate-user-emacs-file ".my-init-el-package-last-upgrade"))
-
-(defun my-touch-file (path)
-  "Create PATH file or update timestamp of PATH like touch command."
-  (if (file-exists-p path)
-      (set-file-times path)
-    (write-region "" nil path)))
+(defconst my-epoch-time (encode-time (list 0 0 0 1 1 1970)))
+(define-multisession-variable my-last-upgrade-time my-epoch-time)
 
 (defun my-auto-upgrade-packages-interval-expired-p ()
   "Return t if it is necessary to upgrade packages."
-  (or (not (file-exists-p (my-get-last-upgrade-package-file)))
-      (progn (defconst upgrade-interval-days 7)
-	     (defconst last-upgrade-time
-               (my-get-file-last-modified-datetime (my-get-last-upgrade-package-file)))
-	     (defconst days-from-last-upgrade
-               (/ (time-convert (time-subtract (current-time) last-upgrade-time)
-				'integer)
-		  (* 60 60 24)))
-	     (> days-from-last-upgrade upgrade-interval-days))))
+  (defconst upgrade-interval-days 7)
+  (defconst last-upgrade-time (multisession-value my-last-upgrade-time))
+  (defconst days-from-last-upgrade
+    (/ (time-convert (time-subtract (current-time) last-upgrade-time)
+		     'integer)
+       (* 60 60 24)))
+  (> days-from-last-upgrade upgrade-interval-days))
 
 (defun my-auto-upgrade-packages ()
   "Auto upgrade packages if interval expired, interactive, and network available."
@@ -201,7 +188,8 @@
     (progn (package-initialize)
            (package-refresh-contents)
            (package-upgrade-all)
-           (my-touch-file (my-get-last-upgrade-package-file)))))
+           (setf (multisession-value my-last-upgrade-time)
+                 (current-time)))))
 
 ;;; Main processes.
 (if (my-is-network-connection-available)
