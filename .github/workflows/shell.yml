@@ -19,7 +19,7 @@ jobs:
       - name: Install supplementals
         shell: bash
         run: |
-          sudo add-apt-repository ppa:ubuntu-elisp/ppa; sudo apt update
+          sudo apt update
           sudo apt install --no-install-recommends shellcheck
 
       - name: shellcheck

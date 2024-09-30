@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 env:
-  os_for_lint: ubuntu-latest
+  os_for_lint: ubuntu-22.04
   cache_version: v1
   cache_hash_seed_file_path: './.github/workflows/cache_seed_file_for_scoop.txt'
 
@@ -18,9 +18,9 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [ubuntu-22.04, windows-latest, macOS-latest]
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             package_update_command: sudo add-apt-repository ppa:ubuntu-elisp/ppa; sudo apt update
             package_install_command: sudo apt install --no-install-recommends
             emacs_package_name: emacs-snapshot
