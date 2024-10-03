@@ -167,8 +167,10 @@
 
 ;;; Functions for auto upgrade packages.
 (defconst my-upgrade-interval-days 7)
-(defconst my-epoch-time (encode-time (list 0 0 0 1 1 1970)))
-(define-multisession-variable my-last-upgrade-time my-epoch-time)
+(defconst my-default-last-upgrade-time
+  (time-subtract (current-time)
+                 (* 60 60 24 my-upgrade-interval-days)))
+(define-multisession-variable my-last-upgrade-time my-default-last-upgrade-time)
 
 (defun my-auto-upgrade-packages-interval-expired-p ()
   "Return t if it is necessary to upgrade packages."
