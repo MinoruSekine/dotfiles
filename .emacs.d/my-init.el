@@ -166,18 +166,20 @@
   (run-with-idle-timer 120 nil #'garbage-collect))
 
 ;;; Functions for auto upgrade packages.
-(defconst my-epoch-time (encode-time (list 0 0 0 1 1 1970)))
-(define-multisession-variable my-last-upgrade-time my-epoch-time)
+(defconst my-upgrade-interval-days 7)
+(defconst my-default-last-upgrade-time
+  (time-subtract (current-time)
+                 (* 60 60 24 my-upgrade-interval-days)))
+(define-multisession-variable my-last-upgrade-time my-default-last-upgrade-time)
 
 (defun my-auto-upgrade-packages-interval-expired-p ()
   "Return t if it is necessary to upgrade packages."
-  (defconst upgrade-interval-days 7)
   (defconst last-upgrade-time (multisession-value my-last-upgrade-time))
   (defconst days-from-last-upgrade
     (/ (time-convert (time-subtract (current-time) last-upgrade-time)
 		     'integer)
        (* 60 60 24)))
-  (> days-from-last-upgrade upgrade-interval-days))
+  (> days-from-last-upgrade my-upgrade-interval-days))
 
 (defun my-auto-upgrade-packages ()
   "Auto upgrade packages if interval expired, interactive, and network available."
