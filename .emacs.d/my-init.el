@@ -234,6 +234,7 @@
     my-backslash-key-setup
     my-javascript-setup
     my-wakatime-setup
+    my-magit-setup
     my-init-el-byte-compile))
 (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list)
 
@@ -637,6 +638,10 @@
             (lambda ()
               (setq indent-tabs-mode nil)
               (setq js-indent-level 2))))
+
+(defun my-magit-setup ()
+  "Setup for magit."
+  (setq magit-refresh-status-buffer nil))
 
 ;; Utility functions for users.
 (defun my-semanticdb-update-for-directory (dir-path)
