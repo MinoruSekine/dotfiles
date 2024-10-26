@@ -641,6 +641,7 @@
 
 (defun my-magit-setup ()
   "Setup for magit."
+  (delete 'Git vc-handled-backends)
   (setq magit-refresh-status-buffer nil))
 
 ;; Utility functions for users.
