@@ -123,6 +123,31 @@
     )
   )
 
+;; url-copy-file from EmacsWIki sometime randomly fails on GitHub Actions runner.
+;; But the reason has not been clarified. So added retry.
+;; See https://github.com/MinoruSekine/dotfiles/issues/200 for details.
+(defun my-url-copy-file (url newname ok-if-already-exists retry-times retry-interval-sec)
+  "URL-COPY-FILE wrapper to download URL to NEWNAME.
+Overwrite existing NEWNAME file when OK-IF-ALREADY-EXISTS is non-nil.
+If error occured in url-copyfile,
+retry RETRY-TIMES times with RETRY-INTERVAL-SEC sec interval."
+  (let* ((remaining-retry-count retry-times)
+         (is-url-copy-file-succeeded nil))
+    (while (and (> remaining-retry-count 0)
+                (not is-url-copy-file-succeeded))
+      (setq is-url-copy-file-succeeded
+            (ignore-errors (url-copy-file url newname ok-if-already-exists)))
+      (setq remaining-retry-count (1- remaining-retry-count))
+      (when (not is-url-copy-file-succeeded)
+        (if (> remaining-retry-count 0)
+            (progn (display-warning
+                    'my-init
+                    (format "Downloading from %s failed. Retrying %s more time(s)"
+                            url remaining-retry-count))
+	           (sit-for retry-interval-sec))
+          (error "url-copy-file for %s failed even with %s times retry"
+                 url retry-times))))))
+
 (defun my-emacs-wiki-elisp-file-name (elisp-name)
   "Filename of ELISP-NAME installed from Emacs Wiki."
   (concat elisp-name ".el"))
@@ -155,7 +180,7 @@
       (defconst this-elisp-file (my-emacs-wiki-elisp-path p))
       (unless (file-directory-p this-elisp-dir)
         (make-directory this-elisp-dir t))
-      (url-copy-file (my-emacs-wiki-elisp-url p) this-elisp-file t)
+      (my-url-copy-file (my-emacs-wiki-elisp-url p) this-elisp-file t 4 8)
       (byte-compile-file this-elisp-file))
     (add-to-list 'load-path this-elisp-dir)))
 
