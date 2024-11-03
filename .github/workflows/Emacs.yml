@@ -108,6 +108,7 @@ jobs:
         run: emacs --version
 
       - name: Check load-path
+        shell: bash
         run: ./.github/workflows/show_emacs_loadpath.sh
 
       - name: Test run
