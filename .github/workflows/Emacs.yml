@@ -15,7 +15,7 @@ env:
   cache_hash_seed_file_path: './.github/workflows/cache_seed_file_for_scoop.txt'
 
 jobs:
-  build:
+  TestRun_and_Lint:
     strategy:
       matrix:
         os: [ubuntu-22.04, windows-latest, macOS-latest, macos-12]
