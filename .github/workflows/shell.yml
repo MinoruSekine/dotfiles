@@ -23,6 +23,5 @@ jobs:
           sudo apt install --no-install-recommends shellcheck
 
       - name: shellcheck
-        if: contains(matrix.os, env.os_for_lint)
         shell: bash
         run: make -k -j sh-lint-all
