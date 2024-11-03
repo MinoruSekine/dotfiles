@@ -111,6 +111,10 @@ jobs:
         shell: bash
         run: ./.github/workflows/show_emacs_loadpath.sh
 
+      - name: Check system-name
+        shell: bash
+        run: ./.github/workflows/show_emacs_system_name.sh
+
       - name: Test run
         if: ${{ !contains(matrix.os, 'windows') && !contains(matrix.os, 'macOS') }}
         shell: bash
