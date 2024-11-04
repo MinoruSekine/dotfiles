@@ -15,7 +15,7 @@ env:
   cache_hash_seed_file_path: './.github/workflows/cache_seed_file_for_scoop.txt'
 
 jobs:
-  build:
+  TestRun_and_Lint:
     strategy:
       matrix:
         os: [ubuntu-22.04, windows-latest, macOS-latest, macos-12]
@@ -108,7 +108,12 @@ jobs:
         run: emacs --version
 
       - name: Check load-path
+        shell: bash
         run: ./.github/workflows/show_emacs_loadpath.sh
+
+      - name: Check system-name
+        shell: bash
+        run: ./.github/workflows/show_emacs_system_name.sh
 
       - name: Test run
         if: ${{ !contains(matrix.os, 'windows') && !contains(matrix.os, 'macOS') }}
