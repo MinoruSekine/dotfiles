@@ -18,7 +18,7 @@ jobs:
   TestRun_and_Lint:
     strategy:
       matrix:
-        os: [ubuntu-22.04, windows-latest, macOS-latest, macos-12]
+        os: [ubuntu-22.04, windows-latest, macOS-latest, macos-13]
         include:
           - os: ubuntu-22.04
             package_update_command: sudo add-apt-repository ppa:ubuntu-elisp/ppa; sudo apt update
@@ -41,7 +41,7 @@ jobs:
             to_cache_dir: ''
             skip_install_if_restore_cache: false
             post_process_for_cache: ''
-          - os: macOS-12
+          - os: macos-13
             package_update_command: ''
             package_install_command: brew install --cask
             emacs_package_name: emacs
