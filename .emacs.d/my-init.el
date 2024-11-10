@@ -148,6 +148,21 @@ retry RETRY-TIMES times with RETRY-INTERVAL-SEC sec interval."
           (error "url-copy-file for %s failed even with %s times retry"
                  url retry-times))))))
 
+(defun my-curl-copy-file (url newname ok-if-already-exists retry-times retry-interval-sec)
+  "Download URL to NEWNAME.
+This function use curl if available,
+and fallback to use my-url-copy-file if curl is unavailable on system.
+OK-IF-ALREADY-EXISTS, RETRY-TIMES, and RETRY-INTERVAL-SEC is only used
+when fallback to my-url-copy-file,
+and they will be ignored if using curl."
+  (defconst my-curl-path (executable-find "curl"))
+  (if my-curl-path
+      (progn (unless (file-exists-p newname)
+               (message "curl found. Download %s by curl." url)
+               (shell-command-to-string (format "curl -f -s -o %s %s" newname url))))
+    (message "curl not found. Fall back to url-copy-file to download %s." url)
+    (my-url-copy-file url newname ok-if-already-exists retry-times retry-interval-sec)))
+
 (defun my-emacs-wiki-elisp-file-name (elisp-name)
   "Filename of ELISP-NAME installed from Emacs Wiki."
   (concat elisp-name ".el"))
@@ -180,7 +195,7 @@ retry RETRY-TIMES times with RETRY-INTERVAL-SEC sec interval."
       (defconst this-elisp-file (my-emacs-wiki-elisp-path p))
       (unless (file-directory-p this-elisp-dir)
         (make-directory this-elisp-dir t))
-      (my-url-copy-file (my-emacs-wiki-elisp-url p) this-elisp-file t 4 8)
+      (my-curl-copy-file (my-emacs-wiki-elisp-url p) this-elisp-file t 4 8)
       (byte-compile-file this-elisp-file))
     (add-to-list 'load-path this-elisp-dir)))
 
