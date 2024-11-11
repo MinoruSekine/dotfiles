@@ -56,12 +56,6 @@
   (if (file-newer-than-file-p el-path my-elc-path)
       (byte-compile-file el-path)))
 
-(defun my-get-gcc-system-include-paths ()
-  "Get system header include path used by gcc."
-  (when (and (executable-find "gcc")
-	     (executable-find "sed"))
-    (split-string (shell-command-to-string "gcc -x c++ -v -E /dev/null 2>&1 > /dev/null | sed -e '1,/> search starts here:/d' | sed -n '/End of search list./q;p' | sed -e 's/^ *//g'") "\n" t)))
-
 (defun my-install-missing-packages ()
   "Install missing packages."
   (defvar my-packages '(beacon
