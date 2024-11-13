@@ -56,12 +56,6 @@
   (if (file-newer-than-file-p el-path my-elc-path)
       (byte-compile-file el-path)))
 
-(defun my-get-gcc-system-include-paths ()
-  "Get system header include path used by gcc."
-  (when (and (executable-find "gcc")
-	     (executable-find "sed"))
-    (split-string (shell-command-to-string "gcc -x c++ -v -E /dev/null 2>&1 > /dev/null | sed -e '1,/> search starts here:/d' | sed -n '/End of search list./q;p' | sed -e 's/^ *//g'") "\n" t)))
-
 (defun my-install-missing-packages ()
   "Install missing packages."
   (defvar my-packages '(beacon
@@ -123,10 +117,15 @@
     )
   )
 
-;; url-copy-file from EmacsWIki sometime randomly fails on GitHub Actions runner.
+;; url-copy-file from EmacsWIki sometime randomly fails
+;; on GitHub Actions runner.
 ;; But the reason has not been clarified. So added retry.
 ;; See https://github.com/MinoruSekine/dotfiles/issues/200 for details.
-(defun my-url-copy-file (url newname ok-if-already-exists retry-times retry-interval-sec)
+(defun my-url-copy-file (url
+                         newname
+                         ok-if-already-exists
+                         retry-times
+                         retry-interval-sec)
   "URL-COPY-FILE wrapper to download URL to NEWNAME.
 Overwrite existing NEWNAME file when OK-IF-ALREADY-EXISTS is non-nil.
 If error occured in url-copyfile,
@@ -142,13 +141,18 @@ retry RETRY-TIMES times with RETRY-INTERVAL-SEC sec interval."
         (if (> remaining-retry-count 0)
             (progn (display-warning
                     'my-init
-                    (format "Downloading from %s failed. Retrying %s more time(s)"
-                            url remaining-retry-count))
-	           (sit-for retry-interval-sec))
+                    (format
+                     "Downloading from %s failed. Retrying %s more time(s)"
+                     url remaining-retry-count))
+                   (sit-for retry-interval-sec))
           (error "url-copy-file for %s failed even with %s times retry"
                  url retry-times))))))
 
-(defun my-curl-copy-file (url newname ok-if-already-exists retry-times retry-interval-sec)
+(defun my-curl-copy-file (url
+                          newname
+                          ok-if-already-exists
+                          retry-times
+                          retry-interval-sec)
   "Download URL to NEWNAME.
 This function use curl if available,
 and fallback to use my-url-copy-file if curl is unavailable on system.
@@ -159,9 +163,11 @@ and they will be ignored if using curl."
   (if my-curl-path
       (progn (unless (file-exists-p newname)
                (message "curl found. Download %s by curl." url)
-               (shell-command-to-string (format "curl -f -s -o %s %s" newname url))))
+               (shell-command-to-string
+                (format "curl -f -s -o %s %s" newname url))))
     (message "curl not found. Fall back to url-copy-file to download %s." url)
-    (my-url-copy-file url newname ok-if-already-exists retry-times retry-interval-sec)))
+    (my-url-copy-file
+     url newname ok-if-already-exists retry-times retry-interval-sec)))
 
 (defun my-emacs-wiki-elisp-file-name (elisp-name)
   "Filename of ELISP-NAME installed from Emacs Wiki."
@@ -176,11 +182,13 @@ and they will be ignored if using curl."
 
 (defun my-emacs-wiki-elisp-path (elisp-name)
   "Path for ELISP-NAME installed from Emacs Wiki."
-  (my-join-path (my-emacs-wiki-elisp-dir elisp-name) (my-emacs-wiki-elisp-file-name elisp-name)))
+  (my-join-path (my-emacs-wiki-elisp-dir elisp-name)
+                (my-emacs-wiki-elisp-file-name elisp-name)))
 
 (defun my-emacs-wiki-elisp-url (elisp-name)
   "URL for ELISP-NAME installed from Emacs Wiki."
-  (concat "https://www.emacswiki.org/emacs/download/" (my-emacs-wiki-elisp-file-name elisp-name)))
+  (concat "https://www.emacswiki.org/emacs/download/"
+          (my-emacs-wiki-elisp-file-name elisp-name)))
 
 (defun my-emacs-wiki-is-elisp-installed (elisp-name)
   "Get ELISP-NAME form Emacs Wiki installed or not."
@@ -217,12 +225,13 @@ and they will be ignored if using curl."
   (defconst last-upgrade-time (multisession-value my-last-upgrade-time))
   (defconst days-from-last-upgrade
     (/ (time-convert (time-subtract (current-time) last-upgrade-time)
-		     'integer)
+                     'integer)
        (* 60 60 24)))
   (> days-from-last-upgrade my-upgrade-interval-days))
 
 (defun my-auto-upgrade-packages ()
-  "Auto upgrade packages if interval expired, interactive, and network available."
+  "Auto upgrade packages
+if interval expired, interactive, and network available."
   (when (and (not noninteractive)
              (my-auto-upgrade-packages-interval-expired-p)
              (my-is-network-connection-available)
@@ -342,13 +351,15 @@ and they will be ignored if using curl."
   "Get width of display in pixel."
   (nth 3
        (cl-loop for itr in (display-monitor-attributes-list)
-	     when (> (length (assoc 'frames itr)) 1) return (assoc 'workarea itr))))
+                when (> (length (assoc 'frames itr)) 1)
+                return (assoc 'workarea itr))))
 
 (defun my-get-display-mm-width ()
   "Get width of display in mm."
   (nth 1
        (cl-loop for itr in (display-monitor-attributes-list)
-	     when (> (length (assoc 'frames itr)) 1) return (assoc 'mm-size itr))))
+                when (> (length (assoc 'frames itr)) 1)
+                return (assoc 'mm-size itr))))
 
 (defun my-get-display-inch-width ()
   "Get width of display in inch."
@@ -360,7 +371,8 @@ and they will be ignored if using curl."
 
 (defun my-is-enabled-adjust-font-size-setup ()
   "Indicated necessary to adjust font size."
-  (and (not (equal system-type 'windows-nt))  ;; NTEmacs seems to support high DPI awareness.
+  ;; NTEmacs seems to natively support high DPI awareness.
+  (and (not (equal system-type 'windows-nt))
        (display-graphic-p)
        (display-supports-face-attributes-p :height)))
 
@@ -412,8 +424,9 @@ and they will be ignored if using curl."
   "Setup c++ mode."
   (defun my-c++-keyword-match-function ()
     "Find C++ keyword(s)."
-    (re-search-forward "\\<\\(class\\|constexpr\\|namespace\\|template\\|auto\\)\\>"
-                       magic-mode-regexp-match-limit t))
+    (re-search-forward
+     "\\<\\(class\\|constexpr\\|namespace\\|template\\|auto\\)\\>"
+     magic-mode-regexp-match-limit t))
   (add-to-list 'magic-mode-alist
                `(,(lambda ()
                     (and (string= (file-name-extension buffer-file-name) "h")
@@ -426,13 +439,15 @@ and they will be ignored if using curl."
   (add-to-list 'magic-mode-alist
                `(,(lambda ()
                     (and (string= (file-name-extension buffer-file-name) "h")
-                         (re-search-forward "@\\<\\(implementation\\|interface\\|protocol\\)\\>"
-                                            magic-mode-regexp-match-limit t)))
+                         (re-search-forward
+                          "@\\<\\(implementation\\|interface\\|protocol\\)\\>"
+                          magic-mode-regexp-match-limit t)))
                  . objc-mode))
   (add-to-list 'auto-mode-alist '("\\.h\\'" . c-mode))
   (add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode))
-  (font-lock-add-keywords 'c++-mode
-                          '(("^[^\n]\\{80\\}\\(.*\\)$" 1 font-lock-warning-face prepend)))
+  (font-lock-add-keywords
+   'c++-mode
+   '(("^[^\n]\\{80\\}\\(.*\\)$" 1 font-lock-warning-face prepend)))
   (font-lock-add-keywords 'c++-mode
                           '(("[ \t]+$" . 'trailing-whitespace)))
   (font-lock-add-keywords 'c-mode
@@ -552,8 +567,10 @@ and they will be ignored if using curl."
   (setq plantuml-options "-charset UTF-8")
   (setq plantuml-output-type "png")
   (setq plantuml-indent-level 2)
-  (setq plantuml-indent-regexp-activate-start "^\s*\\(activate\s+.+\\|[^\\+]+\\+\\+.*\\)$")
-  (setq plantuml-indent-regexp-activate-end "^\s*\\(deactivate\s+.+\\|return\\(\s+.+\\)?\\)$")
+  (setq plantuml-indent-regexp-activate-start
+        "^\s*\\(activate\s+.+\\|[^\\+]+\\+\\+.*\\)$")
+  (setq plantuml-indent-regexp-activate-end
+        "^\s*\\(deactivate\s+.+\\|return\\(\s+.+\\)?\\)$")
   (add-hook 'plantuml-mode-hook
             '(lambda()
                (setq indent-tabs-mode nil)
@@ -621,7 +638,7 @@ and they will be ignored if using curl."
 (defun my-init-el-byte-compile ()
   "Byte compile this file if newer than elc."
   (save-window-excursion
-   (my-update-byte-compile my-init-el-path)))
+    (my-update-byte-compile my-init-el-path)))
 
 (defun my-realgud-setup ()
   "Setup realgud."
@@ -651,7 +668,8 @@ and they will be ignored if using curl."
     (add-function :after after-focus-change-function #'my-adjust-font-size)
     (add-function :after after-focus-change-function #'my-adjust-font-size)))
 
-;; For this function, add "Accesibility" privilege to Emacs and /usr/bin/osascript.
+;; Add "Accesibility" privilege to Emacs and /usr/bin/osascript
+;; in order to use this function.
 (defun my-toggle-input-method-darwin ()
   "Toggle macOS input method by sending key stroke via AppleScript."
   (interactive)
@@ -659,7 +677,9 @@ and they will be ignored if using curl."
   ;; If your environment has another key binding to toggle input method,
   ;; you must modify this.
   (shell-command-to-string
-   "osascript -e 'tell application \"System Events\"' -e 'key code 49 using command down' -e 'end tell'"))
+   (concat "osascript -e 'tell application \"System Events\"'"
+           "-e 'key code 49 using command down'"
+           "-e 'end tell'")))
 
 (defun my-global-set-key-toggle-input-method ()
   "Set C-¥ key binding as toggling system's input method."
@@ -689,10 +709,11 @@ and they will be ignored if using curl."
   "Update semanticdb for files under specified DIR-PATH."
   (interactive "DDirectory which has files for updating semanticdb: ")
   (let* ((my-semanticdb-update-dir-entries
-          (cl-remove-if (lambda (str) (string-match str "\.\.?")) (directory-files dir-path))))
+          (cl-remove-if (lambda (str) (string-match str "\.\.?"))
+                        (directory-files dir-path))))
     (dolist (itr my-semanticdb-update-dir-entries)
       (let* ((my-semanticdb-update-dir-entry (my-join-path dir-path itr)))
-	(if (file-directory-p my-semanticdb-update-dir-entry)
+        (if (file-directory-p my-semanticdb-update-dir-entry)
             (my-semanticdb-update-for-directory my-semanticdb-update-dir-entry)
-	  (semanticdb-file-table-object my-semanticdb-update-dir-entry))))))
+          (semanticdb-file-table-object my-semanticdb-update-dir-entry))))))
 ;;; my-init.el ends here
