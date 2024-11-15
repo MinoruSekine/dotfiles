@@ -163,7 +163,7 @@ and they will be ignored if using curl."
   (if my-curl-path
       (progn (unless (file-exists-p newname)
                (message "curl found. Download %s by curl." url)
-               (shell-command-to-string
+               (call-process-shell-command
                 (format "curl -f -s -o %s %s" newname url))))
     (message "curl not found. Fall back to url-copy-file to download %s." url)
     (my-url-copy-file
@@ -676,7 +676,7 @@ if interval expired, interactive, and network available."
   ;; This elisp funtion sends Cmd + SPC key stroke.
   ;; If your environment has another key binding to toggle input method,
   ;; you must modify this.
-  (shell-command-to-string
+  (call-process-shell-command
    (concat "osascript -e 'tell application \"System Events\"'"
            "-e 'key code 49 using command down'"
            "-e 'end tell'")))
