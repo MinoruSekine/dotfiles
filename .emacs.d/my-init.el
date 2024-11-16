@@ -18,14 +18,22 @@
   "Get path to plantuml.jar on running environment."
   (cond ((equal system-type 'darwin)
          (substring (shell-command-to-string
-                     "echo /usr/local/Cellar/plantuml/*/libexec/plantuml.jar")
+                     (mapconcat
+                      #'shell-quote-argument
+                      (list "echo"
+                            "/usr/local/Cellar/plantuml/*/libexec/plantuml.jar")
+                      " "))
                     0
                     -1))
         ((equal system-type 'windows-nt)
          (expand-file-name (replace-regexp-in-string
                             "plantuml.\\(cmd\\|jar\\)\n"
                             "plantuml.jar"
-                            (shell-command-to-string "scoop which plantuml"))))
+                            (shell-command-to-string
+                             (mapconcat
+                              #'shell-quote-argument
+                              (list "scoop" "which" "plantuml")
+                              " ")))))
         ((equal system-type 'gnu/linux)
          "/usr/share/plantuml/plantuml.jar")
         ))
@@ -163,8 +171,11 @@ and they will be ignored if using curl."
   (if my-curl-path
       (progn (unless (file-exists-p newname)
                (message "curl found. Download %s by curl." url)
-               (shell-command-to-string
-                (format "curl -f -s -o %s %s" newname url))))
+               (call-process-shell-command
+                (mapconcat
+                 #'shell-quote-argument
+                 (list "curl" "-f" "-s" "-o" newname url)
+                 " "))))
     (message "curl not found. Fall back to url-copy-file to download %s." url)
     (my-url-copy-file
      url newname ok-if-already-exists retry-times retry-interval-sec)))
@@ -676,10 +687,14 @@ if interval expired, interactive, and network available."
   ;; This elisp funtion sends Cmd + SPC key stroke.
   ;; If your environment has another key binding to toggle input method,
   ;; you must modify this.
-  (shell-command-to-string
-   (concat "osascript -e 'tell application \"System Events\"'"
-           "-e 'key code 49 using command down'"
-           "-e 'end tell'")))
+  (call-process-shell-command
+   (mapconcat
+    #'shell-quote-argument
+    (list "osascript"
+          "-e" "tell application \"System Events\""
+          "-e" "key code 49 using command down"
+          "-e" "end tell")
+    " ")))
 
 (defun my-global-set-key-toggle-input-method ()
   "Set C-¥ key binding as toggling system's input method."
