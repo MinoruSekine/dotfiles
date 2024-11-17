@@ -125,7 +125,7 @@
     )
   )
 
-;; url-copy-file from EmacsWIki sometime randomly fails
+;; url-copy-file from EmacsWiki sometime randomly fails
 ;; on GitHub Actions runner.
 ;; But the reason has not been clarified. So added retry.
 ;; See https://github.com/MinoruSekine/dotfiles/issues/200 for details.
