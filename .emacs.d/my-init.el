@@ -206,7 +206,7 @@ and they will be ignored if using curl."
   (file-exists-p (my-emacs-wiki-elisp-path elisp-name)))
 
 (defun my-setup-elisp-from-emacs-wiki ()
-  "Install missing elisp from Emacs Wiki and set 'load-path'."
+  "Install missing elisp from Emacs Wiki and set `load-path`."
   (defvar my-elisp-from-emacs-wiki '("tempbuf"))
   (dolist (p my-elisp-from-emacs-wiki)
     (defconst this-elisp-dir (my-emacs-wiki-elisp-dir p))
