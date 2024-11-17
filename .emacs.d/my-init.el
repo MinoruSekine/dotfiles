@@ -208,14 +208,29 @@ and they will be ignored if using curl."
 (defun my-setup-elisp-from-emacs-wiki ()
   "Install missing elisp from Emacs Wiki and set `load-path`."
   (defvar my-elisp-from-emacs-wiki '("tempbuf"))
+  (defcustom my-init-emacs-wiki-download-error-level
+    (if (getenv "GITHUB_WORKFLOW")
+        :warning
+      :error)
+    "If non-nil, ignore error while downloading from Emacs Wiki.
+On GitHub Actions workflow, t is default.
+On other environments nil is default.
+Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
+    :type 'boolean
+    :group 'my-init)
   (dolist (p my-elisp-from-emacs-wiki)
     (defconst this-elisp-dir (my-emacs-wiki-elisp-dir p))
     (unless (my-emacs-wiki-is-elisp-installed p)
       (defconst this-elisp-file (my-emacs-wiki-elisp-path p))
       (unless (file-directory-p this-elisp-dir)
         (make-directory this-elisp-dir t))
-      (my-curl-copy-file (my-emacs-wiki-elisp-url p) this-elisp-file t 4 8)
-      (byte-compile-file this-elisp-file))
+      (if (= (my-curl-copy-file
+              (my-emacs-wiki-elisp-url p) this-elisp-file t 4 8)
+             0)
+          (byte-compile-file this-elisp-file)
+        (lwarn 'my-init
+               my-init-emacs-wiki-download-error-level
+               "Downloading %s by `curl` is failed" p)))
     (add-to-list 'load-path this-elisp-dir)))
 
 (defun my-gc-setup ()
@@ -640,11 +655,12 @@ if interval expired, interactive, and network available."
 
 (defun my-tempbuf-mode-setup ()
   "Setup tempbuf-mode."
-  (require 'tempbuf)
-  (custom-set-variables '(tempbuf-kill-message nil)
-                        '(tempbuf-minimum-timeout 300))
-  (add-hook 'dired-mode-hook 'turn-on-tempbuf-mode)
-  (add-hook 'magit-mode-hook 'turn-on-tempbuf-mode))
+  (when (my-emacs-wiki-is-elisp-installed "tempbuf")
+    (require 'tempbuf)
+    (custom-set-variables '(tempbuf-kill-message nil)
+                          '(tempbuf-minimum-timeout 300))
+    (add-hook 'dired-mode-hook 'turn-on-tempbuf-mode)
+    (add-hook 'magit-mode-hook 'turn-on-tempbuf-mode)))
 
 (defun my-init-el-byte-compile ()
   "Byte compile this file if newer than elc."
