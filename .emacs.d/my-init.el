@@ -655,12 +655,13 @@ if interval expired, interactive, and network available."
 
 (defun my-tempbuf-mode-setup ()
   "Setup tempbuf-mode."
-  (when (my-emacs-wiki-is-elisp-installed "tempbuf")
-    (require 'tempbuf)
-    (custom-set-variables '(tempbuf-kill-message nil)
-                          '(tempbuf-minimum-timeout 300))
-    (add-hook 'dired-mode-hook 'turn-on-tempbuf-mode)
-    (add-hook 'magit-mode-hook 'turn-on-tempbuf-mode)))
+  (if (my-emacs-wiki-is-elisp-installed "tempbuf")
+      (progn (require 'tempbuf)
+             (custom-set-variables '(tempbuf-kill-message nil)
+                                   '(tempbuf-minimum-timeout 300))
+             (add-hook 'dired-mode-hook 'turn-on-tempbuf-mode)
+             (add-hook 'magit-mode-hook 'turn-on-tempbuf-mode))
+    (warn "Skipped configurations for tempbuf because not found.")))
 
 (defun my-init-el-byte-compile ()
   "Byte compile this file if newer than elc."
