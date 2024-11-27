@@ -141,8 +141,8 @@ retry RETRY-TIMES times with RETRY-INTERVAL-SEC sec interval."
          (is-url-copy-file-succeeded nil))
     (while (and (> remaining-retry-count 0)
                 (not is-url-copy-file-succeeded))
-      (setq is-url-copy-file-succeeded
-            (ignore-errors (url-copy-file url newname ok-if-already-exists)))
+      (defconst is-url-copy-file-succeeded
+        (ignore-errors (url-copy-file url newname ok-if-already-exists)))
       (setq remaining-retry-count (1- remaining-retry-count))
       (when (not is-url-copy-file-succeeded)
         (if (> remaining-retry-count 0)
