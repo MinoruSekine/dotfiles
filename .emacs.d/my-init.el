@@ -547,7 +547,7 @@ This function works if interval expired, interactive, and network available."
   )
 
 (defun my-rainbow-delimiters-mode-setup ()
-  "Setup rainbow-delimiters-mode."
+  "Setup \"rainbow-delimiters-mode\"."
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
   (require 'cl-lib)
   (require 'color)
@@ -583,7 +583,7 @@ This function works if interval expired, interactive, and network available."
   "Path of plantuml.jar.")
 
 (defun my-plantuml-mode-setup ()
-  "Setup plantuml-mode."
+  "Setup \"plantuml-mode\"."
   (add-to-list 'auto-mode-alist '("\\.pu\\'" . plantuml-mode))
   (add-to-list 'auto-mode-alist '("\\.puml\\'" . plantuml-mode))
   (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
@@ -623,7 +623,7 @@ This function works if interval expired, interactive, and network available."
   )
 
 (defun my-color-identifiers-mode-setup ()
-  "Setup color-identifiers-mode."
+  "Setup \"color-identifiers-mode\"."
   (global-color-identifiers-mode t)
   (run-with-idle-timer 1 t #'color-identifiers:refresh)
   )
@@ -697,7 +697,7 @@ This function works if interval expired, interactive, and network available."
         (remove-hook 'magit-credential-hook 'ssh-agency-ensure)))))
 
 (defun my-wakatime-setup ()
-  "Setup wakatime-mode for Emacs if wakatime available."
+  "Setup \"wakatime-mode\" for Emacs if wakatime available."
   (when (package-installed-p 'wakatime-mode)
     (global-wakatime-mode t)))
 
