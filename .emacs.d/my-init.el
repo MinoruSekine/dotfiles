@@ -261,11 +261,11 @@ This function works if interval expired, interactive, and network available."
              (my-auto-upgrade-packages-interval-expired-p)
              (my-is-network-connection-available)
              (y-or-n-p "Upgrade packages now?"))
-    (progn (package-initialize)
-           (package-refresh-contents)
-           (package-upgrade-all)
-           (setf (multisession-value my-last-upgrade-time)
-                 (current-time)))))
+    (package-initialize)
+    (package-refresh-contents)
+    (package-upgrade-all)
+    (setf (multisession-value my-last-upgrade-time)
+          (current-time))))
 
 ;;; Main processes.
 (if (my-is-network-connection-available)
