@@ -106,11 +106,10 @@
       (package-install 'gnu-elpa-keyring-update)
       (setq package-check-signature prev-package-check-signature)))
 
-  (unless (fboundp 'remove-if-not)
-    (require 'cl))
+  (require 'cl)
   (defvar my-not-yet-installed-packages
-    (remove-if-not (lambda (p) (not (package-installed-p p)))
-                   my-packages))
+    (cl-remove-if-not (lambda (p) (not (package-installed-p p)))
+                      my-packages))
 
   (when (and my-not-yet-installed-packages
              (if (or noninteractive (and (fboundp 'daemonp) (daemonp)))
@@ -256,8 +255,8 @@ Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
   (> days-from-last-upgrade my-upgrade-interval-days))
 
 (defun my-auto-upgrade-packages ()
-  "Auto upgrade packages
-if interval expired, interactive, and network available."
+  "Auto upgrade packages.
+This function works if interval expired, interactive, and network available."
   (when (and (not noninteractive)
              (my-auto-upgrade-packages-interval-expired-p)
              (my-is-network-connection-available)
@@ -342,10 +341,11 @@ if interval expired, interactive, and network available."
   (setq show-paren-style 'mixed)
   (setq show-paren-when-point-inside-paren t)
   (setq show-paren-when-point-in-periphery t)
+  (require 'beacon)
   (beacon-mode t)
   (setq beacon-color "yellow")
   (setq beacon-blink-duration 0.1)
-  (setq blink-cursor-blinks 0)
+  (setq blink-cursor-blinks 0)  ;; 0 means "blink ever".
   (highlight-doxygen-global-mode 1)
   )
 
@@ -356,7 +356,7 @@ if interval expired, interactive, and network available."
   (display-time-mode 1)
   (which-function-mode 1)
   (add-hook 'emacs-lisp-mode-hook
-            (lambda()
+            (lambda ()
               (setq mode-name "Elisp")))
   )
 
@@ -479,9 +479,9 @@ if interval expired, interactive, and network available."
   (font-lock-add-keywords 'c-mode
                           '(("[ \t]+$" . 'trailing-whitespace)))
   (add-hook 'c++-mode-hook
-            '(lambda()
-               (setq indent-tabs-mode nil)
-               ))
+            #'(lambda ()
+                (setq indent-tabs-mode nil)
+                ))
   )
 
 (defun my-emacs-server-setup ()
@@ -598,14 +598,14 @@ if interval expired, interactive, and network available."
   (setq plantuml-indent-regexp-activate-end
         "^\s*\\(deactivate\s+.+\\|return\\(\s+.+\\)?\\)$")
   (add-hook 'plantuml-mode-hook
-            '(lambda()
+            '(lambda ()
                (setq indent-tabs-mode nil)
                ))
 
   )
 
 (defun my-dired-setup ()
-  "Setup dired."
+  "Setup DIRED."
   (when (equal system-type 'darwin)
     (setq dired-use-ls-dired nil)
     )
@@ -647,7 +647,7 @@ if interval expired, interactive, and network available."
 (defun my-emacs-lisp-mode-setup ()
   "Setup Emacs Lisp mode."
   (add-hook 'emacs-lisp-mode-hook
-            '(lambda()
+            '(lambda ()
                (setq indent-tabs-mode nil)
                )
             )
