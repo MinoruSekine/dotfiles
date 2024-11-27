@@ -234,8 +234,9 @@ Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
 
 (defun my-gc-setup ()
   "Settings for garbage collection."
-  (setq gc-cons-threshold (* 256 1024 1024))
-  (setq garbage-collection-messages t)
+  (custom-set-variables
+   '(gc-cons-threshold (* 256 1024 1024))
+   '(garbage-collection-messages t))
   (run-with-idle-timer 120 nil #'garbage-collect))
 
 ;;; Functions for auto upgrade packages.
@@ -322,8 +323,9 @@ This function works if interval expired, interactive, and network available."
   ;;; Pager in Emacs (eshell, terms, ...)
   (setenv "PAGER" "")
 
-  (setq exec-path (append exec-path
-                          (parse-colon-path (getenv "PATH"))))
+  (custom-set-variables
+   '(exec-path (append exec-path
+                       (parse-colon-path (getenv "PATH")))))
   )
 
 (defun my-language-setup ()
@@ -338,21 +340,25 @@ This function works if interval expired, interactive, and network available."
 (defun my-general-visibility-setup ()
   "Setup visibility for both -nw and GUI."
   (show-paren-mode t)
-  (setq show-paren-style 'mixed)
-  (setq show-paren-when-point-inside-paren t)
-  (setq show-paren-when-point-in-periphery t)
+  (custom-set-variables
+   '(show-paren-style 'mixed)
+   '(show-paren-when-point-inside-paren t)
+   '(show-paren-when-point-in-periphery t))
   (require 'beacon)
   (beacon-mode t)
-  (setq beacon-color "yellow")
-  (setq beacon-blink-duration 0.1)
-  (setq blink-cursor-blinks 0)  ;; 0 means "blink ever".
+  (custom-set-variables
+   '(beacon-color "yellow")
+   '(beacon-blink-duration 0.1))
+  (custom-set-variables
+   '(blink-cursor-blinks 0))  ;; 0 means "blink ever".
   (highlight-doxygen-global-mode 1)
   )
 
 (defun my-general-mode-line-setup ()
   "Set up modeline."
-  (setq column-number-mode t)
-  (setq line-number-mode t)
+  (custom-set-variables
+   '(column-number-mode t)
+   '(line-number-mode t))
   (display-time-mode 1)
   (which-function-mode 1)
   (add-hook 'emacs-lisp-mode-hook
@@ -496,7 +502,8 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-ede-and-semantic-mode-setup ()
   "Setup ede and semantic mode."
-  (setq semantic-idle-work-parse-neighboring-files-flag t)
+  (custom-set-variables
+   '(semantic-idle-work-parse-neighboring-files-flag t))
   (global-ede-mode t)
   (semantic-mode 1)
   (when (file-directory-p "/usr/local/include/")
@@ -522,19 +529,21 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-completion-case-sensitivity-setup ()
   "Setup case sensitivity on completion."
-  (setq read-buffer-completion-ignore-case t)
-  (setq read-file-name-completion-ignore-case t)
+  (custom-set-variables
+   '(read-buffer-completion-ignore-case t)
+   '(read-file-name-completion-ignore-case t))
   )
 
 (defun my-compilation-mode-setup ()
   "Setup compilation mode."
-  (with-eval-after-load 'compile
-    (setq compilation-scroll-output t)
-    (setq compile-command "time nice make -k -j ")))
+  (custom-set-variables
+   '(compilation-scroll-output t)
+   '(compile-command "time nice make -k -j ")))
 
 (defun my-font-lock-setup ()
   "Setup font-lock."
-  (setq jit-lock-defer-time 0.05)
+  (custom-set-variables
+   '(jit-lock-defer-time 0.05))
   )
 
 (defun my-rainbow-delimiters-mode-setup ()
@@ -553,9 +562,10 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-flycheck-mode-setup ()
   "Setup flycheck mode."
-  (setq flycheck-cppcheck-standards '("c++11"))
-  (setq flycheck-clang-language-standard "c++11")
-  (setq flycheck-gcc-language-standard "c++11")
+  (custom-set-variables
+   '(flycheck-cppcheck-standards '("c++11"))
+   '(flycheck-clang-language-standard "c++11")
+   '(flycheck-gcc-language-standard "c++11"))
   (global-flycheck-mode t)
   )
 
@@ -607,7 +617,8 @@ This function works if interval expired, interactive, and network available."
 (defun my-dired-setup ()
   "Setup DIRED."
   (when (equal system-type 'darwin)
-    (setq dired-use-ls-dired nil)
+    (custom-set-variables
+     '(dired-use-ls-dired nil))
     )
   )
 
@@ -726,15 +737,16 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-javascript-setup ()
   "Setup for JavaScript."
+  (custom-set-variables '(js-indent-level 2))
   (add-hook 'js-mode-hook
             (lambda ()
-              (setq indent-tabs-mode nil)
-              (setq js-indent-level 2))))
+              (setq indent-tabs-mode nil))))
 
 (defun my-magit-setup ()
   "Setup for magit."
   (delete 'Git vc-handled-backends)
-  (setq magit-refresh-status-buffer nil))
+  (custom-set-variables
+   '(magit-refresh-status-buffer nil)))
 
 ;; Utility functions for users.
 (defun my-semanticdb-update-for-directory (dir-path)
