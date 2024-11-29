@@ -106,11 +106,10 @@
       (package-install 'gnu-elpa-keyring-update)
       (setq package-check-signature prev-package-check-signature)))
 
-  (unless (fboundp 'remove-if-not)
-    (require 'cl))
+  (require 'cl)
   (defvar my-not-yet-installed-packages
-    (remove-if-not (lambda (p) (not (package-installed-p p)))
-                   my-packages))
+    (cl-remove-if-not (lambda (p) (not (package-installed-p p)))
+                      my-packages))
 
   (when (and my-not-yet-installed-packages
              (if (or noninteractive (and (fboundp 'daemonp) (daemonp)))
@@ -142,8 +141,8 @@ retry RETRY-TIMES times with RETRY-INTERVAL-SEC sec interval."
          (is-url-copy-file-succeeded nil))
     (while (and (> remaining-retry-count 0)
                 (not is-url-copy-file-succeeded))
-      (setq is-url-copy-file-succeeded
-            (ignore-errors (url-copy-file url newname ok-if-already-exists)))
+      (defconst is-url-copy-file-succeeded
+        (ignore-errors (url-copy-file url newname ok-if-already-exists)))
       (setq remaining-retry-count (1- remaining-retry-count))
       (when (not is-url-copy-file-succeeded)
         (if (> remaining-retry-count 0)
@@ -235,8 +234,9 @@ Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
 
 (defun my-gc-setup ()
   "Settings for garbage collection."
-  (setq gc-cons-threshold (* 256 1024 1024))
-  (setq garbage-collection-messages t)
+  (custom-set-variables
+   '(gc-cons-threshold (* 256 1024 1024))
+   '(garbage-collection-messages t))
   (run-with-idle-timer 120 nil #'garbage-collect))
 
 ;;; Functions for auto upgrade packages.
@@ -256,17 +256,17 @@ Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
   (> days-from-last-upgrade my-upgrade-interval-days))
 
 (defun my-auto-upgrade-packages ()
-  "Auto upgrade packages
-if interval expired, interactive, and network available."
+  "Auto upgrade packages.
+This function works if interval expired, interactive, and network available."
   (when (and (not noninteractive)
              (my-auto-upgrade-packages-interval-expired-p)
              (my-is-network-connection-available)
              (y-or-n-p "Upgrade packages now?"))
-    (progn (package-initialize)
-           (package-refresh-contents)
-           (package-upgrade-all)
-           (setf (multisession-value my-last-upgrade-time)
-                 (current-time)))))
+    (package-initialize)
+    (package-refresh-contents)
+    (package-upgrade-all)
+    (setf (multisession-value my-last-upgrade-time)
+          (current-time))))
 
 ;;; Main processes.
 (if (my-is-network-connection-available)
@@ -323,8 +323,9 @@ if interval expired, interactive, and network available."
   ;;; Pager in Emacs (eshell, terms, ...)
   (setenv "PAGER" "")
 
-  (setq exec-path (append exec-path
-                          (parse-colon-path (getenv "PATH"))))
+  (custom-set-variables
+   '(exec-path (append exec-path
+                       (parse-colon-path (getenv "PATH")))))
   )
 
 (defun my-language-setup ()
@@ -339,24 +340,29 @@ if interval expired, interactive, and network available."
 (defun my-general-visibility-setup ()
   "Setup visibility for both -nw and GUI."
   (show-paren-mode t)
-  (setq show-paren-style 'mixed)
-  (setq show-paren-when-point-inside-paren t)
-  (setq show-paren-when-point-in-periphery t)
+  (custom-set-variables
+   '(show-paren-style 'mixed)
+   '(show-paren-when-point-inside-paren t)
+   '(show-paren-when-point-in-periphery t))
+  (require 'beacon)
   (beacon-mode t)
-  (setq beacon-color "yellow")
-  (setq beacon-blink-duration 0.1)
-  (setq blink-cursor-blinks 0)
+  (custom-set-variables
+   '(beacon-color "yellow")
+   '(beacon-blink-duration 0.1))
+  (custom-set-variables
+   '(blink-cursor-blinks 0))  ;; 0 means "blink ever".
   (highlight-doxygen-global-mode 1)
   )
 
 (defun my-general-mode-line-setup ()
   "Set up modeline."
-  (setq column-number-mode t)
-  (setq line-number-mode t)
+  (custom-set-variables
+   '(column-number-mode t)
+   '(line-number-mode t))
   (display-time-mode 1)
   (which-function-mode 1)
   (add-hook 'emacs-lisp-mode-hook
-            (lambda()
+            (lambda ()
               (setq mode-name "Elisp")))
   )
 
@@ -479,9 +485,9 @@ if interval expired, interactive, and network available."
   (font-lock-add-keywords 'c-mode
                           '(("[ \t]+$" . 'trailing-whitespace)))
   (add-hook 'c++-mode-hook
-            '(lambda()
-               (setq indent-tabs-mode nil)
-               ))
+            #'(lambda ()
+                (setq indent-tabs-mode nil)
+                ))
   )
 
 (defun my-emacs-server-setup ()
@@ -496,7 +502,8 @@ if interval expired, interactive, and network available."
 
 (defun my-ede-and-semantic-mode-setup ()
   "Setup ede and semantic mode."
-  (setq semantic-idle-work-parse-neighboring-files-flag t)
+  (custom-set-variables
+   '(semantic-idle-work-parse-neighboring-files-flag t))
   (global-ede-mode t)
   (semantic-mode 1)
   (when (file-directory-p "/usr/local/include/")
@@ -522,23 +529,25 @@ if interval expired, interactive, and network available."
 
 (defun my-completion-case-sensitivity-setup ()
   "Setup case sensitivity on completion."
-  (setq read-buffer-completion-ignore-case t)
-  (setq read-file-name-completion-ignore-case t)
+  (custom-set-variables
+   '(read-buffer-completion-ignore-case t)
+   '(read-file-name-completion-ignore-case t))
   )
 
 (defun my-compilation-mode-setup ()
   "Setup compilation mode."
-  (with-eval-after-load 'compile
-    (setq compilation-scroll-output t)
-    (setq compile-command "time nice make -k -j ")))
+  (custom-set-variables
+   '(compilation-scroll-output t)
+   '(compile-command "time nice make -k -j ")))
 
 (defun my-font-lock-setup ()
   "Setup font-lock."
-  (setq jit-lock-defer-time 0.05)
+  (custom-set-variables
+   '(jit-lock-defer-time 0.05))
   )
 
 (defun my-rainbow-delimiters-mode-setup ()
-  "Setup rainbow-delimiters-mode."
+  "Setup \"rainbow-delimiters-mode\"."
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
   (require 'cl-lib)
   (require 'color)
@@ -553,9 +562,10 @@ if interval expired, interactive, and network available."
 
 (defun my-flycheck-mode-setup ()
   "Setup flycheck mode."
-  (setq flycheck-cppcheck-standards '("c++11"))
-  (setq flycheck-clang-language-standard "c++11")
-  (setq flycheck-gcc-language-standard "c++11")
+  (custom-set-variables
+   '(flycheck-cppcheck-standards '("c++11"))
+   '(flycheck-clang-language-standard "c++11")
+   '(flycheck-gcc-language-standard "c++11"))
   (global-flycheck-mode t)
   )
 
@@ -573,7 +583,7 @@ if interval expired, interactive, and network available."
   "Path of plantuml.jar.")
 
 (defun my-plantuml-mode-setup ()
-  "Setup plantuml-mode."
+  "Setup \"plantuml-mode\"."
   (add-to-list 'auto-mode-alist '("\\.pu\\'" . plantuml-mode))
   (add-to-list 'auto-mode-alist '("\\.puml\\'" . plantuml-mode))
   (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
@@ -598,21 +608,22 @@ if interval expired, interactive, and network available."
   (setq plantuml-indent-regexp-activate-end
         "^\s*\\(deactivate\s+.+\\|return\\(\s+.+\\)?\\)$")
   (add-hook 'plantuml-mode-hook
-            '(lambda()
+            '(lambda ()
                (setq indent-tabs-mode nil)
                ))
 
   )
 
 (defun my-dired-setup ()
-  "Setup dired."
+  "Setup DIRED."
   (when (equal system-type 'darwin)
-    (setq dired-use-ls-dired nil)
+    (custom-set-variables
+     '(dired-use-ls-dired nil))
     )
   )
 
 (defun my-color-identifiers-mode-setup ()
-  "Setup color-identifiers-mode."
+  "Setup \"color-identifiers-mode\"."
   (global-color-identifiers-mode t)
   (run-with-idle-timer 1 t #'color-identifiers:refresh)
   )
@@ -647,7 +658,7 @@ if interval expired, interactive, and network available."
 (defun my-emacs-lisp-mode-setup ()
   "Setup Emacs Lisp mode."
   (add-hook 'emacs-lisp-mode-hook
-            '(lambda()
+            '(lambda ()
                (setq indent-tabs-mode nil)
                )
             )
@@ -686,7 +697,7 @@ if interval expired, interactive, and network available."
         (remove-hook 'magit-credential-hook 'ssh-agency-ensure)))))
 
 (defun my-wakatime-setup ()
-  "Setup wakatime-mode for Emacs if wakatime available."
+  "Setup \"wakatime-mode\" for Emacs if wakatime available."
   (when (package-installed-p 'wakatime-mode)
     (global-wakatime-mode t)))
 
@@ -726,15 +737,16 @@ if interval expired, interactive, and network available."
 
 (defun my-javascript-setup ()
   "Setup for JavaScript."
+  (custom-set-variables '(js-indent-level 2))
   (add-hook 'js-mode-hook
             (lambda ()
-              (setq indent-tabs-mode nil)
-              (setq js-indent-level 2))))
+              (setq indent-tabs-mode nil))))
 
 (defun my-magit-setup ()
   "Setup for magit."
   (delete 'Git vc-handled-backends)
-  (setq magit-refresh-status-buffer nil))
+  (custom-set-variables
+   '(magit-refresh-status-buffer nil)))
 
 ;; Utility functions for users.
 (defun my-semanticdb-update-for-directory (dir-path)
