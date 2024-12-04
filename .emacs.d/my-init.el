@@ -107,9 +107,9 @@
       (setq package-check-signature prev-package-check-signature)))
 
   (require 'cl)
-  (defvar my-not-yet-installed-packages
-    (cl-remove-if-not (lambda (p) (not (package-installed-p p)))
-                      my-packages))
+  (defconst my-not-yet-installed-packages
+    (cl-remove-if (lambda (p) (package-installed-p p))
+                  my-packages))
 
   (when (and my-not-yet-installed-packages
              (if (or noninteractive (and (fboundp 'daemonp) (daemonp)))
@@ -183,11 +183,11 @@ and they will be ignored if using curl."
   "Filename of ELISP-NAME installed from Emacs Wiki."
   (concat elisp-name ".el"))
 
-(defvar my-emacs-wiki-elisp-dir-root (expand-file-name "~/.emacs.d/emacs-wiki")
-  "Path to install elisps from Emacs Wiki.")
-
 (defun my-emacs-wiki-elisp-dir (elisp-name)
   "Directory for ELISP-NAME installed from Emacs Wiki."
+  (defconst my-emacs-wiki-elisp-dir-root
+    (expand-file-name "~/.emacs.d/emacs-wiki")
+    "Path to install elisps from Emacs Wiki.")
   (my-join-path my-emacs-wiki-elisp-dir-root elisp-name))
 
 (defun my-emacs-wiki-elisp-path (elisp-name)
@@ -206,7 +206,7 @@ and they will be ignored if using curl."
 
 (defun my-setup-elisp-from-emacs-wiki ()
   "Install missing elisp from Emacs Wiki and set `load-path`."
-  (defvar my-elisp-from-emacs-wiki '("tempbuf"))
+  (defconst my-elisp-from-emacs-wiki '("tempbuf"))
   (defcustom my-init-emacs-wiki-download-error-level
     (if (getenv "GITHUB_WORKFLOW")
         :warning
@@ -274,20 +274,20 @@ This function works if interval expired, interactive, and network available."
            (my-setup-elisp-from-emacs-wiki))
   (display-warning 'my-init "Network connection may not be available."))
 
-(defvar my-after-init-func-list '(my-gc-setup
-                                  my-environment-variable-setup
-                                  my-language-setup
-                                  my-general-visibility-setup
-                                  my-gui-setup
-                                  my-general-mode-line-setup
-                                  my-font-lock-setup
-                                  my-color-identifiers-mode-setup
-                                  my-adjust-font-size-setup
-                                  ))
+(defconst my-after-init-func-list '(my-gc-setup
+                                    my-environment-variable-setup
+                                    my-language-setup
+                                    my-general-visibility-setup
+                                    my-gui-setup
+                                    my-general-mode-line-setup
+                                    my-font-lock-setup
+                                    my-color-identifiers-mode-setup
+                                    my-adjust-font-size-setup
+                                    ))
 (my-add-hooks 'after-init-hook my-after-init-func-list)
 
-(defvar my-init-el-path load-file-name)
-(defvar my-emacs-startup-func-list
+(defconst my-init-el-path load-file-name)
+(defconst my-emacs-startup-func-list
   '(my-emacs-server-setup
     my-backup-directory-setup
     my-default-directory-to-home-setup
@@ -313,7 +313,7 @@ This function works if interval expired, interactive, and network available."
     my-init-el-byte-compile))
 (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list)
 
-(defvar my-kill-emacs-func-list
+(defconst my-kill-emacs-func-list
   '(my-auto-upgrade-packages))
 (my-add-hooks 'kill-emacs-hook my-kill-emacs-func-list)
 
@@ -497,14 +497,17 @@ This function works if interval expired, interactive, and network available."
     (server-start))
   )
 
-(defvar my-after-ede-setup-hook nil
-  "List of functions to call after setup for EDE.")
+(defcustom my-after-ede-setup-hook nil
+  "List of functions to call after setup for EDE."
+  :type 'hook
+  :group 'my-init)
 
 (defun my-ede-and-semantic-mode-setup ()
   "Setup ede and semantic mode."
   (custom-set-variables
    '(semantic-idle-work-parse-neighboring-files-flag t))
   (global-ede-mode t)
+  (require 'semantic)
   (semantic-mode 1)
   (when (file-directory-p "/usr/local/include/")
     (semantic-add-system-include "/usr/local/include/" 'c-mode)
@@ -579,9 +582,6 @@ This function works if interval expired, interactive, and network available."
     )
   )
 
-(defvar my-plantuml-jar-path (my-get-default-plantuml-jar-path)
-  "Path of plantuml.jar.")
-
 (defun my-plantuml-mode-setup ()
   "Setup \"plantuml-mode\"."
   (add-to-list 'auto-mode-alist '("\\.pu\\'" . plantuml-mode))
@@ -594,6 +594,8 @@ This function works if interval expired, interactive, and network available."
       "/usr/local/opt/openjdk/bin/java")
     (when (executable-find java-path-installed-by-brew)
       (setq plantuml-java-command java-path-installed-by-brew)))
+  (defconst my-plantuml-jar-path (my-get-default-plantuml-jar-path)
+    "Path of plantuml.jar.")
   (when (file-exists-p my-plantuml-jar-path)
     (setq plantuml-jar-path my-plantuml-jar-path))
   (setq plantuml-default-exec-mode 'jar)
