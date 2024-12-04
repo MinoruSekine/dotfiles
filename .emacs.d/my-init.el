@@ -485,9 +485,8 @@ This function works if interval expired, interactive, and network available."
   (font-lock-add-keywords 'c-mode
                           '(("[ \t]+$" . 'trailing-whitespace)))
   (add-hook 'c++-mode-hook
-            #'(lambda ()
-                (setq indent-tabs-mode nil)
-                ))
+            (lambda ()
+              (setq indent-tabs-mode nil)))
   )
 
 (defun my-emacs-server-setup ()
@@ -610,9 +609,8 @@ This function works if interval expired, interactive, and network available."
   (setq plantuml-indent-regexp-activate-end
         "^\s*\\(deactivate\s+.+\\|return\\(\s+.+\\)?\\)$")
   (add-hook 'plantuml-mode-hook
-            '(lambda ()
-               (setq indent-tabs-mode nil)
-               ))
+            (lambda ()
+              (setq indent-tabs-mode nil)))
 
   )
 
@@ -660,10 +658,8 @@ This function works if interval expired, interactive, and network available."
 (defun my-emacs-lisp-mode-setup ()
   "Setup Emacs Lisp mode."
   (add-hook 'emacs-lisp-mode-hook
-            '(lambda ()
-               (setq indent-tabs-mode nil)
-               )
-            )
+            (lambda ()
+              (setq indent-tabs-mode nil)))
   )
 
 (defun my-tempbuf-mode-setup ()
