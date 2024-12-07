@@ -314,7 +314,8 @@ This function works if interval expired, interactive, and network available."
 (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list)
 
 (defconst my-kill-emacs-func-list
-  '(my-auto-upgrade-packages))
+  '(my-auto-upgrade-packages
+    my-init-el-byte-compile))
 (my-add-hooks 'kill-emacs-hook my-kill-emacs-func-list)
 
 ;;; Functions for initializing Emacs.
