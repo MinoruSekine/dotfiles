@@ -1,0 +1,79 @@
+name: 'Install Emacs with cache'
+
+inputs:
+  cache_hash_seed_file_path:
+    required: true
+    default: './.github/workflows/cache_seed_file_for_scoop.txt'
+  cache_version:
+    required: true
+    default: v1
+  to_cache_dir:
+    required: true
+    default: '~/scoop'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout for composite action
+      uses: actions/checkout@v4
+
+    - name: Create cache seed file
+      if: runner.os == 'Windows'
+      shell: bash
+      run: echo Install_Emacs_${{ runner.os }} >> ${{ inputs.cache_hash_seed_file_path }}
+
+    - name: Restore cache if available
+      id: restore_cache
+      if: runner.os == 'Windows'
+      uses: actions/cache@v3
+      with:
+        path: ${{ inputs.to_cache_dir }}
+        key: cache_version_${{ inputs.cache_version }}-${{ runner.os }}-${{ hashFiles(inputs.cache_hash_seed_file_path) }}
+
+    - name: Install Emacs (Ubuntu)
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        sudo add-apt-repository ppa:ubuntu-elisp/ppa
+        sudo apt update
+        sudo apt install --no-install-recommends emacs-snapshot
+
+    - name: Install Emacs (macOS)
+      if: runner.os == 'macOS'
+      shell: bash
+      env:
+        HOMEBREW_NO_AUTO_UPDATE: 1
+        HOMEBREW_NO_INSTALL_CLEANUP: 1
+      run: |
+        brew install --cask emacs
+
+    - name: Install scoop (Windows)
+      uses: MinoruSekine/setup-scoop@v4.0.1
+      if: runner.os == 'Windows' && steps.restore_cache.outputs.cache-hit != 'true'
+      with:
+        install_scoop: 'true'
+        buckets: extras
+        scoop_update: 'true'
+        scoop_checkup: 'false'
+        update_path: 'true'
+
+    - name: Setup scoop PATH (Windows)
+      uses: MinoruSekine/setup-scoop@v4.0.1
+      if: runner.os == 'Windows' && steps.restore_cache.outputs.cache-hit == 'true'
+      with:
+        install_scoop: 'false'
+        scoop_update: 'false'
+        scoop_checkup: 'false'
+        update_path: 'true'
+
+    - name: Install Emacs (Windows)
+      if: runner.os == 'Windows' && steps.restore_cache.outputs.cache-hit != 'true'
+      shell: pwsh
+      run: |
+        scoop install emacs
+
+    - name: Clear scoop cache (Windows)
+      if: runner.os == 'Windows' && steps.restore_cache.outputs.cache-hit != 'true'
+      shell: pwsh
+      run: |
+        scoop cache rm "*"
