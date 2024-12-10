@@ -61,7 +61,7 @@ jobs:
 
       - name: Create cache seed file
         if: matrix.to_cache_dir != ''
-        run: echo ${{ matrix.emacs_package_name }}_${{ runner.os }} >> ${{ env.cache_hash_seed_file_path }}
+        run: echo ${{ runner.os }} >> ${{ env.cache_hash_seed_file_path }}
 
       - name: Restore cache if available
         id: restore_cache
