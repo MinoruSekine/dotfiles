@@ -39,7 +39,6 @@ jobs:
         run: ./.github/workflows/show_emacs_system_name.sh
 
       - name: Test run
-        if: ${{ !contains(matrix.os, 'windows') }}
         shell: bash
         run: |
           make -k -j testrun
@@ -55,6 +54,5 @@ jobs:
         run: make -k -j elisp-lint-all
 
       - name: Unit tests for Emacs Lisp
-        if: ${{ !contains(matrix.os, 'windows') }}
         shell: bash
         run: make -k -j test
