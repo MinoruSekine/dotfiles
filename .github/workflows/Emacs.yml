@@ -21,11 +21,6 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Disable adding CR by Windows git
-        run: |
-          git config --global core.autocrlf false
-          git config --global core.eol lf
-
       - uses: actions/checkout@v4
 
       - name: Install Emacs
