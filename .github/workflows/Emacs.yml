@@ -9,11 +9,10 @@ on:
     - cron: 0 20 * * 6
   workflow_dispatch:
 
-env:
-  os_for_lint: ubuntu-22.04
-
 jobs:
-  TestRun_and_Lint:
+  TestRun:
+    name: Test run
+
     strategy:
       matrix:
         os: [ubuntu-22.04, windows-latest, macOS-latest, macos-13]
@@ -43,15 +42,39 @@ jobs:
         run: |
           make -k -j testrun
 
+  ElispLint:
+    name: elisp-lint
+
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Emacs
+        uses: ./.github/actions/install_emacs
+
       - name: Install elisp-lint
-        if: contains(matrix.os, env.os_for_lint)
         shell: bash
         run: emacs -Q --batch -l ./.github/workflows/install-elisp-lint.el -f install-elisp-lint-batch
 
       - name: elisp-lint
-        if: contains(matrix.os, env.os_for_lint)
         shell: bash
         run: make -k -j elisp-lint-all
+
+      - name: Unit tests for Emacs Lisp
+        shell: bash
+        run: make -k -j test
+
+  UnitTests:
+    name: Unit tests
+
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Emacs
+        uses: ./.github/actions/install_emacs
 
       - name: Unit tests for Emacs Lisp
         shell: bash
