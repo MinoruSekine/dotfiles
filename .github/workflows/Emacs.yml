@@ -27,6 +27,7 @@ jobs:
         uses: ./.github/actions/install_emacs
 
       - name: Check version of Emacs
+        shell: bash
         run: emacs --version
 
       - name: Check load-path
@@ -55,4 +56,5 @@ jobs:
 
       - name: Unit tests for Emacs Lisp
         if: ${{ !contains(matrix.os, 'windows') }}
+        shell: bash
         run: make -k -j test
