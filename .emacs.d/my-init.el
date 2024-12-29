@@ -133,11 +133,11 @@ and they will be ignored if using curl."
   ;; on GitHub Actions runner.
   ;; But the reason has not been clarified. So added retry.
   ;; See https://github.com/MinoruSekine/dotfiles/issues/200 for details.
-  (defun my-url-copy-file (url
-                           newname
-                           ok-if-already-exists
-                           retry-times
-                           retry-interval-sec)
+  (defsubst my-url-copy-file (url
+                              newname
+                              ok-if-already-exists
+                              retry-times
+                              retry-interval-sec)
     "URL-COPY-FILE wrapper to download URL to NEWNAME.
 Overwrite existing NEWNAME file when OK-IF-ALREADY-EXISTS is non-nil.
 If error occured in url-copyfile,
@@ -172,29 +172,29 @@ retry RETRY-TIMES times with RETRY-INTERVAL-SEC sec interval."
     (my-url-copy-file
      url newname ok-if-already-exists retry-times retry-interval-sec)))
 
-(defun my-emacs-wiki-elisp-file-name (elisp-name)
+(defsubst my-emacs-wiki-elisp-file-name (elisp-name)
   "Filename of ELISP-NAME installed from Emacs Wiki."
   (concat elisp-name ".el"))
 
-(defun my-emacs-wiki-elisp-dir (elisp-name)
+(defsubst my-emacs-wiki-elisp-dir (elisp-name)
   "Directory for ELISP-NAME installed from Emacs Wiki."
   (defconst my-emacs-wiki-elisp-dir-root
     (expand-file-name "~/.emacs.d/emacs-wiki")
     "Path to install elisps from Emacs Wiki.")
   (my-join-path my-emacs-wiki-elisp-dir-root elisp-name))
 
-(defun my-emacs-wiki-elisp-path (elisp-name)
+(defsubst my-emacs-wiki-elisp-path (elisp-name)
   "Path for ELISP-NAME installed from Emacs Wiki."
   (my-join-path (my-emacs-wiki-elisp-dir elisp-name)
                 (my-emacs-wiki-elisp-file-name elisp-name)))
 
-(defun my-emacs-wiki-is-elisp-installed (elisp-name)
+(defsubst my-emacs-wiki-is-elisp-installed (elisp-name)
   "Get ELISP-NAME form Emacs Wiki installed or not."
   (file-exists-p (my-emacs-wiki-elisp-path elisp-name)))
 
 (defun my-setup-elisp-from-emacs-wiki ()
   "Install missing elisp from Emacs Wiki and set `load-path`."
-  (defun my-emacs-wiki-elisp-url (elisp-name)
+  (defsubst my-emacs-wiki-elisp-url (elisp-name)
     "URL for ELISP-NAME installed from Emacs Wiki."
     (concat "https://www.emacswiki.org/emacs/download/"
             (my-emacs-wiki-elisp-file-name elisp-name)))
@@ -241,7 +241,7 @@ Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
 (defun my-auto-upgrade-packages ()
   "Auto upgrade packages.
 This function works if interval expired, interactive, and network available."
-  (defun my-auto-upgrade-packages-interval-expired-p ()
+  (defsubst my-auto-upgrade-packages-interval-expired-p ()
     "Return t if it is necessary to upgrade packages."
     (defconst last-upgrade-time (multisession-value my-last-upgrade-time))
     (defconst days-from-last-upgrade
@@ -446,7 +446,7 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-c++-mode-setup ()
   "Setup c++ mode."
-  (defun my-c++-keyword-match-function ()
+  (defsubst my-c++-keyword-match-function ()
     "Find C++ keyword(s)."
     (re-search-forward
      "\\<\\(class\\|constexpr\\|namespace\\|template\\|auto\\)\\>"
@@ -666,7 +666,7 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-init-el-byte-compile ()
   "Byte compile this file if newer than elc."
-  (defun my-update-byte-compile (el-path)
+  (defsubst my-update-byte-compile (el-path)
     "Byte compile EL-PATH if it is newer than its .elc."
     (defconst my-elc-path (my-get-elc-path el-path))
     (if (file-newer-than-file-p el-path my-elc-path)
