@@ -20,8 +20,9 @@
          (substring (shell-command-to-string
                      (mapconcat
                       #'shell-quote-argument
-                      (list "echo"
-                            "/usr/local/Cellar/plantuml/*/libexec/plantuml.jar")
+                      (list
+                       "echo"
+                       "/usr/local/Cellar/plantuml/*/libexec/plantuml.jar")
                       " "))
                     0
                     -1))
@@ -56,13 +57,6 @@
 (defun my-get-elc-path (el-path)
   "Get .elc path from .el path specified by EL-PATH."
   (concat (file-name-sans-extension el-path) ".elc"))
-
-
-(defun my-update-byte-compile (el-path)
-  "Byte compile EL-PATH if it is newer than its .elc."
-  (defconst my-elc-path (my-get-elc-path el-path))
-  (if (file-newer-than-file-p el-path my-elc-path)
-      (byte-compile-file el-path)))
 
 (defun my-install-missing-packages ()
   "Install missing packages."
@@ -124,37 +118,6 @@
     )
   )
 
-;; url-copy-file from EmacsWiki sometime randomly fails
-;; on GitHub Actions runner.
-;; But the reason has not been clarified. So added retry.
-;; See https://github.com/MinoruSekine/dotfiles/issues/200 for details.
-(defun my-url-copy-file (url
-                         newname
-                         ok-if-already-exists
-                         retry-times
-                         retry-interval-sec)
-  "URL-COPY-FILE wrapper to download URL to NEWNAME.
-Overwrite existing NEWNAME file when OK-IF-ALREADY-EXISTS is non-nil.
-If error occured in url-copyfile,
-retry RETRY-TIMES times with RETRY-INTERVAL-SEC sec interval."
-  (let* ((remaining-retry-count retry-times)
-         (is-url-copy-file-succeeded nil))
-    (while (and (> remaining-retry-count 0)
-                (not is-url-copy-file-succeeded))
-      (defconst is-url-copy-file-succeeded
-        (ignore-errors (url-copy-file url newname ok-if-already-exists)))
-      (setq remaining-retry-count (1- remaining-retry-count))
-      (when (not is-url-copy-file-succeeded)
-        (if (> remaining-retry-count 0)
-            (progn (display-warning
-                    'my-init
-                    (format
-                     "Downloading from %s failed. Retrying %s more time(s)"
-                     url remaining-retry-count))
-                   (sit-for retry-interval-sec))
-          (error "url-copy-file for %s failed even with %s times retry"
-                 url retry-times))))))
-
 (defun my-curl-copy-file (url
                           newname
                           ok-if-already-exists
@@ -166,6 +129,36 @@ and fallback to use my-url-copy-file if curl is unavailable on system.
 OK-IF-ALREADY-EXISTS, RETRY-TIMES, and RETRY-INTERVAL-SEC is only used
 when fallback to my-url-copy-file,
 and they will be ignored if using curl."
+  ;; url-copy-file from EmacsWiki sometime randomly fails
+  ;; on GitHub Actions runner.
+  ;; But the reason has not been clarified. So added retry.
+  ;; See https://github.com/MinoruSekine/dotfiles/issues/200 for details.
+  (defun my-url-copy-file (url
+                           newname
+                           ok-if-already-exists
+                           retry-times
+                           retry-interval-sec)
+    "URL-COPY-FILE wrapper to download URL to NEWNAME.
+Overwrite existing NEWNAME file when OK-IF-ALREADY-EXISTS is non-nil.
+If error occured in url-copyfile,
+retry RETRY-TIMES times with RETRY-INTERVAL-SEC sec interval."
+    (let* ((remaining-retry-count retry-times)
+           (is-url-copy-file-succeeded nil))
+      (while (and (> remaining-retry-count 0)
+                  (not is-url-copy-file-succeeded))
+        (defconst is-url-copy-file-succeeded
+          (ignore-errors (url-copy-file url newname ok-if-already-exists)))
+        (setq remaining-retry-count (1- remaining-retry-count))
+        (when (not is-url-copy-file-succeeded)
+          (if (> remaining-retry-count 0)
+              (progn (display-warning
+                      'my-init
+                      (format
+                       "Downloading from %s failed. Retrying %s more time(s)"
+                       url remaining-retry-count))
+                     (sit-for retry-interval-sec))
+            (error "url-copy-file for %s failed even with %s times retry"
+                   url retry-times))))))
   (defconst my-curl-path (executable-find "curl"))
   (if my-curl-path
       (progn (unless (file-exists-p newname)
@@ -195,17 +188,16 @@ and they will be ignored if using curl."
   (my-join-path (my-emacs-wiki-elisp-dir elisp-name)
                 (my-emacs-wiki-elisp-file-name elisp-name)))
 
-(defun my-emacs-wiki-elisp-url (elisp-name)
-  "URL for ELISP-NAME installed from Emacs Wiki."
-  (concat "https://www.emacswiki.org/emacs/download/"
-          (my-emacs-wiki-elisp-file-name elisp-name)))
-
 (defun my-emacs-wiki-is-elisp-installed (elisp-name)
   "Get ELISP-NAME form Emacs Wiki installed or not."
   (file-exists-p (my-emacs-wiki-elisp-path elisp-name)))
 
 (defun my-setup-elisp-from-emacs-wiki ()
   "Install missing elisp from Emacs Wiki and set `load-path`."
+  (defun my-emacs-wiki-elisp-url (elisp-name)
+    "URL for ELISP-NAME installed from Emacs Wiki."
+    (concat "https://www.emacswiki.org/emacs/download/"
+            (my-emacs-wiki-elisp-file-name elisp-name)))
   (defconst my-elisp-from-emacs-wiki '("tempbuf"))
   (defcustom my-init-emacs-wiki-download-error-level
     (if (getenv "GITHUB_WORKFLOW")
@@ -246,18 +238,17 @@ Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
                  (* 60 60 24 my-upgrade-interval-days)))
 (define-multisession-variable my-last-upgrade-time my-default-last-upgrade-time)
 
-(defun my-auto-upgrade-packages-interval-expired-p ()
-  "Return t if it is necessary to upgrade packages."
-  (defconst last-upgrade-time (multisession-value my-last-upgrade-time))
-  (defconst days-from-last-upgrade
-    (/ (time-convert (time-subtract (current-time) last-upgrade-time)
-                     'integer)
-       (* 60 60 24)))
-  (> days-from-last-upgrade my-upgrade-interval-days))
-
 (defun my-auto-upgrade-packages ()
   "Auto upgrade packages.
 This function works if interval expired, interactive, and network available."
+  (defun my-auto-upgrade-packages-interval-expired-p ()
+    "Return t if it is necessary to upgrade packages."
+    (defconst last-upgrade-time (multisession-value my-last-upgrade-time))
+    (defconst days-from-last-upgrade
+      (/ (time-convert (time-subtract (current-time) last-upgrade-time)
+                       'integer)
+         (* 60 60 24)))
+    (> days-from-last-upgrade my-upgrade-interval-days))
   (when (and (not noninteractive)
              (my-auto-upgrade-packages-interval-expired-p)
              (my-is-network-connection-available)
@@ -675,6 +666,11 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-init-el-byte-compile ()
   "Byte compile this file if newer than elc."
+  (defun my-update-byte-compile (el-path)
+    "Byte compile EL-PATH if it is newer than its .elc."
+    (defconst my-elc-path (my-get-elc-path el-path))
+    (if (file-newer-than-file-p el-path my-elc-path)
+        (byte-compile-file el-path)))
   (save-window-excursion
     (my-update-byte-compile my-init-el-path)))
 
