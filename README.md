@@ -1,6 +1,7 @@
 # dotfiles
 
-![](https://github.com/MinoruSekine/dotfiles/actions/workflows/ci.yml/badge.svg?branch=master )
+![](https://github.com/MinoruSekine/dotfiles/actions/workflows/Emacs.yml/badge.svg?branch=master )
+![](https://github.com/MinoruSekine/dotfiles/actions/workflows/shell.yml/badge.svg?branch=master )
 
 This repository includes:
 
