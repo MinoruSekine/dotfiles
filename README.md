@@ -20,6 +20,8 @@ This repository includes:
   - Official packages
   - MELPA
   - Emacs Wiki
+    - If `curl` exists on the system,
+	  use `curl` to download elisp files instead of `url-copy-file`
 - Periodic upgrade packages at exiting Emacs
 
 #### Configurations
