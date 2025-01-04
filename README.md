@@ -1,6 +1,7 @@
 # dotfiles
 
-![](https://github.com/MinoruSekine/dotfiles/actions/workflows/ci.yml/badge.svg?branch=master )
+![](https://github.com/MinoruSekine/dotfiles/actions/workflows/Emacs.yml/badge.svg?branch=master )
+![](https://github.com/MinoruSekine/dotfiles/actions/workflows/shell.yml/badge.svg?branch=master )
 
 This repository includes:
 
@@ -19,6 +20,8 @@ This repository includes:
   - Official packages
   - MELPA
   - Emacs Wiki
+    - If `curl` exists on the system,
+	  use `curl` to download elisp files instead of `url-copy-file`
 - Periodic upgrade packages at exiting Emacs
 
 #### Configurations
