@@ -34,9 +34,9 @@ runs:
       if: runner.os == 'Linux'
       shell: bash
       run: |
-        sudo add-apt-repository ppa:ubuntu-elisp/ppa
+        sudo add-apt-repository ppa:ubuntuhandbook1/emacs
         sudo apt update
-        sudo apt install --no-install-recommends emacs-snapshot
+        sudo apt install --no-install-recommends emacs emacs-common
 
     - name: Install Emacs (macOS)
       if: runner.os == 'macOS'
