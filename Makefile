@@ -25,7 +25,7 @@ testrun-emacs: .emacs.d/my-init.el
 	$(TESTRUN_EMACS_CMD)
 
 # Rules for shell script linter.
-DIRS_WHICH_HAVE_SH_FILES := .emacs.d .profile .github/workflows
+DIRS_WHICH_HAVE_SH_FILES := .emacs.d .profile
 SH_FILES := $(foreach dir, $(DIRS_WHICH_HAVE_SH_FILES), $(wildcard $(dir)/*.sh))
 SH_CHECK := $(addsuffix .shellcheck, $(SH_FILES))
 

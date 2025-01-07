@@ -31,11 +31,11 @@ jobs:
 
       - name: Check Emacs load-path
         shell: bash
-        run: ./.github/workflows/show_emacs_loadpath.sh
+        run: emacs -nw --batch --eval '(print load-path #'\''external-debugging-output)'
 
       - name: Check system-name by Emacs
         shell: bash
-        run: ./.github/workflows/show_emacs_system_name.sh
+        run: emacs -nw --batch --eval '(print (system-name) #'\''external-debugging-output)'
 
       - name: Test run
         shell: bash
