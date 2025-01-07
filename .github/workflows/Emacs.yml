@@ -29,11 +29,11 @@ jobs:
         shell: bash
         run: emacs --version
 
-      - name: Check load-path
+      - name: Check Emacs load-path
         shell: bash
         run: ./.github/workflows/show_emacs_loadpath.sh
 
-      - name: Check system-name
+      - name: Check system-name by Emacs
         shell: bash
         run: ./.github/workflows/show_emacs_system_name.sh
 
