@@ -299,6 +299,7 @@ This function works if interval expired, interactive, and network available."
     my-global-set-key-toggle-input-method
     my-backslash-key-setup
     my-javascript-setup
+    my-typescript-setup
     my-wakatime-setup
     my-magit-setup
     my-init-el-byte-compile))
@@ -736,6 +737,48 @@ This function works if interval expired, interactive, and network available."
   (add-hook 'js-mode-hook
             (lambda ()
               (setq indent-tabs-mode nil))))
+
+(defun my-typescript-setup ()
+  "Setup for TypeScript."
+  (use-package typescript-ts-mode
+    :mode (("\\.tsx\\'" . tsx-ts-mode)
+           ("\\.ts\\'" . tsx-ts-mode))
+    :config
+    (setq typescript-ts-mode-indent-offset 2))
+  (use-package treesit
+    :config
+    (setq treesit-font-lock-level 4))
+  (use-package treesit-auto
+    :ensure t
+    :init
+    (require 'treesit-auto)
+    (global-treesit-auto-mode)
+    :config
+    (setq treesit-auto-install t))
+  (use-package tree-sitter
+    :ensure t
+    :hook ((typescript-ts-mode . tree-sitter-hl-mode)
+           (tsx-ts-mode . tree-sitter-hl-mode))
+    :config
+    (global-tree-sitter-mode))
+  (use-package tree-sitter-langs
+    :ensure t
+    :after tree-sitter
+    :config
+    (tree-sitter-require 'tsx)
+    (add-to-list 'tree-sitter-major-mode-language-alist '(tsx-ts-mode . tsx)))
+  (use-package tide
+    :ensure t
+    :hook (tsx-ts-mode . setup-tide-mode)
+    :config
+    (defun setup-tide-mode ()
+      (interactive)
+      (tide-setup)
+      (flycheck-mode +1)
+      (setq flycheck-check-syntax-automatically '(save mode-enabled))
+      (eldoc-mode +1)
+      (tide-hl-identifier-mode +1))
+    (setq company-tooltip-align-annotations t)))
 
 (defun my-magit-setup ()
   "Setup for magit."
