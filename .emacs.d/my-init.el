@@ -533,7 +533,8 @@ This function works if interval expired, interactive, and network available."
   "Setup compilation mode."
   (custom-set-variables
    '(compilation-scroll-output t)
-   '(compile-command "time nice make -k -j ")))
+   '(compile-command "time nice make -k -j "))
+  (add-hook 'compilation-filter-hook 'ansi-color-compilation-filter))
 
 (defun my-font-lock-setup ()
   "Setup font-lock."
