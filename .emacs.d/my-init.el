@@ -284,6 +284,7 @@ This function works if interval expired, interactive, and network available."
     my-default-directory-to-home-setup
     my-completion-case-sensitivity-setup
     my-ede-and-semantic-mode-setup
+    my-editorconfig-mode-setup
     my-c++-mode-setup
     my-compilation-mode-setup
     my-rainbow-delimiters-mode-setup
@@ -510,6 +511,13 @@ This function works if interval expired, interactive, and network available."
   (global-semantic-highlight-func-mode)
   (run-hooks 'my-after-ede-setup-hook)
   )
+
+(defun my-editorconfig-mode-setup ()
+  "Setup for .editorconfig file."
+  (use-package editorconfig
+    :ensure t
+    :config
+    (editorconfig-mode 1)))
 
 (defun my-backup-directory-setup ()
   "Setup directories for backup files."
