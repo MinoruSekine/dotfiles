@@ -556,17 +556,17 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-rainbow-delimiters-mode-setup ()
   "Setup \"rainbow-delimiters-mode\"."
-  (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
-  (require 'cl-lib)
-  (require 'color)
-  (with-eval-after-load 'rainbow-delimiters
+  (use-package rainbow-delimiters
+    :ensure t
+    :requires (cl-lib color)
+    :hook (prog-mode . rainbow-delimiters-mode)
+    :config
     (cl-loop
      for index from 1 to rainbow-delimiters-max-face-count
      do
      (let ((face (intern (format "rainbow-delimiters-depth-%d-face"
                                  index))))
-       (cl-callf color-saturate-name (face-foreground face) 30))))
-  )
+       (cl-callf color-saturate-name (face-foreground face) 30)))))
 
 (defun my-flycheck-mode-setup ()
   "Setup flycheck mode."
