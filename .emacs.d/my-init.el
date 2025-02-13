@@ -60,8 +60,7 @@
 
 (defun my-install-missing-packages ()
   "Install missing packages."
-  (defvar my-packages '(beacon
-                        color-identifiers-mode
+  (defvar my-packages '(color-identifiers-mode
                         color-moccur
                         elisp-lint
                         flycheck
@@ -338,14 +337,15 @@ This function works if interval expired, interactive, and network available."
    '(show-paren-style 'mixed)
    '(show-paren-when-point-inside-paren t)
    '(show-paren-when-point-in-periphery t))
-  (require 'beacon)
-  (beacon-mode t)
-  (custom-set-variables
-   '(beacon-color "yellow")
-   '(beacon-blink-duration 0.1))
-  (custom-set-variables
-   '(blink-cursor-blinks 0))  ;; 0 means "blink ever".
   (highlight-doxygen-global-mode 1)
+  (use-package beacon
+    :ensure t
+    :custom
+    (beacon-color "yellow")
+    (beacon-blink-duration 0.1)
+    (blink-cursor-blinks 0)  ;; 0 means "blink ever".
+    :config
+    (beacon-mode t))
   )
 
 (defun my-general-mode-line-setup ()
