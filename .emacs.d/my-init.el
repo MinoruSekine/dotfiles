@@ -502,16 +502,18 @@ This function works if interval expired, interactive, and network available."
   (custom-set-variables
    '(semantic-idle-work-parse-neighboring-files-flag t))
   (global-ede-mode t)
-  (require 'semantic)
-  (semantic-mode 1)
-  (when (file-directory-p "/usr/local/include/")
-    (semantic-add-system-include "/usr/local/include/" 'c-mode)
-    (semantic-add-system-include "/usr/local/include/" 'c++-mode))
-  (global-semantic-idle-scheduler-mode 1)
-  (global-semantic-idle-completions-mode 1)
-  (global-semantic-idle-summary-mode 1)
-  (global-semantic-highlight-func-mode)
-  (run-hooks 'my-after-ede-setup-hook)
+  (use-package semantic
+    :ensure t
+    :config
+    (semantic-mode 1)
+    (when (file-directory-p "/usr/local/include/")
+      (semantic-add-system-include "/usr/local/include/" 'c-mode)
+      (semantic-add-system-include "/usr/local/include/" 'c++-mode))
+    (global-semantic-idle-scheduler-mode 1)
+    (global-semantic-idle-completions-mode 1)
+    (global-semantic-idle-summary-mode 1)
+    (global-semantic-highlight-func-mode)
+    (run-hooks 'my-after-ede-setup-hook))
   )
 
 (defun my-editorconfig-mode-setup ()
