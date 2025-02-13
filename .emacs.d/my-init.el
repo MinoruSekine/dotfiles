@@ -485,9 +485,11 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-emacs-server-setup ()
   "Setup Emacs server."
-  (require 'server)
-  (unless (server-running-p)
-    (server-start))
+  (use-package server
+    :ensure t
+    :config
+    (unless (server-running-p)
+      (server-start)))
   )
 
 (defcustom my-after-ede-setup-hook nil
