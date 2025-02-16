@@ -60,8 +60,7 @@
 
 (defun my-install-missing-packages ()
   "Install missing packages."
-  (defvar my-packages '(beacon
-                        color-identifiers-mode
+  (defvar my-packages '(color-identifiers-mode
                         color-moccur
                         elisp-lint
                         flycheck
@@ -338,14 +337,15 @@ This function works if interval expired, interactive, and network available."
    '(show-paren-style 'mixed)
    '(show-paren-when-point-inside-paren t)
    '(show-paren-when-point-in-periphery t))
-  (require 'beacon)
-  (beacon-mode t)
-  (custom-set-variables
-   '(beacon-color "yellow")
-   '(beacon-blink-duration 0.1))
-  (custom-set-variables
-   '(blink-cursor-blinks 0))  ;; 0 means "blink ever".
   (highlight-doxygen-global-mode 1)
+  (use-package beacon
+    :ensure t
+    :custom
+    (beacon-color "yellow")
+    (beacon-blink-duration 0.1)
+    (blink-cursor-blinks 0)  ;; 0 means "blink ever".
+    :config
+    (beacon-mode t))
   )
 
 (defun my-general-mode-line-setup ()
@@ -485,9 +485,11 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-emacs-server-setup ()
   "Setup Emacs server."
-  (require 'server)
-  (unless (server-running-p)
-    (server-start))
+  (use-package server
+    :ensure t
+    :config
+    (unless (server-running-p)
+      (server-start)))
   )
 
 (defcustom my-after-ede-setup-hook nil
@@ -500,16 +502,18 @@ This function works if interval expired, interactive, and network available."
   (custom-set-variables
    '(semantic-idle-work-parse-neighboring-files-flag t))
   (global-ede-mode t)
-  (require 'semantic)
-  (semantic-mode 1)
-  (when (file-directory-p "/usr/local/include/")
-    (semantic-add-system-include "/usr/local/include/" 'c-mode)
-    (semantic-add-system-include "/usr/local/include/" 'c++-mode))
-  (global-semantic-idle-scheduler-mode 1)
-  (global-semantic-idle-completions-mode 1)
-  (global-semantic-idle-summary-mode 1)
-  (global-semantic-highlight-func-mode)
-  (run-hooks 'my-after-ede-setup-hook)
+  (use-package semantic
+    :ensure t
+    :config
+    (semantic-mode 1)
+    (when (file-directory-p "/usr/local/include/")
+      (semantic-add-system-include "/usr/local/include/" 'c-mode)
+      (semantic-add-system-include "/usr/local/include/" 'c++-mode))
+    (global-semantic-idle-scheduler-mode 1)
+    (global-semantic-idle-completions-mode 1)
+    (global-semantic-idle-summary-mode 1)
+    (global-semantic-highlight-func-mode)
+    (run-hooks 'my-after-ede-setup-hook))
   )
 
 (defun my-editorconfig-mode-setup ()
@@ -552,17 +556,17 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-rainbow-delimiters-mode-setup ()
   "Setup \"rainbow-delimiters-mode\"."
-  (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
-  (require 'cl-lib)
-  (require 'color)
-  (with-eval-after-load 'rainbow-delimiters
+  (use-package rainbow-delimiters
+    :ensure t
+    :requires (cl-lib color)
+    :hook (prog-mode . rainbow-delimiters-mode)
+    :config
     (cl-loop
      for index from 1 to rainbow-delimiters-max-face-count
      do
      (let ((face (intern (format "rainbow-delimiters-depth-%d-face"
                                  index))))
-       (cl-callf color-saturate-name (face-foreground face) 30))))
-  )
+       (cl-callf color-saturate-name (face-foreground face) 30)))))
 
 (defun my-flycheck-mode-setup ()
   "Setup flycheck mode."
