@@ -36,6 +36,7 @@ This repository includes:
 - Emacs server
 - Mode line
 - Sharing configuration for both GUI and CUI Emacs
+- Support .editorconfig file
 
 #### Configurations for modes
 
