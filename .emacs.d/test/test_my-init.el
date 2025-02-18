@@ -27,7 +27,4 @@
   (should (string= ".elc"
                    (file-name-extension my-test-elc-path t))))
 
-
-
-
 ;;
