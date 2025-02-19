@@ -811,4 +811,5 @@ This function works if interval expired, interactive, and network available."
         (if (file-directory-p my-semanticdb-update-dir-entry)
             (my-semanticdb-update-for-directory my-semanticdb-update-dir-entry)
           (semanticdb-file-table-object my-semanticdb-update-dir-entry))))))
+
 ;;; my-init.el ends here
