@@ -27,9 +27,9 @@
   (should (string= ".elc"
                    (file-name-extension my-test-elc-path t))))
 
-(ert-deftest my-is-network-connection-available-test ()
-  (defconst my-is-network-connection-available-result
-    (my-is-network-connection-available))
-  (should (or (equal my-is-network-connection-available-result t)
-              (equal my-is-network-connection-available-result nil))))
+(ert-deftest my-network-connection-available-test-p ()
+  (defconst my-network-connection-available-result-p
+    (my-network-connection-available-p))
+  (should (or (equal my-network-connection-available-result-p t)
+              (equal my-network-connection-available-result-p nil))))
 ;;

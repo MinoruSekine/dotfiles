@@ -44,7 +44,7 @@
   (dolist (itr my-list)
     (add-hook hook-to-add itr)))
 
-(defun my-is-network-connection-available ()
+(defun my-network-connection-available-p ()
   "Get network connection is available or not."
   ;; The local loop back device may always be included
   ;; in return of network-interface-list.
@@ -187,7 +187,7 @@ retry RETRY-TIMES times with RETRY-INTERVAL-SEC sec interval."
   (my-join-path (my-emacs-wiki-elisp-dir elisp-name)
                 (my-emacs-wiki-elisp-file-name elisp-name)))
 
-(defsubst my-emacs-wiki-is-elisp-installed (elisp-name)
+(defsubst my-emacs-wiki-elisp-installed-p (elisp-name)
   "Get ELISP-NAME form Emacs Wiki installed or not."
   (file-exists-p (my-emacs-wiki-elisp-path elisp-name)))
 
@@ -210,7 +210,7 @@ Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
     :group 'my-init)
   (dolist (p my-elisp-from-emacs-wiki)
     (defconst this-elisp-dir (my-emacs-wiki-elisp-dir p))
-    (unless (my-emacs-wiki-is-elisp-installed p)
+    (unless (my-emacs-wiki-elisp-installed-p p)
       (defconst this-elisp-file (my-emacs-wiki-elisp-path p))
       (unless (file-directory-p this-elisp-dir)
         (make-directory this-elisp-dir t))
@@ -250,7 +250,7 @@ This function works if interval expired, interactive, and network available."
     (> days-from-last-upgrade my-upgrade-interval-days))
   (when (and (not noninteractive)
              (my-auto-upgrade-packages-interval-expired-p)
-             (my-is-network-connection-available)
+             (my-network-connection-available-p)
              (y-or-n-p "Upgrade packages now?"))
     (package-initialize)
     (package-refresh-contents)
@@ -259,7 +259,7 @@ This function works if interval expired, interactive, and network available."
           (current-time))))
 
 ;;; Main processes.
-(if (my-is-network-connection-available)
+(if (my-network-connection-available-p)
     (progn (my-install-missing-packages)
            (my-setup-elisp-from-emacs-wiki))
   (display-warning 'my-init "Network connection may not be available."))
@@ -395,7 +395,7 @@ This function works if interval expired, interactive, and network available."
   "Get DPI of display."
   (/ (my-get-display-pixel-width) (my-get-display-inch-width)))
 
-(defun my-is-enabled-adjust-font-size-setup ()
+(defun my-enabled-adjust-font-size-setup-p ()
   "Indicated necessary to adjust font size."
   ;; NTEmacs seems to natively support high DPI awareness.
   (and (not (equal system-type 'windows-nt))
@@ -404,7 +404,7 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-get-font-zoom-ratio-for-display ()
   "Get font zoom ratio for display."
-  (if (my-is-enabled-adjust-font-size-setup)
+  (if (my-enabled-adjust-font-size-setup-p)
       (max (/ (my-get-display-dpi) 72) 1)
     1))
 
@@ -670,7 +670,7 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-tempbuf-mode-setup ()
   "Setup tempbuf-mode."
-  (if (my-emacs-wiki-is-elisp-installed "tempbuf")
+  (if (my-emacs-wiki-elisp-installed-p "tempbuf")
       (progn (require 'tempbuf)
              (custom-set-variables '(tempbuf-kill-message nil)
                                    '(tempbuf-minimum-timeout 300))
@@ -712,7 +712,7 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-adjust-font-size-setup ()
   "Set up hooks to adjust font size when necessary."
-  (when (my-is-enabled-adjust-font-size-setup)
+  (when (my-enabled-adjust-font-size-setup-p)
     (add-function :after after-focus-change-function #'my-adjust-font-size)
     (add-function :after after-focus-change-function #'my-adjust-font-size)))
 
