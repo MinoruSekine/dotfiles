@@ -65,6 +65,7 @@ This repository includes:
 ### `.profile/keychain_init.sh`
 
 - Initialize `keychain` for ssh
+  - For `keychain` command, not for Keychain on macOS
 
 # Use settings for Emacs
 
