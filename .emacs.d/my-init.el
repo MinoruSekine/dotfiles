@@ -579,46 +579,45 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-mocuur-setup ()
   "Setup moccur."
-  (with-eval-after-load 'color-moccur
+  (use-package color-moccur
+    :ensure t
+    :config
     (add-to-list 'dmoccur-exclusion-mask "\\.o$")
     (add-to-list 'dmoccur-exclusion-mask "\\.[a-z]?obj$")
     (add-to-list 'dmoccur-exclusion-mask "\\..?pch\\(\\.[a-z]+\\)?$")
-    (add-to-list 'dmoccur-exclusion-mask "\\.p?db$")
-    )
-  )
+    (add-to-list 'dmoccur-exclusion-mask "\\.p?db$")))
 
 (defun my-plantuml-mode-setup ()
   "Setup \"plantuml-mode\"."
-  (add-to-list 'auto-mode-alist '("\\.pu\\'" . plantuml-mode))
-  (add-to-list 'auto-mode-alist '("\\.puml\\'" . plantuml-mode))
-  (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
-  ;; To avoid "No Java runtime present, requesting install." message
-  ;; even if installed OpenJDK by brew.
-  (when (equal system-type 'darwin)
-    (defconst java-path-installed-by-brew
-      "/usr/local/opt/openjdk/bin/java")
-    (when (executable-find java-path-installed-by-brew)
-      (setq plantuml-java-command java-path-installed-by-brew)))
-  (defconst my-plantuml-jar-path (my-get-default-plantuml-jar-path)
-    "Path of plantuml.jar.")
-  (when (file-exists-p my-plantuml-jar-path)
-    (setq plantuml-jar-path my-plantuml-jar-path))
-  (setq plantuml-default-exec-mode 'jar)
-  (with-eval-after-load 'plantuml
+  (use-package plantuml-mode
+    :ensure t
+    :mode ("\\.pu\\'" "\\.puml\\'" "\\.plantuml\\'")
+    :custom
+    (plantuml-default-exec-mode 'jar)
+    (plantuml-options "-charset UTF-8")
+    (plantuml-output-type "png")
+    (plantuml-indent-level 2)
+    (plantuml-indent-regexp-activate-start
+     "^\s*\\(activate\s+.+\\|[^\\+]+\\+\\+.*\\)$")
+    (plantuml-indent-regexp-activate-end
+     "^\s*\\(deactivate\s+.+\\|return\\(\s+.+\\)?\\)$")
+    :config
+    (when (equal system-type 'darwin)
+      (defconst java-path-installed-by-brew
+        "/usr/local/opt/openjdk/bin/java")
+      (when (executable-find java-path-installed-by-brew)
+        (setq plantuml-java-command java-path-installed-by-brew)))
+    (defconst my-plantuml-jar-path (my-get-default-plantuml-jar-path)
+      "Path of plantuml.jar.")
+    (when (file-exists-p my-plantuml-jar-path)
+      (setq plantuml-jar-path my-plantuml-jar-path))
+    ;; To avoid "No Java runtime present, requesting install." message
+    ;; even if installed OpenJDK by brew.
     (setq plantuml-java-args
-          (delete "-Djava.awt.headless=true" plantuml-java-args)))
-  (setq plantuml-options "-charset UTF-8")
-  (setq plantuml-output-type "png")
-  (setq plantuml-indent-level 2)
-  (setq plantuml-indent-regexp-activate-start
-        "^\s*\\(activate\s+.+\\|[^\\+]+\\+\\+.*\\)$")
-  (setq plantuml-indent-regexp-activate-end
-        "^\s*\\(deactivate\s+.+\\|return\\(\s+.+\\)?\\)$")
-  (add-hook 'plantuml-mode-hook
-            (lambda ()
-              (setq indent-tabs-mode nil)))
-
-  )
+          (delete "-Djava.awt.headless=true" plantuml-java-args))
+    (add-hook 'plantuml-mode-hook
+              (lambda ()
+                (setq indent-tabs-mode nil)))))
 
 (defun my-dired-setup ()
   "Setup DIRED."
