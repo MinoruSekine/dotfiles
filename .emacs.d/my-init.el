@@ -693,7 +693,7 @@ This function works if interval expired, interactive, and network available."
   (when (package-installed-p 'realgud-lldb)
     (require 'realgud-lldb)))
 
-(defun my-ssh-key-exists-p ()
+(defsubst my-ssh-key-exists-p ()
   "Check current user's ssh key(s) exists or not."
   (and (file-directory-p "~/.ssh")
        (file-expand-wildcards "~/.ssh/*.pub")))
