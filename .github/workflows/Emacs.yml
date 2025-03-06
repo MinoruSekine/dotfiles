@@ -61,10 +61,6 @@ jobs:
         shell: bash
         run: make -k -j elisp-lint-all
 
-      - name: Unit tests for Emacs Lisp
-        shell: bash
-        run: make -k -j test
-
   UnitTests:
     name: Unit tests
 
