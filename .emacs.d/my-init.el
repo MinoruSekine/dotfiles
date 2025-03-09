@@ -657,8 +657,7 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-eshell-setup ()
   "Setup eshell."
-  (with-eval-after-load 'eshell
-    (require 'em-term)
+  (with-eval-after-load 'em-term
     ;;; It is extra necessary to disable pager if you need.
     (add-to-list 'eshell-visual-subcommands
                  '("git" "diff" "help" "log" "show")))
