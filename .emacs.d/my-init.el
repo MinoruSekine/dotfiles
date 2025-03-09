@@ -157,7 +157,6 @@ Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
       (package-install 'gnu-elpa-keyring-update)
       (setq package-check-signature prev-package-check-signature)))
 
-  (require 'cl)
   (defconst my-not-yet-installed-packages
     (cl-remove-if (lambda (p) (package-installed-p p))
                   my-packages))
