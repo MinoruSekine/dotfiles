@@ -54,6 +54,10 @@
   "Join FILE-NAME string into DIR with right path delimiter."
   (concat (file-name-as-directory dir) file-name))
 
+(defsubst my-get-file-size (file-path)
+  "Get size of FILE-PATH."
+  (nth 7 (file-attributes file-path)))
+
 (defun my-get-elc-path (el-path)
   "Get .elc path from .el path specified by EL-PATH."
   (concat (file-name-sans-extension el-path) ".elc"))
@@ -76,7 +80,8 @@
 
 (defsubst my-emacs-wiki-elisp-installed-p (elisp-name)
   "Get ELISP-NAME form Emacs Wiki installed or not."
-  (file-exists-p (my-emacs-wiki-elisp-path elisp-name)))
+  (defconst elisp-path (my-emacs-wiki-elisp-path elisp-name))
+  (and (file-exists-p elisp-path) (> (my-get-file-size elisp-path) 0)))
 
 (defun my-setup-elisp-from-emacs-wiki ()
   "Install missing elisp from Emacs Wiki and set `load-path`."
