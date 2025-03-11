@@ -54,10 +54,68 @@
   "Join FILE-NAME string into DIR with right path delimiter."
   (concat (file-name-as-directory dir) file-name))
 
+(defsubst my-get-file-size (file-path)
+  "Get size of FILE-PATH."
+  (nth 7 (file-attributes file-path)))
+
 (defun my-get-elc-path (el-path)
   "Get .elc path from .el path specified by EL-PATH."
   (concat (file-name-sans-extension el-path) ".elc"))
 
+(defsubst my-emacs-wiki-elisp-file-name (elisp-name)
+  "Filename of ELISP-NAME installed from Emacs Wiki."
+  (concat elisp-name ".el"))
+
+(defsubst my-emacs-wiki-elisp-dir (elisp-name)
+  "Directory for ELISP-NAME installed from Emacs Wiki."
+  (defconst my-emacs-wiki-elisp-dir-root
+    (expand-file-name "~/.emacs.d/emacs-wiki")
+    "Path to install elisps from Emacs Wiki.")
+  (my-join-path my-emacs-wiki-elisp-dir-root elisp-name))
+
+(defsubst my-emacs-wiki-elisp-path (elisp-name)
+  "Path for ELISP-NAME installed from Emacs Wiki."
+  (my-join-path (my-emacs-wiki-elisp-dir elisp-name)
+                (my-emacs-wiki-elisp-file-name elisp-name)))
+
+(defsubst my-emacs-wiki-elisp-installed-p (elisp-name)
+  "Get ELISP-NAME form Emacs Wiki installed or not."
+  (defconst elisp-path (my-emacs-wiki-elisp-path elisp-name))
+  (and (file-exists-p elisp-path) (> (my-get-file-size elisp-path) 0)))
+
+(defun my-setup-elisp-from-emacs-wiki ()
+  "Install missing elisp from Emacs Wiki and set `load-path`."
+  (defsubst my-emacs-wiki-elisp-url (elisp-name)
+    "URL for ELISP-NAME installed from Emacs Wiki."
+    (concat "https://www.emacswiki.org/emacs/download/"
+            (my-emacs-wiki-elisp-file-name elisp-name)))
+  (defconst my-elisp-from-emacs-wiki '("tempbuf"))
+  (defcustom my-init-emacs-wiki-download-error-level
+    (if (getenv "GITHUB_WORKFLOW")
+        :warning
+      :error)
+    "If non-nil, ignore error while downloading from Emacs Wiki.
+On GitHub Actions workflow, t is default.
+On other environments nil is default.
+Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
+    :type 'boolean
+    :group 'my-init)
+  (dolist (p my-elisp-from-emacs-wiki)
+    (defconst this-elisp-dir (my-emacs-wiki-elisp-dir p))
+    (unless (my-emacs-wiki-elisp-installed-p p)
+      (defconst this-elisp-file (my-emacs-wiki-elisp-path p))
+      (unless (file-directory-p this-elisp-dir)
+        (make-directory this-elisp-dir t))
+      (if (= (my-curl-copy-file
+              (my-emacs-wiki-elisp-url p) this-elisp-file t 4 8)
+             0)
+          (byte-compile-file this-elisp-file)
+        (lwarn 'my-init
+               my-init-emacs-wiki-download-error-level
+               "Downloading %s by `curl` is failed" p)))
+    (add-to-list 'load-path this-elisp-dir)))
+
+;; Functions for my-init.el.
 (defun my-install-missing-packages ()
   "Install missing packages."
   (defvar my-packages '(color-identifiers-mode
@@ -99,7 +157,6 @@
       (package-install 'gnu-elpa-keyring-update)
       (setq package-check-signature prev-package-check-signature)))
 
-  (require 'cl)
   (defconst my-not-yet-installed-packages
     (cl-remove-if (lambda (p) (package-installed-p p))
                   my-packages))
@@ -170,65 +227,6 @@ retry RETRY-TIMES times with RETRY-INTERVAL-SEC sec interval."
     (message "curl not found. Fall back to url-copy-file to download %s." url)
     (my-url-copy-file
      url newname ok-if-already-exists retry-times retry-interval-sec)))
-
-(defsubst my-emacs-wiki-elisp-file-name (elisp-name)
-  "Filename of ELISP-NAME installed from Emacs Wiki."
-  (concat elisp-name ".el"))
-
-(defsubst my-emacs-wiki-elisp-dir (elisp-name)
-  "Directory for ELISP-NAME installed from Emacs Wiki."
-  (defconst my-emacs-wiki-elisp-dir-root
-    (expand-file-name "~/.emacs.d/emacs-wiki")
-    "Path to install elisps from Emacs Wiki.")
-  (my-join-path my-emacs-wiki-elisp-dir-root elisp-name))
-
-(defsubst my-emacs-wiki-elisp-path (elisp-name)
-  "Path for ELISP-NAME installed from Emacs Wiki."
-  (my-join-path (my-emacs-wiki-elisp-dir elisp-name)
-                (my-emacs-wiki-elisp-file-name elisp-name)))
-
-(defsubst my-emacs-wiki-elisp-installed-p (elisp-name)
-  "Get ELISP-NAME form Emacs Wiki installed or not."
-  (file-exists-p (my-emacs-wiki-elisp-path elisp-name)))
-
-(defun my-setup-elisp-from-emacs-wiki ()
-  "Install missing elisp from Emacs Wiki and set `load-path`."
-  (defsubst my-emacs-wiki-elisp-url (elisp-name)
-    "URL for ELISP-NAME installed from Emacs Wiki."
-    (concat "https://www.emacswiki.org/emacs/download/"
-            (my-emacs-wiki-elisp-file-name elisp-name)))
-  (defconst my-elisp-from-emacs-wiki '("tempbuf"))
-  (defcustom my-init-emacs-wiki-download-error-level
-    (if (getenv "GITHUB_WORKFLOW")
-        :warning
-      :error)
-    "If non-nil, ignore error while downloading from Emacs Wiki.
-On GitHub Actions workflow, t is default.
-On other environments nil is default.
-Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
-    :type 'boolean
-    :group 'my-init)
-  (dolist (p my-elisp-from-emacs-wiki)
-    (defconst this-elisp-dir (my-emacs-wiki-elisp-dir p))
-    (unless (my-emacs-wiki-elisp-installed-p p)
-      (defconst this-elisp-file (my-emacs-wiki-elisp-path p))
-      (unless (file-directory-p this-elisp-dir)
-        (make-directory this-elisp-dir t))
-      (if (= (my-curl-copy-file
-              (my-emacs-wiki-elisp-url p) this-elisp-file t 4 8)
-             0)
-          (byte-compile-file this-elisp-file)
-        (lwarn 'my-init
-               my-init-emacs-wiki-download-error-level
-               "Downloading %s by `curl` is failed" p)))
-    (add-to-list 'load-path this-elisp-dir)))
-
-(defun my-gc-setup ()
-  "Settings for garbage collection."
-  (custom-set-variables
-   '(gc-cons-threshold (* 256 1024 1024))
-   '(garbage-collection-messages t))
-  (run-with-idle-timer 120 nil #'garbage-collect))
 
 ;;; Functions for auto upgrade packages.
 (defconst my-upgrade-interval-days 7)
@@ -311,6 +309,13 @@ This function works if interval expired, interactive, and network available."
 (my-add-hooks 'kill-emacs-hook my-kill-emacs-func-list)
 
 ;;; Functions for initializing Emacs.
+(defun my-gc-setup ()
+  "Settings for garbage collection."
+  (custom-set-variables
+   '(gc-cons-threshold (* 256 1024 1024))
+   '(garbage-collection-messages t))
+  (run-with-idle-timer 120 nil #'garbage-collect))
+
 (defun my-environment-variable-setup ()
   "Set up environment variables."
   ;;; Pager in Emacs (eshell, terms, ...)
@@ -652,8 +657,7 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-eshell-setup ()
   "Setup eshell."
-  (with-eval-after-load 'eshell
-    (require 'em-term)
+  (with-eval-after-load 'em-term
     ;;; It is extra necessary to disable pager if you need.
     (add-to-list 'eshell-visual-subcommands
                  '("git" "diff" "help" "log" "show")))
