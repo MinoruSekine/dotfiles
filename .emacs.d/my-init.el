@@ -693,8 +693,9 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-realgud-setup ()
   "Setup realgud."
-  (when (package-installed-p 'realgud-lldb)
-    (require 'realgud-lldb)))
+  (when (and (executable-find "lldb") (package-installed-p 'realgud-lldb))
+    (use-package realgud-lldb
+      :ensure t)))
 
 (defsubst my-ssh-key-exists-p ()
   "Check current user's ssh key(s) exists or not."
