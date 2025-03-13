@@ -130,10 +130,10 @@ Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
                         plantuml-mode
                         powershell
                         rainbow-delimiters
-                        ;; realgud
+                        realgud
                         yaml-mode))
-  ;; (when (executable-find "lldb")
-  ;;   (add-to-list 'my-packages 'realgud-lldb))
+  (when (executable-find "lldb")
+    (add-to-list 'my-packages 'realgud-lldb))
   (when (executable-find "wakatime-cli")
     (add-to-list 'my-packages 'wakatime-mode))
   (when (equal system-type 'windows-nt)
@@ -292,7 +292,7 @@ This function works if interval expired, interactive, and network available."
     my-eshell-setup
     my-emacs-lisp-mode-setup
     my-tempbuf-mode-setup
-    ;; my-realgud-setup
+    my-realgud-setup
     my-ssh-agency-setup
     my-global-set-key-toggle-input-method
     my-backslash-key-setup
@@ -693,8 +693,9 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-realgud-setup ()
   "Setup realgud."
-  (when (package-installed-p 'realgud-lldb)
-    (require 'realgud-lldb)))
+  (when (and (executable-find "lldb") (package-installed-p 'realgud-lldb))
+    (use-package realgud-lldb
+      :ensure t)))
 
 (defsubst my-ssh-key-exists-p ()
   "Check current user's ssh key(s) exists or not."
