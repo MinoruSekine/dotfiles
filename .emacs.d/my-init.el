@@ -300,6 +300,7 @@ This function works if interval expired, interactive, and network available."
     my-typescript-setup
     my-wakatime-setup
     my-magit-setup
+    my-whitespace-mode-setup
     my-init-el-byte-compile))
 (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list)
 
@@ -476,13 +477,6 @@ This function works if interval expired, interactive, and network available."
                  . objc-mode))
   (add-to-list 'auto-mode-alist '("\\.h\\'" . c-mode))
   (add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode))
-  (font-lock-add-keywords
-   'c++-mode
-   '(("^[^\n]\\{80\\}\\(.*\\)$" 1 font-lock-warning-face prepend)))
-  (font-lock-add-keywords 'c++-mode
-                          '(("[ \t]+$" . 'trailing-whitespace)))
-  (font-lock-add-keywords 'c-mode
-                          '(("[ \t]+$" . 'trailing-whitespace)))
   (add-hook 'c++-mode-hook
             (lambda ()
               (setq indent-tabs-mode nil)))
@@ -802,6 +796,22 @@ This function works if interval expired, interactive, and network available."
   (delete 'Git vc-handled-backends)
   (custom-set-variables
    '(magit-refresh-status-buffer nil)))
+
+(defun my-disable-whitespace-mode-if-non-file ()
+  "Disable whitespace mode if current buffer is not file."
+  (unless buffer-file-name
+    (whitespace-mode -1)))
+
+(defun my-whitespace-mode-setup ()
+  "Setup for whitespace mode."
+  (use-package whitespace
+    :ensure t
+    :custom
+    (whitespace-style '(face trailing tabs))
+    :config
+    (global-whitespace-mode)
+    :hook
+    (after-change-major-mode . my-disable-whitespace-mode-if-non-file)))
 
 ;; Utility functions for users.
 (defun my-semanticdb-update-for-directory (dir-path)
