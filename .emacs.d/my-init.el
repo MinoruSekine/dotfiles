@@ -452,35 +452,30 @@ This function works if interval expired, interactive, and network available."
   (my-after-make-frame-func (selected-frame))
   )
 
+(defun my-switch-mode-for-header-file ()
+  "Switch to detailed mode for .h files."
+  (save-excursion
+    (goto-char (point-min))
+    (let ((objc-found-p
+           (re-search-forward
+            "\\_<@\\(interface\\|implementation\\)"
+            magic-mode-regexp-match-limit t))
+          (c++-found-p
+           (re-search-forward
+            "\\_<\\(namespace\\|template\\|class\\|std::\\)"
+            magic-mode-regexp-match-limit t)))
+      (cond
+       ((and objc-found-p c++-found-p) (objc++-mode))
+       (objc-found-p (objc-mode))
+       (c++-found-p (c++-mode))
+       (t (c-mode))))))
+
 (defun my-c++-mode-setup ()
   "Setup c++ mode."
-  (defsubst my-c++-keyword-match-function ()
-    "Find C++ keyword(s)."
-    (re-search-forward
-     "\\<\\(class\\|constexpr\\|namespace\\|template\\|auto\\)\\>"
-     magic-mode-regexp-match-limit t))
-  (add-to-list 'magic-mode-alist
-               `(,(lambda ()
-                    (and (string= (file-name-extension buffer-file-name) "h")
-                         (my-c++-keyword-match-function)))
-                 . c++-mode))
-  (add-to-list 'magic-fallback-mode-alist
-               `(,(lambda ()
-                    (my-c++-keyword-match-function))
-                 . c++-mode))
-  (add-to-list 'magic-mode-alist
-               `(,(lambda ()
-                    (and (string= (file-name-extension buffer-file-name) "h")
-                         (re-search-forward
-                          "@\\<\\(implementation\\|interface\\|protocol\\)\\>"
-                          magic-mode-regexp-match-limit t)))
-                 . objc-mode))
-  (add-to-list 'auto-mode-alist '("\\.h\\'" . c-mode))
-  (add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode))
-  (add-hook 'c++-mode-hook
-            (lambda ()
-              (setq indent-tabs-mode nil)))
-  )
+  (use-package cc-mode
+    :ensure t
+    :mode (("\\.h\\'" . my-switch-mode-for-header-file)
+           ("\\.mm\\'" . objc++-mode))))
 
 (defun my-emacs-server-setup ()
   "Setup Emacs server."
