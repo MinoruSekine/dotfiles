@@ -280,6 +280,7 @@ This function works if interval expired, interactive, and network available."
     my-backup-directory-setup
     my-default-directory-to-home-setup
     my-completion-case-sensitivity-setup
+    my-indent-tabs-mode-for-file-without-hard-tab
     my-ede-and-semantic-mode-setup
     my-editorconfig-mode-setup
     my-c++-mode-setup
@@ -510,6 +511,30 @@ This function works if interval expired, interactive, and network available."
     (run-hooks 'my-after-ede-setup-hook))
   )
 
+(defun my-indent-tabs-mode-for-file-without-hard-tab ()
+  "Set INDENT-TABS-MODE as nil for files without hard tab."
+  (defun my-set-indent-tabs-mode ()
+    "Disable INDENT-TABS-MODE when .editorconfig is unavailable (PROPS is nil)
+ and existing file includes no hard tab."
+    (defsubst my-buffer-contains-hard-tab-p (bytes-to-check)
+      "Return first BYTES-TO-CHECK bytes of current buffer
+ containing hard tab or not."
+      (save-restriction
+        (widen)
+        (save-excursion
+          (goto-char (point-min))
+          (let ((limit (min (point-max) bytes-to-check)))
+            (re-search-forward "\t" limit t)))))
+    (defconst my-hard-tab-check-bytes 16384)
+    (when (and buffer-file-name
+               (not (and (fboundp 'editorconfig-core-get-properties)
+                         (editorconfig-core-get-properties)))
+               (or (not (file-exists-p buffer-file-name))
+                   (not (my-buffer-contains-hard-tab-p
+                         my-hard-tab-check-bytes))))
+      (setq indent-tabs-mode nil)))
+  (add-hook 'find-file-hook #'my-set-indent-tabs-mode))
+
 (defun my-editorconfig-mode-setup ()
   "Setup for .editorconfig file."
   (use-package editorconfig
@@ -608,10 +633,7 @@ This function works if interval expired, interactive, and network available."
     ;; To avoid "No Java runtime present, requesting install." message
     ;; even if installed OpenJDK by brew.
     (setq plantuml-java-args
-          (delete "-Djava.awt.headless=true" plantuml-java-args))
-    (add-hook 'plantuml-mode-hook
-              (lambda ()
-                (setq indent-tabs-mode nil)))))
+          (delete "-Djava.awt.headless=true" plantuml-java-args))))
 
 (defun my-dired-setup ()
   "Setup DIRED."
@@ -655,10 +677,7 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-emacs-lisp-mode-setup ()
   "Setup Emacs Lisp mode."
-  (add-hook 'emacs-lisp-mode-hook
-            (lambda ()
-              (setq indent-tabs-mode nil)))
-  )
+  nil)
 
 (defun my-tempbuf-mode-setup ()
   "Setup tempbuf-mode."
@@ -739,10 +758,7 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-javascript-setup ()
   "Setup for JavaScript."
-  (custom-set-variables '(js-indent-level 2))
-  (add-hook 'js-mode-hook
-            (lambda ()
-              (setq indent-tabs-mode nil))))
+  (custom-set-variables '(js-indent-level 2)))
 
 (defun my-typescript-setup ()
   "Setup for TypeScript."
