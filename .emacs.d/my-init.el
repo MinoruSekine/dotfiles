@@ -772,10 +772,8 @@ This function works if interval expired, interactive, and network available."
     (setq treesit-font-lock-level 4))
   (use-package treesit-auto
     :ensure t
-    :init
-    (require 'treesit-auto)
-    (global-treesit-auto-mode)
     :config
+    (global-treesit-auto-mode)
     (setq treesit-auto-install t))
   (use-package tree-sitter
     :ensure t
