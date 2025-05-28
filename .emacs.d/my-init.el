@@ -126,6 +126,7 @@ Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
                         highlight-doxygen
                         magit
                         markdown-mode
+                        minions
                         package-utils
                         plantuml-mode
                         powershell
@@ -365,7 +366,10 @@ This function works if interval expired, interactive, and network available."
   (add-hook 'emacs-lisp-mode-hook
             (lambda ()
               (setq mode-name "Elisp")))
-  )
+  (use-package minions
+    :ensure t
+    :config
+    (minions-mode)))
 
 (defun my-after-make-frame-func (frame)
   "Called just after making each frame with FRAME as made frame."
@@ -825,7 +829,7 @@ This function works if interval expired, interactive, and network available."
 ;; Utility functions for users.
 (defun my-semanticdb-update-for-directory (dir-path)
   "Update semanticdb for files under specified DIR-PATH."
-  (interactive "DDirectory which has files for updating semanticdb: ")
+  (interactive "Directory which has files for updating semanticdb: ")
   (let* ((my-semanticdb-update-dir-entries
           (cl-remove-if (lambda (str) (string-match str "\.\.?"))
                         (directory-files dir-path))))
