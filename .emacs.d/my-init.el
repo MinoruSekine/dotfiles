@@ -1,4 +1,4 @@
-;;; my-init.el --- My Emacs initialization codes.
+;;; my-init.el --- My Emacs initialization codes. -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 
