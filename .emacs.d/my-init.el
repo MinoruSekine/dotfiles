@@ -17,15 +17,22 @@
 (defun my-get-default-plantuml-jar-path ()
   "Get path to plantuml.jar on running environment."
   (cond ((equal system-type 'darwin)
-         (substring (shell-command-to-string
-                     (mapconcat
-                      #'shell-quote-argument
-                      (list
-                       "echo"
-                       "/usr/local/Cellar/plantuml/*/libexec/plantuml.jar")
-                      " "))
-                    0
-                    -1))
+         (let* ((my-plantuml-executable-installed-by-homebrew-path
+                 (executable-find "plantuml")))
+           (when my-plantuml-executable-installed-by-homebrew-path
+             (let* ((my-plantuml-jar-wildcard
+                     (string-replace
+                      "/bin/plantuml"
+                      "/Cellar/plantuml/*/libexec/plantuml.jar"
+                      my-plantuml-executable-installed-by-homebrew-path)))
+               (substring (shell-command-to-string
+                           (combine-and-quote-strings
+                            (list
+                             "echo"
+                             my-plantuml-jar-wildcard)
+                            " "))
+                          0
+                          -1)))))
         ((equal system-type 'windows-nt)
          (expand-file-name (replace-regexp-in-string
                             "plantuml.\\(cmd\\|jar\\)\n"
