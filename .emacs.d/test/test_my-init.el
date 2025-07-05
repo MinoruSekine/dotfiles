@@ -6,8 +6,9 @@
 (load-file (concat parent-dir "my-init.el"))
 
 (ert-deftest my-get-default-plantuml-jar-path-test ()
-  (when (executable-find "plantuml")
-    (should (< 0 (length (my-get-default-plantuml-jar-path))))))
+  (if (executable-find "plantuml")
+      (should (< 0 (length (my-get-default-plantuml-jar-path))))
+    (should (not (my-get-default-plantuml-jar-path)))))
 
 (ert-deftest my-join-path-test ()
   (defconst my-test-dir "/foo")

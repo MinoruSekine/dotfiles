@@ -16,35 +16,41 @@
 ;; Internal helper functions.
 (defun my-get-default-plantuml-jar-path ()
   "Get path to plantuml.jar on running environment."
-  (cond ((equal system-type 'darwin)
-         (let* ((my-plantuml-executable-installed-by-homebrew-path
-                 (executable-find "plantuml")))
-           (when my-plantuml-executable-installed-by-homebrew-path
-             (let* ((my-plantuml-jar-wildcard
-                     (string-replace
-                      "/bin/plantuml"
-                      "/Cellar/plantuml/*/libexec/plantuml.jar"
-                      my-plantuml-executable-installed-by-homebrew-path)))
-               (substring (shell-command-to-string
-                           (combine-and-quote-strings
-                            (list
-                             "echo"
-                             my-plantuml-jar-wildcard)
-                            " "))
-                          0
-                          -1)))))
-        ((equal system-type 'windows-nt)
-         (expand-file-name (replace-regexp-in-string
-                            "plantuml.\\(cmd\\|jar\\)\n"
-                            "plantuml.jar"
-                            (shell-command-to-string
-                             (mapconcat
-                              #'shell-quote-argument
-                              (list "scoop" "which" "plantuml")
-                              " ")))))
-        ((equal system-type 'gnu/linux)
-         "/usr/share/plantuml/plantuml.jar")
-        ))
+  (let* ((my-plantuml-jar-path
+          (cond ((equal system-type 'darwin)
+                 (let* ((my-plantuml-executable-installed-by-homebrew-path
+                         (executable-find "plantuml")))
+                   (when my-plantuml-executable-installed-by-homebrew-path
+                     (let*
+                         ((my-plantuml-jar-wildcard
+                           (string-replace
+                            "/bin/plantuml"
+                            "/Cellar/plantuml/*/libexec/plantuml.jar"
+                            my-plantuml-executable-installed-by-homebrew-path)))
+                       (substring (shell-command-to-string
+                                   (combine-and-quote-strings
+                                    (list
+                                     "echo"
+                                     my-plantuml-jar-wildcard)
+                                    " "))
+                                  0
+                                  -1)))))
+                ((equal system-type 'windows-nt)
+                 (expand-file-name (replace-regexp-in-string
+                                    "plantuml.\\(cmd\\|jar\\)\n"
+                                    "plantuml.jar"
+                                    (shell-command-to-string
+                                     (mapconcat
+                                      #'shell-quote-argument
+                                      (list "scoop" "which" "plantuml")
+                                      " ")))))
+                ((equal system-type 'gnu/linux)
+                 "/usr/share/plantuml/plantuml.jar")
+                )))
+    (if (and my-plantuml-jar-path
+             (file-readable-p my-plantuml-jar-path))
+        my-plantuml-jar-path
+      nil)))
 
 (defun my-add-hooks (hook-to-add my-list)
   "Add each function in MY-LIST into HOOK-TO-ADD ."
