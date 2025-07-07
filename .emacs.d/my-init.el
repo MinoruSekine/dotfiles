@@ -550,7 +550,8 @@ This function works if interval expired, interactive, and network available."
                    (not (my-buffer-contains-hard-tab-p
                          my-hard-tab-check-bytes))))
       (setq indent-tabs-mode nil)))
-  (add-hook 'find-file-hook #'my-set-indent-tabs-mode))
+  (add-hook 'find-file-hook #'my-set-indent-tabs-mode)
+  (add-hook 'after-change-major-mode-hook #'my-set-indent-tabs-mode))
 
 (defun my-editorconfig-mode-setup ()
   "Setup for .editorconfig file."
