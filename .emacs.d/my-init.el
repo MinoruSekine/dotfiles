@@ -746,8 +746,9 @@ This function works if interval expired, interactive, and network available."
     (add-function :after after-focus-change-function #'my-adjust-font-size)
     (add-function :after after-focus-change-function #'my-adjust-font-size)))
 
-;; Add "Accesibility" privilege to Emacs and /usr/bin/osascript
-;; in order to use this function.
+;; To use this function,
+;; add "Accesibility" and "Automation (System Events)" privilege
+;; in "System configurtion - Privacy and Security" to Emacs
 (defun my-toggle-input-method-darwin ()
   "Toggle macOS input method by sending key stroke via AppleScript."
   (interactive)
