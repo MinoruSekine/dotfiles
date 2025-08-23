@@ -782,8 +782,7 @@ This function works if interval expired, interactive, and network available."
 (defun my-typescript-setup ()
   "Setup for TypeScript."
   (use-package typescript-ts-mode
-    :mode (("\\.tsx\\'" . tsx-ts-mode)
-           ("\\.ts\\'" . tsx-ts-mode))
+    :mode (("\\.ts[x]?\\'" . tsx-ts-mode))
     :config
     (setq typescript-ts-mode-indent-offset 2))
   (use-package treesit
