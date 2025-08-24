@@ -783,32 +783,24 @@ This function works if interval expired, interactive, and network available."
   "Setup for TypeScript."
   (use-package typescript-ts-mode
     :mode (("\\.tsx\\'" . tsx-ts-mode)
-           ("\\.ts\\'" . tsx-ts-mode))
+           ("\\.ts\\'" . typescript-ts-mode))
     :config
     (setq typescript-ts-mode-indent-offset 2))
   (use-package treesit
     :config
-    (setq treesit-font-lock-level 4))
+    (setq treesit-font-lock-level 4)
+    (setq treesit-major-mode-language-alist
+          '((typescript-ts-mode . typescript)
+            (tsx-ts-mode        . tsx))))
   (use-package treesit-auto
     :ensure t
     :config
     (global-treesit-auto-mode)
     (setq treesit-auto-install t))
-  (use-package tree-sitter
-    :ensure t
-    :hook ((typescript-ts-mode . tree-sitter-hl-mode)
-           (tsx-ts-mode . tree-sitter-hl-mode))
-    :config
-    (global-tree-sitter-mode))
-  (use-package tree-sitter-langs
-    :ensure t
-    :after tree-sitter
-    :config
-    (tree-sitter-require 'tsx)
-    (add-to-list 'tree-sitter-major-mode-language-alist '(tsx-ts-mode . tsx)))
   (use-package tide
     :ensure t
-    :hook (tsx-ts-mode . setup-tide-mode)
+    :hook ((typescript-ts-mode . setup-tide-mode)
+           (tsx-ts-mode        . setup-tide-mode))
     :config
     (defun setup-tide-mode ()
       (interactive)
