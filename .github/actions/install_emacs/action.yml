@@ -14,9 +14,6 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Checkout for composite action
-      uses: actions/checkout@v4
-
     - name: Create cache seed file
       if: runner.os == 'Windows'
       shell: bash
