@@ -37,6 +37,7 @@ This repository includes:
 - Mode line
 - Sharing configuration for both GUI and CUI Emacs
 - Support .editorconfig file
+- Tab configuration for files without tabs
 
 #### Configurations for modes
 
@@ -51,6 +52,8 @@ This repository includes:
 - plantuml-mode
 - rainbow-delimiters-mode
 - tempbuf-mode
+- treesit
+- whitespace-mode
 
 ### `supplemental/windows/emacsdaemon.bat`
 
