@@ -50,7 +50,7 @@ This repository includes:
 - moccur
 - plantuml-mode
 - rainbow-delimiters-mode
-- tempbuf-mdoe
+- tempbuf-mode
 
 ### `supplemental/windows/emacsdaemon.bat`
 
