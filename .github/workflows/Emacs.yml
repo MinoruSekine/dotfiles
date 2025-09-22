@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest, macos-13]
+        os: [ubuntu-latest, windows-latest, macOS-latest]
 
     runs-on: ${{ matrix.os }}
 
@@ -72,8 +72,6 @@ jobs:
           - os: windows-latest
             pkg_install_cmd: scoop install
           - os: macOS-latest
-            pkg_install_cmd: brew install
-          - os: macOS-13
             pkg_install_cmd: brew install
 
     runs-on: ${{ matrix.os }}
