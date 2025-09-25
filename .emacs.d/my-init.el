@@ -316,6 +316,7 @@ This function works if interval expired, interactive, and network available."
     my-wakatime-setup
     my-magit-setup
     my-whitespace-mode-setup
+    my-html-setup
     my-init-el-byte-compile))
 (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list)
 
@@ -832,6 +833,10 @@ This function works if interval expired, interactive, and network available."
     (global-whitespace-mode)
     :hook
     (after-change-major-mode . my-disable-whitespace-mode-if-non-file)))
+
+(defun my-html-setup ()
+  "Setup for HTML files."
+  (add-hook 'html-ts-mode-hook (lambda () (semantic-mode -1))))
 
 ;; Utility functions for users.
 (defun my-semanticdb-update-for-directory (dir-path)
