@@ -20,7 +20,7 @@ test-elisp: $(TESTS_TARGET_ELISP)
 elisp-lint-all: .emacs.d/my-init.el
 	.emacs.d/elisp-lint.sh "$(realpath $+)"
 
-TESTRUN_EMACS_CMD=$(EMACS_CMD) -nw --batch --eval '(setq debug-on-error t)' --eval "(setq my-default-install-missing-packages t)" -l $(realpath $+) -f kill-emacs
+TESTRUN_EMACS_CMD=$(EMACS_CMD) -nw --batch --eval '(setq debug-on-error t)' --eval '(setq package-check-signature nil)'  --eval "(setq my-default-install-missing-packages t)" -l $(realpath $+) -f kill-emacs
 testrun-emacs: .emacs.d/my-init.el
 	$(TESTRUN_EMACS_CMD)
 
