@@ -6,7 +6,7 @@ inputs:
     default: './.github/workflows/cache_seed_file_for_scoop.txt'
   cache_version:
     required: true
-    default: v1
+    default: v2
   to_cache_dir:
     required: true
     default: '~/scoop'
@@ -45,7 +45,7 @@ runs:
         brew install --cask emacs-app
 
     - name: Install scoop (Windows)
-      uses: MinoruSekine/setup-scoop@v4.0.1
+      uses: MinoruSekine/setup-scoop@v4.0.2
       if: runner.os == 'Windows' && steps.restore_cache.outputs.cache-hit != 'true'
       with:
         install_scoop: 'true'
@@ -53,21 +53,16 @@ runs:
         scoop_update: 'true'
         scoop_checkup: 'false'
         update_path: 'true'
+        apps: extras/emacs
 
     - name: Setup scoop PATH (Windows)
-      uses: MinoruSekine/setup-scoop@v4.0.1
+      uses: MinoruSekine/setup-scoop@v4.0.2
       if: runner.os == 'Windows' && steps.restore_cache.outputs.cache-hit == 'true'
       with:
         install_scoop: 'false'
         scoop_update: 'false'
         scoop_checkup: 'false'
         update_path: 'true'
-
-    - name: Install Emacs (Windows)
-      if: runner.os == 'Windows' && steps.restore_cache.outputs.cache-hit != 'true'
-      shell: pwsh
-      run: |
-        scoop install emacs
 
     - name: Clear scoop cache (Windows)
       if: runner.os == 'Windows' && steps.restore_cache.outputs.cache-hit != 'true'
