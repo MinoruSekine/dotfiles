@@ -700,13 +700,16 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-tempbuf-mode-setup ()
   "Setup tempbuf-mode."
-  (if (my-emacs-wiki-elisp-installed-p "tempbuf")
-      (progn (require 'tempbuf)
-             (custom-set-variables '(tempbuf-kill-message nil)
-                                   '(tempbuf-minimum-timeout 300))
-             (add-hook 'dired-mode-hook 'turn-on-tempbuf-mode)
-             (add-hook 'magit-mode-hook 'turn-on-tempbuf-mode))
-    (warn "Skipped configurations for tempbuf because not found.")))
+  (use-package tempbuf
+    :ensure nil
+    :if (locate-library "tempbuf")
+    :demand t
+    :custom
+    (tempbuf-kill-message nil)
+    (tempbuf-minimum-timeout 300)
+    :hook
+    (dired-mode . turn-on-tempbuf-mode)
+    (magit-mode . turn-on-tempbuf-mode)))
 
 (defun my-init-el-byte-compile ()
   "Byte compile this file if newer than elc."
