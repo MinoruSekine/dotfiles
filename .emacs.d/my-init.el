@@ -94,6 +94,9 @@
 (defsubst my-emacs-wiki-elisp-installed-p (elisp-name)
   "Get ELISP-NAME form Emacs Wiki installed or not."
   (defconst elisp-path (my-emacs-wiki-elisp-path elisp-name))
+  ;; This implementation can't be replaced with locate-library,
+  ;; because this function will be called before setting up load-path
+  ;; and locate-library refers load-path.
   (and (file-exists-p elisp-path) (> (my-get-file-size elisp-path) 0)))
 
 (defun my-setup-elisp-from-emacs-wiki ()
