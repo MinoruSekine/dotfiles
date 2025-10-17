@@ -9,9 +9,9 @@
 ;;; Unit tests of functions in my-init.el.
 (require 'ert)
 
-(defconst this-file (or load-file-name buffer-file-name))
-(defconst this-dir (file-name-directory this-file))
-(defconst parent-dir (file-name-directory (directory-file-name this-dir)))
+(defconst my-init-el-test-this-file (or load-file-name buffer-file-name))
+(defconst my-init-el-test-this-dir (file-name-directory my-init-el-test-this-file))
+(defconst parent-dir (file-name-directory (directory-file-name my-init-el-test-this-dir)))
 (load-file (concat parent-dir "my-init.el"))
 
 (ert-deftest my-get-default-plantuml-jar-path-test ()
@@ -45,6 +45,6 @@
               (equal my-network-connection-available-result-p nil))))
 
 (ert-deftest my-get-file-size-test ()
-  (should (> (my-get-file-size this-file) 0)))
+  (should (> (my-get-file-size my-init-el-test-this-file) 0)))
 
 ;;; test_my-init.el ends here.
