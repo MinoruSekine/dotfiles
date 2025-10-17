@@ -1,4 +1,4 @@
-;;; test_my-init.el --- My Emacs initialization codes. -*- lexical-binding: t; -*-
+;;; test_my-init.el --- My Emacs initialization codes. -*- no-byte-compile: t; -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 
