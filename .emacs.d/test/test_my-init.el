@@ -1,3 +1,11 @@
+;;; test_my-init.el --- My Emacs initialization codes. -*- lexical-binding: t; -*-
+
+;;; Commentary:
+
+;; This file includes unit tests for utility functions in my-init.el.
+
+;;; Code:
+
 ;;; Unit tests of functions in my-init.el.
 (require 'ert)
 
@@ -34,4 +42,5 @@
     (my-network-connection-available-p))
   (should (or (equal my-network-connection-available-result-p t)
               (equal my-network-connection-available-result-p nil))))
-;;
+
+;;; test_my-init.el ends here.
