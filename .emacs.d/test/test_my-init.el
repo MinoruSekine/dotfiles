@@ -1,8 +1,17 @@
+;;; test_my-init.el --- My Emacs initialization codes. -*- no-byte-compile: t; -*- lexical-binding: t; -*-
+
+;;; Commentary:
+
+;; This file includes unit tests for utility functions in my-init.el.
+
+;;; Code:
+
 ;;; Unit tests of functions in my-init.el.
 (require 'ert)
 
-(defconst this-dir (file-name-directory (or load-file-name buffer-file-name)))
-(defconst parent-dir (file-name-directory (directory-file-name this-dir)))
+(defconst my-init-el-test-this-file (or load-file-name buffer-file-name))
+(defconst my-init-el-test-this-dir (file-name-directory my-init-el-test-this-file))
+(defconst parent-dir (file-name-directory (directory-file-name my-init-el-test-this-dir)))
 (load-file (concat parent-dir "my-init.el"))
 
 (ert-deftest my-get-default-plantuml-jar-path-test ()
@@ -34,4 +43,8 @@
     (my-network-connection-available-p))
   (should (or (equal my-network-connection-available-result-p t)
               (equal my-network-connection-available-result-p nil))))
-;;
+
+(ert-deftest my-get-file-size-test ()
+  (should (> (my-get-file-size my-init-el-test-this-file) 0)))
+
+;;; test_my-init.el ends here.
