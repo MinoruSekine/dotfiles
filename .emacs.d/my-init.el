@@ -319,13 +319,11 @@ This function works if interval expired, interactive, and network available."
     my-wakatime-setup
     my-magit-setup
     my-whitespace-mode-setup
-    my-html-setup
-    my-init-el-byte-compile))
+    my-html-setup))
 (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list)
 
 (defconst my-kill-emacs-func-list
-  '(my-auto-upgrade-packages
-    my-init-el-byte-compile))
+  '(my-auto-upgrade-packages))
 (my-add-hooks 'kill-emacs-hook my-kill-emacs-func-list)
 
 ;;; Functions for initializing Emacs.
@@ -703,27 +701,16 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-tempbuf-mode-setup ()
   "Setup tempbuf-mode."
-  (when (my-emacs-wiki-elisp-installed-p "tempbuf")
-    (eval
-     '(use-package tempbuf
-        :ensure nil
-        :demand t
-        :custom
-        (tempbuf-kill-message nil)
-        (tempbuf-minimum-timeout 300)
-        :hook
-        (dired-mode . turn-on-tempbuf-mode)
-        (magit-mode . turn-on-tempbuf-mode)))))
-
-(defun my-init-el-byte-compile ()
-  "Byte compile this file if newer than elc."
-  (defsubst my-update-byte-compile (el-path)
-    "Byte compile EL-PATH if it is newer than its .elc."
-    (defconst my-elc-path (my-get-elc-path el-path))
-    (if (file-newer-than-file-p el-path my-elc-path)
-        (byte-compile-file el-path)))
-  (save-window-excursion
-    (my-update-byte-compile my-init-el-path)))
+  (use-package tempbuf
+    :ensure nil
+    :if (locate-library "tempbuf")
+    :demand t
+    :custom
+    (tempbuf-kill-message nil)
+    (tempbuf-minimum-timeout 300)
+    :hook
+    (dired-mode . turn-on-tempbuf-mode)
+    (magit-mode . turn-on-tempbuf-mode)))
 
 (defun my-realgud-setup ()
   "Setup realgud."
