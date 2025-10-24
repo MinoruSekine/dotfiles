@@ -360,7 +360,8 @@ This function works if interval expired, interactive, and network available."
    '(show-paren-style 'mixed)
    '(show-paren-when-point-inside-paren t)
    '(show-paren-when-point-in-periphery t))
-  (highlight-doxygen-global-mode 1)
+  (use-package highlight-doxygen
+    :hook ((c-mode c++-mode java-mode python-mode) . highlight-doxygen-mode))
   (use-package beacon
     :ensure t
     :custom
