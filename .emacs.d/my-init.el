@@ -81,8 +81,13 @@
 
 (defsubst my-emacs-wiki-elisp-dir (elisp-name)
   "Directory for ELISP-NAME installed from Emacs Wiki."
+  (defconst my-user-emacs-directory
+    (if user-emacs-directory
+        user-emacs-directory
+      "~/.emacs.d")
+    "Use-emacs-directory, but ~/.emacs.d if not set.")
   (defconst my-emacs-wiki-elisp-dir-root
-    (expand-file-name "~/.emacs.d/emacs-wiki")
+    (expand-file-name (my-join-path my-user-emacs-directory "emacs-wiki"))
     "Path to install elisps from Emacs Wiki.")
   (my-join-path my-emacs-wiki-elisp-dir-root elisp-name))
 
