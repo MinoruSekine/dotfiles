@@ -81,15 +81,14 @@
 
 (defsubst my-emacs-wiki-elisp-dir (elisp-name)
   "Directory for ELISP-NAME installed from Emacs Wiki."
-  (defconst my-user-emacs-directory
-    (if user-emacs-directory
-        user-emacs-directory
-      "~/.emacs.d")
-    "Use-emacs-directory, but ~/.emacs.d if not set.")
-  (defconst my-emacs-wiki-elisp-dir-root
-    (expand-file-name (my-join-path my-user-emacs-directory "emacs-wiki"))
-    "Path to install elisps from Emacs Wiki.")
-  (my-join-path my-emacs-wiki-elisp-dir-root elisp-name))
+  (let* ((my-user-emacs-directory
+          (if user-emacs-directory
+              user-emacs-directory
+            "~/.emacs.d"))
+         (my-emacs-wiki-elisp-dir-root
+          (expand-file-name
+           (my-join-path my-user-emacs-directory "emacs-wiki"))))
+    (my-join-path my-emacs-wiki-elisp-dir-root elisp-name)))
 
 (defsubst my-emacs-wiki-elisp-path (elisp-name)
   "Path for ELISP-NAME installed from Emacs Wiki."
@@ -98,11 +97,8 @@
 
 (defsubst my-emacs-wiki-elisp-installed-p (elisp-name)
   "Get ELISP-NAME form Emacs Wiki installed or not."
-  (defconst elisp-path (my-emacs-wiki-elisp-path elisp-name))
-  ;; This implementation can't be replaced with locate-library,
-  ;; because this function will be called before setting up load-path
-  ;; and locate-library refers load-path.
-  (and (file-exists-p elisp-path) (> (my-get-file-size elisp-path) 0)))
+  (let* ((elisp-path (my-emacs-wiki-elisp-path elisp-name)))
+    (and (file-exists-p elisp-path) (> (my-get-file-size elisp-path) 0))))
 
 (defun my-setup-elisp-from-emacs-wiki ()
   "Install missing elisp from Emacs Wiki and set `load-path`."
@@ -110,31 +106,31 @@
     "URL for ELISP-NAME installed from Emacs Wiki."
     (concat "https://www.emacswiki.org/emacs/download/"
             (my-emacs-wiki-elisp-file-name elisp-name)))
-  (defconst my-elisp-from-emacs-wiki '("tempbuf"))
-  (defcustom my-init-emacs-wiki-download-error-level
-    (if (getenv "GITHUB_WORKFLOW")
-        :warning
-      :error)
-    "If non-nil, ignore error while downloading from Emacs Wiki.
+  (let* ((my-elisp-from-emacs-wiki '("tempbuf")))
+    (defcustom my-init-emacs-wiki-download-error-level
+      (if (getenv "GITHUB_WORKFLOW")
+          :warning
+        :error)
+      "If non-nil, ignore error while downloading from Emacs Wiki.
 On GitHub Actions workflow, t is default.
 On other environments nil is default.
 Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
-    :type 'boolean
-    :group 'my-init)
-  (dolist (p my-elisp-from-emacs-wiki)
-    (defconst this-elisp-dir (my-emacs-wiki-elisp-dir p))
-    (unless (my-emacs-wiki-elisp-installed-p p)
-      (defconst this-elisp-file (my-emacs-wiki-elisp-path p))
-      (unless (file-directory-p this-elisp-dir)
-        (make-directory this-elisp-dir t))
-      (if (= (my-curl-copy-file
-              (my-emacs-wiki-elisp-url p) this-elisp-file t 4 8)
-             0)
-          (byte-compile-file this-elisp-file)
-        (lwarn 'my-init
-               my-init-emacs-wiki-download-error-level
-               "Downloading %s by `curl` is failed" p)))
-    (add-to-list 'load-path this-elisp-dir)))
+      :type 'boolean
+      :group 'my-init)
+    (dolist (p my-elisp-from-emacs-wiki)
+      (let* ((this-elisp-dir (my-emacs-wiki-elisp-dir p)))
+        (unless (my-emacs-wiki-elisp-installed-p p)
+          (let* ((this-elisp-file (my-emacs-wiki-elisp-path p)))
+            (unless (file-directory-p this-elisp-dir)
+              (make-directory this-elisp-dir t))
+            (if (= (my-curl-copy-file
+                    (my-emacs-wiki-elisp-url p) this-elisp-file t 4 8)
+                   0)
+                (byte-compile-file this-elisp-file)
+              (lwarn 'my-init
+                     my-init-emacs-wiki-download-error-level
+                     "Downloading %s by `curl` is failed" p)))
+          (add-to-list 'load-path this-elisp-dir))))))
 
 ;; Functions for my-init.el.
 (defun my-install-missing-packages ()
@@ -179,22 +175,20 @@ Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
       (package-install 'gnu-elpa-keyring-update)
       (setq package-check-signature prev-package-check-signature)))
 
-  (defconst my-not-yet-installed-packages
-    (cl-remove-if (lambda (p) (package-installed-p p))
-                  my-packages))
+  (let* ((my-not-yet-installed-packages
+          (cl-remove-if (lambda (p) (package-installed-p p))
+                        my-packages)))
 
-  (when (and my-not-yet-installed-packages
-             (if (or noninteractive (and (fboundp 'daemonp) (daemonp)))
-                 (if (boundp 'my-default-install-missing-packages)
-                     my-default-install-missing-packages nil)
-               (y-or-n-p (concat "Install missing packages? : "
-                                 (format "%s"
-                                         my-not-yet-installed-packages)))))
-    (package-refresh-contents)
-    (dolist (p my-not-yet-installed-packages)
-      (package-install p))
-    )
-  )
+    (when (and my-not-yet-installed-packages
+               (if (or noninteractive (and (fboundp 'daemonp) (daemonp)))
+                   (if (boundp 'my-default-install-missing-packages)
+                       my-default-install-missing-packages nil)
+                 (y-or-n-p (concat "Install missing packages? : "
+                                   (format "%s"
+                                           my-not-yet-installed-packages)))))
+      (package-refresh-contents)
+      (dolist (p my-not-yet-installed-packages)
+        (package-install p)))))
 
 (defun my-curl-copy-file (url
                           newname
@@ -224,31 +218,36 @@ retry RETRY-TIMES times with RETRY-INTERVAL-SEC sec interval."
            (is-url-copy-file-succeeded nil))
       (while (and (> remaining-retry-count 0)
                   (not is-url-copy-file-succeeded))
-        (defconst is-url-copy-file-succeeded
-          (ignore-errors (url-copy-file url newname ok-if-already-exists)))
-        (setq remaining-retry-count (1- remaining-retry-count))
-        (when (not is-url-copy-file-succeeded)
-          (if (> remaining-retry-count 0)
-              (progn (display-warning
-                      'my-init
-                      (format
-                       "Downloading from %s failed. Retrying %s more time(s)"
-                       url remaining-retry-count))
-                     (sit-for retry-interval-sec))
-            (error "url-copy-file for %s failed even with %s times retry"
-                   url retry-times))))))
-  (defconst my-curl-path (executable-find "curl"))
-  (if my-curl-path
-      (progn (unless (file-exists-p newname)
-               (message "curl found. Download %s by curl." url)
-               (call-process-shell-command
-                (mapconcat
-                 #'shell-quote-argument
-                 (list "curl" "-f" "-s" "-o" newname url)
-                 " "))))
-    (message "curl not found. Fall back to url-copy-file to download %s." url)
-    (my-url-copy-file
-     url newname ok-if-already-exists retry-times retry-interval-sec)))
+        (let* ((is-url-copy-file-succeeded
+                (ignore-errors (url-copy-file
+                                url
+                                newname
+                                ok-if-already-exists))))
+          (setq remaining-retry-count (1- remaining-retry-count))
+          (when (not is-url-copy-file-succeeded)
+            (if (> remaining-retry-count 0)
+                (progn (display-warning
+                        'my-init
+                        (format
+                         "Downloading from %s failed."
+                         "Retrying %s more time(s)"
+                         url remaining-retry-count))
+                       (sit-for retry-interval-sec))
+              (error
+               "url-copy-file for %s failed even with %s times retry"
+               url retry-times)))))))
+  (let* ((my-curl-path (executable-find "curl")))
+    (if my-curl-path
+        (progn (unless (file-exists-p newname)
+                 (message "curl found. Download %s by curl." url)
+                 (call-process-shell-command
+                  (mapconcat
+                   #'shell-quote-argument
+                   (list "curl" "-f" "-s" "-o" newname url)
+                   " "))))
+      (message "curl not found. Fall back to url-copy-file to download %s." url)
+      (my-url-copy-file
+       url newname ok-if-already-exists retry-times retry-interval-sec))))
 
 ;;; Functions for auto upgrade packages.
 (defconst my-upgrade-interval-days 7)
@@ -262,12 +261,12 @@ retry RETRY-TIMES times with RETRY-INTERVAL-SEC sec interval."
 This function works if interval expired, interactive, and network available."
   (defsubst my-auto-upgrade-packages-interval-expired-p ()
     "Return t if it is necessary to upgrade packages."
-    (defconst last-upgrade-time (multisession-value my-last-upgrade-time))
-    (defconst days-from-last-upgrade
-      (/ (time-convert (time-subtract (current-time) last-upgrade-time)
-                       'integer)
-         (* 60 60 24)))
-    (> days-from-last-upgrade my-upgrade-interval-days))
+    (let* ((last-upgrade-time (multisession-value my-last-upgrade-time))
+           (days-from-last-upgrade
+            (/ (time-convert (time-subtract (current-time) last-upgrade-time)
+                             'integer)
+               (* 60 60 24))))
+      (> days-from-last-upgrade my-upgrade-interval-days)))
   (when (and (not noninteractive)
              (my-auto-upgrade-packages-interval-expired-p)
              (my-network-connection-available-p)
@@ -442,11 +441,11 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-adjust-font-size (&optional frame)
   "Adjust font size for current display which has FRAME."
-  (defconst my-default-face-height 100 "Default face height.")
-  (defconst my-adjusted-face-height (truncate
-                                     (* my-default-face-height
-                                        (my-get-font-zoom-ratio-for-display))))
-  (set-face-attribute 'default frame :height my-adjusted-face-height))
+  (let* ((my-default-face-height 100)
+         (my-adjusted-face-height (truncate
+                                   (* my-default-face-height
+                                      (my-get-font-zoom-ratio-for-display)))))
+    (set-face-attribute 'default frame :height my-adjusted-face-height)))
 
 (defun my-get-relative-frame-size-zoom-ratio ()
   "Get zoom ratio for frame size relative to display work area size."
@@ -550,14 +549,14 @@ This function works if interval expired, interactive, and network available."
           (goto-char (point-min))
           (let ((limit (min (point-max) bytes-to-check)))
             (re-search-forward "\t" limit t)))))
-    (defconst my-hard-tab-check-bytes 16384)
-    (when (and buffer-file-name
-               (not (and (fboundp 'editorconfig-core-get-properties)
-                         (editorconfig-core-get-properties)))
-               (or (not (file-exists-p buffer-file-name))
-                   (not (my-buffer-contains-hard-tab-p
-                         my-hard-tab-check-bytes))))
-      (setq indent-tabs-mode nil)))
+    (let* ((my-hard-tab-check-bytes 16384))
+      (when (and buffer-file-name
+                 (not (and (fboundp 'editorconfig-core-get-properties)
+                           (editorconfig-core-get-properties)))
+                 (or (not (file-exists-p buffer-file-name))
+                     (not (my-buffer-contains-hard-tab-p
+                           my-hard-tab-check-bytes))))
+        (setq indent-tabs-mode nil))))
   (add-hook 'find-file-hook #'my-set-indent-tabs-mode)
   (add-hook 'after-change-major-mode-hook #'my-set-indent-tabs-mode))
 
@@ -648,18 +647,18 @@ This function works if interval expired, interactive, and network available."
      "^\s*\\(deactivate\s+.+\\|return\\(\s+.+\\)?\\)$")
     :config
     (when (equal system-type 'darwin)
-      (defconst java-path-installed-by-brew
-        "/usr/local/opt/openjdk/bin/java")
-      (when (executable-find java-path-installed-by-brew)
-        (setq plantuml-java-command java-path-installed-by-brew)))
-    (defconst my-plantuml-jar-path (my-get-default-plantuml-jar-path)
-      "Path of plantuml.jar.")
-    (when (file-exists-p my-plantuml-jar-path)
-      (setq plantuml-jar-path my-plantuml-jar-path))
-    ;; To avoid "No Java runtime present, requesting install." message
-    ;; even if installed OpenJDK by brew.
-    (setq plantuml-java-args
-          (delete "-Djava.awt.headless=true" plantuml-java-args))))
+      (let* ((java-path-installed-by-brew
+              "/usr/local/opt/openjdk/bin/java"))
+        (when (executable-find java-path-installed-by-brew)
+          (setq plantuml-java-command java-path-installed-by-brew))))
+    (let* ((my-plantuml-jar-path (my-get-default-plantuml-jar-path)
+                                 "Path of plantuml.jar."))
+      (when (file-exists-p my-plantuml-jar-path)
+        (setq plantuml-jar-path my-plantuml-jar-path))
+      ;; To avoid "No Java runtime present, requesting install." message
+      ;; even if installed OpenJDK by brew.
+      (setq plantuml-java-args
+            (delete "-Djava.awt.headless=true" plantuml-java-args)))))
 
 (defun my-dired-setup ()
   "Setup DIRED."
