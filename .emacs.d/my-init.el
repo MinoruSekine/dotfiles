@@ -250,7 +250,10 @@ retry RETRY-TIMES times with RETRY-INTERVAL-SEC sec interval."
        url newname ok-if-already-exists retry-times retry-interval-sec))))
 
 ;;; Functions for auto upgrade packages.
-(defconst my-upgrade-interval-days 7)
+(defcustom my-upgrade-interval-days 7
+  "Interval num of days to notify upgrading packages installed by my-init.el."
+  :type 'integet
+  :group 'my-init)
 (defconst my-default-last-upgrade-time
   (time-subtract (current-time)
                  (* 60 60 24 my-upgrade-interval-days)))
