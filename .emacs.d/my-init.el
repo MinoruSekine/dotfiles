@@ -298,7 +298,6 @@ This function works if interval expired, interactive, and network available."
                                     ))
 (my-add-hooks 'after-init-hook my-after-init-func-list)
 
-(defconst my-init-el-path load-file-name)
 (defconst my-emacs-startup-func-list
   '(my-emacs-server-setup
     my-backup-directory-setup
