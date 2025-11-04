@@ -254,10 +254,11 @@ retry RETRY-TIMES times with RETRY-INTERVAL-SEC sec interval."
   "Interval num of days to notify upgrading packages installed by my-init.el."
   :type 'integet
   :group 'my-init)
-(defconst my-default-last-upgrade-time
-  (time-subtract (current-time)
-                 (* 60 60 24 my-upgrade-interval-days)))
-(define-multisession-variable my-last-upgrade-time my-default-last-upgrade-time)
+(let* ((my-default-last-upgrade-time (time-subtract
+                                      (current-time)
+                                      (* 60 60 24 my-upgrade-interval-days))))
+  (define-multisession-variable
+    my-last-upgrade-time my-default-last-upgrade-time))
 
 (defun my-auto-upgrade-packages ()
   "Auto upgrade packages.
@@ -286,51 +287,51 @@ This function works if interval expired, interactive, and network available."
            (my-setup-elisp-from-emacs-wiki))
   (display-warning 'my-init "Network connection may not be available."))
 
-(defconst my-after-init-func-list '(my-gc-setup
-                                    my-environment-variable-setup
-                                    my-language-setup
-                                    my-general-visibility-setup
-                                    my-gui-setup
-                                    my-general-mode-line-setup
-                                    my-font-lock-setup
-                                    my-color-identifiers-mode-setup
-                                    my-adjust-font-size-setup
-                                    ))
-(my-add-hooks 'after-init-hook my-after-init-func-list)
+(let* ((my-after-init-func-list '(my-gc-setup
+                                  my-environment-variable-setup
+                                  my-language-setup
+                                  my-general-visibility-setup
+                                  my-gui-setup
+                                  my-general-mode-line-setup
+                                  my-font-lock-setup
+                                  my-color-identifiers-mode-setup
+                                  my-adjust-font-size-setup
+                                  )))
+  (my-add-hooks 'after-init-hook my-after-init-func-list))
 
-(defconst my-emacs-startup-func-list
-  '(my-emacs-server-setup
-    my-backup-directory-setup
-    my-default-directory-to-home-setup
-    my-completion-case-sensitivity-setup
-    my-indent-tabs-mode-for-file-without-hard-tab
-    my-ede-and-semantic-mode-setup
-    my-editorconfig-mode-setup
-    my-c++-mode-setup
-    my-compilation-mode-setup
-    my-rainbow-delimiters-mode-setup
-    my-flycheck-mode-setup
-    my-mocuur-setup
-    my-plantuml-mode-setup
-    my-dired-setup
-    my-eshell-setup
-    my-emacs-lisp-mode-setup
-    my-tempbuf-mode-setup
-    my-realgud-setup
-    my-ssh-agency-setup
-    my-global-set-key-toggle-input-method
-    my-backslash-key-setup
-    my-javascript-setup
-    my-typescript-setup
-    my-wakatime-setup
-    my-magit-setup
-    my-whitespace-mode-setup
-    my-html-setup))
-(my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list)
+(let* ((my-emacs-startup-func-list
+        '(my-emacs-server-setup
+          my-backup-directory-setup
+          my-default-directory-to-home-setup
+          my-completion-case-sensitivity-setup
+          my-indent-tabs-mode-for-file-without-hard-tab
+          my-ede-and-semantic-mode-setup
+          my-editorconfig-mode-setup
+          my-c++-mode-setup
+          my-compilation-mode-setup
+          my-rainbow-delimiters-mode-setup
+          my-flycheck-mode-setup
+          my-mocuur-setup
+          my-plantuml-mode-setup
+          my-dired-setup
+          my-eshell-setup
+          my-emacs-lisp-mode-setup
+          my-tempbuf-mode-setup
+          my-realgud-setup
+          my-ssh-agency-setup
+          my-global-set-key-toggle-input-method
+          my-backslash-key-setup
+          my-javascript-setup
+          my-typescript-setup
+          my-wakatime-setup
+          my-magit-setup
+          my-whitespace-mode-setup
+          my-html-setup)))
+  (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list))
 
-(defconst my-kill-emacs-func-list
-  '(my-auto-upgrade-packages))
-(my-add-hooks 'kill-emacs-hook my-kill-emacs-func-list)
+(let* ((my-kill-emacs-func-list
+        '(my-auto-upgrade-packages)))
+  (my-add-hooks 'kill-emacs-hook my-kill-emacs-func-list))
 
 ;;; Functions for initializing Emacs.
 (defun my-gc-setup ()
