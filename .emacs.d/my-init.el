@@ -816,9 +816,14 @@ This function works if interval expired, interactive, and network available."
 
 (defun my-magit-setup ()
   "Setup for magit."
-  (delete 'Git vc-handled-backends)
-  (custom-set-variables
-   '(magit-refresh-status-buffer nil)))
+  (use-package magit
+    :ensure t
+    :defer t
+    :commands (magit-status)
+    :config
+    (delete 'Git vc-handled-backends)
+    (custom-set-variables
+     '(magit-refresh-status-buffer nil))))
 
 (defun my-disable-whitespace-mode-if-non-file ()
   "Disable whitespace mode if current buffer is not file."
