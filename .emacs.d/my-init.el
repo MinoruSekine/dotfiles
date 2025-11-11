@@ -541,8 +541,7 @@ This function works if interval expired, interactive, and network available."
   )
 
 (defsubst my-buffer-contains-hard-tab-p (bytes-to-check)
-  "Return first BYTES-TO-CHECK bytes of current buffer
-containing hard tab or not."
+  "Check hard tab(s) in first BYTES-TO-CHECK bytes of current buffer."
   (save-restriction
     (widen)
     (save-excursion
