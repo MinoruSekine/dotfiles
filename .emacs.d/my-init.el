@@ -100,12 +100,13 @@
   (let* ((elisp-path (my-emacs-wiki-elisp-path elisp-name)))
     (and (file-exists-p elisp-path) (> (my-get-file-size elisp-path) 0))))
 
+(defsubst my-emacs-wiki-elisp-url (elisp-name)
+  "URL for ELISP-NAME installed from Emacs Wiki."
+  (concat "https://www.emacswiki.org/emacs/download/"
+          (my-emacs-wiki-elisp-file-name elisp-name)))
+
 (defun my-setup-elisp-from-emacs-wiki ()
   "Install missing elisp from Emacs Wiki and set `load-path`."
-  (defsubst my-emacs-wiki-elisp-url (elisp-name)
-    "URL for ELISP-NAME installed from Emacs Wiki."
-    (concat "https://www.emacswiki.org/emacs/download/"
-            (my-emacs-wiki-elisp-file-name elisp-name)))
   (let* ((my-elisp-from-emacs-wiki '("tempbuf")))
     (defcustom my-init-emacs-wiki-download-error-level
       (if (getenv "GITHUB_WORKFLOW")
@@ -190,6 +191,41 @@ Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
       (dolist (p my-not-yet-installed-packages)
         (package-install p)))))
 
+;; url-copy-file from EmacsWiki sometime randomly fails
+;; on GitHub Actions runner.
+;; But the reason has not been clarified. So added retry.
+;; See https://github.com/MinoruSekine/dotfiles/issues/200 for details.
+(defsubst my-url-copy-file (url
+                            newname
+                            ok-if-already-exists
+                            retry-times
+                            retry-interval-sec)
+  "URL-COPY-FILE wrapper to download URL to NEWNAME.
+Overwrite existing NEWNAME file when OK-IF-ALREADY-EXISTS is non-nil.
+If error occured in url-copyfile,
+retry RETRY-TIMES times with RETRY-INTERVAL-SEC sec interval."
+  (let* ((remaining-retry-count retry-times)
+         (is-url-copy-file-succeeded nil))
+    (while (and (> remaining-retry-count 0)
+                (not is-url-copy-file-succeeded))
+      (let* ((is-url-copy-file-succeeded
+              (ignore-errors (url-copy-file
+                              url
+                              newname
+                              ok-if-already-exists))))
+        (setq remaining-retry-count (1- remaining-retry-count))
+        (when (not is-url-copy-file-succeeded)
+          (if (> remaining-retry-count 0)
+              (progn (display-warning
+                      'my-init
+                      (format
+                       "Downloading from %s failed. Retrying %s more time(s)"
+                       url remaining-retry-count))
+                     (sit-for retry-interval-sec))
+            (error
+             "url-copy-file for %s failed even with %s times retry"
+             url retry-times)))))))
+
 (defun my-curl-copy-file (url
                           newname
                           ok-if-already-exists
@@ -201,41 +237,6 @@ and fallback to use my-url-copy-file if curl is unavailable on system.
 OK-IF-ALREADY-EXISTS, RETRY-TIMES, and RETRY-INTERVAL-SEC is only used
 when fallback to my-url-copy-file,
 and they will be ignored if using curl."
-  ;; url-copy-file from EmacsWiki sometime randomly fails
-  ;; on GitHub Actions runner.
-  ;; But the reason has not been clarified. So added retry.
-  ;; See https://github.com/MinoruSekine/dotfiles/issues/200 for details.
-  (defsubst my-url-copy-file (url
-                              newname
-                              ok-if-already-exists
-                              retry-times
-                              retry-interval-sec)
-    "URL-COPY-FILE wrapper to download URL to NEWNAME.
-Overwrite existing NEWNAME file when OK-IF-ALREADY-EXISTS is non-nil.
-If error occured in url-copyfile,
-retry RETRY-TIMES times with RETRY-INTERVAL-SEC sec interval."
-    (let* ((remaining-retry-count retry-times)
-           (is-url-copy-file-succeeded nil))
-      (while (and (> remaining-retry-count 0)
-                  (not is-url-copy-file-succeeded))
-        (let* ((is-url-copy-file-succeeded
-                (ignore-errors (url-copy-file
-                                url
-                                newname
-                                ok-if-already-exists))))
-          (setq remaining-retry-count (1- remaining-retry-count))
-          (when (not is-url-copy-file-succeeded)
-            (if (> remaining-retry-count 0)
-                (progn (display-warning
-                        'my-init
-                        (format
-                         "Downloading from %s failed."
-                         "Retrying %s more time(s)"
-                         url remaining-retry-count))
-                       (sit-for retry-interval-sec))
-              (error
-               "url-copy-file for %s failed even with %s times retry"
-               url retry-times)))))))
   (let* ((my-curl-path (executable-find "curl")))
     (if my-curl-path
         (progn (unless (file-exists-p newname)
@@ -260,17 +261,18 @@ retry RETRY-TIMES times with RETRY-INTERVAL-SEC sec interval."
   (define-multisession-variable
     my-last-upgrade-time my-default-last-upgrade-time))
 
+(defsubst my-auto-upgrade-packages-interval-expired-p ()
+  "Return t if it is necessary to upgrade packages."
+  (let* ((last-upgrade-time (multisession-value my-last-upgrade-time))
+         (days-from-last-upgrade
+          (/ (time-convert (time-subtract (current-time) last-upgrade-time)
+                           'integer)
+             (* 60 60 24))))
+    (> days-from-last-upgrade my-upgrade-interval-days)))
+
 (defun my-auto-upgrade-packages ()
   "Auto upgrade packages.
 This function works if interval expired, interactive, and network available."
-  (defsubst my-auto-upgrade-packages-interval-expired-p ()
-    "Return t if it is necessary to upgrade packages."
-    (let* ((last-upgrade-time (multisession-value my-last-upgrade-time))
-           (days-from-last-upgrade
-            (/ (time-convert (time-subtract (current-time) last-upgrade-time)
-                             'integer)
-               (* 60 60 24))))
-      (> days-from-last-upgrade my-upgrade-interval-days)))
   (when (and (not noninteractive)
              (my-auto-upgrade-packages-interval-expired-p)
              (my-network-connection-available-p)
@@ -538,18 +540,18 @@ This function works if interval expired, interactive, and network available."
     (run-hooks 'my-after-ede-setup-hook))
   )
 
+(defsubst my-buffer-contains-hard-tab-p (bytes-to-check)
+  "Check hard tab(s) in first BYTES-TO-CHECK bytes of current buffer."
+  (save-restriction
+    (widen)
+    (save-excursion
+      (goto-char (point-min))
+      (let ((limit (min (point-max) bytes-to-check)))
+        (re-search-forward "\t" limit t)))))
+
 (defun my-set-indent-tabs-mode ()
   "Disable INDENT-TABS-MODE when .editorconfig is unavailable (PROPS is nil)
 and existing file includes no hard tab."
-  (defsubst my-buffer-contains-hard-tab-p (bytes-to-check)
-    "Return first BYTES-TO-CHECK bytes of current buffer
- containing hard tab or not."
-    (save-restriction
-      (widen)
-      (save-excursion
-        (goto-char (point-min))
-        (let ((limit (min (point-max) bytes-to-check)))
-          (re-search-forward "\t" limit t)))))
   (let* ((my-hard-tab-check-bytes 16384))
     (when (and buffer-file-name
                (not (and (fboundp 'editorconfig-core-get-properties)
