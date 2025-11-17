@@ -162,8 +162,7 @@ Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
   (add-to-list
    'package-archives
    '("melpa" . "https://melpa.org/packages/")
-   '("melpa-stable" . "https://stable.melpa.org/packages/")
-   )
+   '("melpa-stable" . "https://stable.melpa.org/packages/"))
   (package-initialize)
 
   (unless package-archive-contents
