@@ -256,20 +256,19 @@ and they will be ignored if using curl."
   "Interval num of days to notify upgrading packages installed by my-init.el."
   :type 'integet
   :group 'my-init)
-(let* ((my-default-last-upgrade-time (time-subtract
-                                      (current-time)
-                                      (* 60 60 24 my-upgrade-interval-days))))
-  (define-multisession-variable
-    my-last-upgrade-time my-default-last-upgrade-time))
+(define-multisession-variable my-last-upgrade-time nil)
 
 (defsubst my-auto-upgrade-packages-interval-expired-p ()
   "Return t if it is necessary to upgrade packages."
   (let* ((last-upgrade-time (multisession-value my-last-upgrade-time))
          (days-from-last-upgrade
-          (/ (time-convert (time-subtract (current-time) last-upgrade-time)
-                           'integer)
-             (* 60 60 24))))
-    (> days-from-last-upgrade my-upgrade-interval-days)))
+          (if last-upgrade-time
+              (/ (time-convert (time-subtract (current-time) last-upgrade-time)
+                               'integer)
+                 (* 60 60 24))
+            nil)))
+    (or (not days-from-last-upgrade)
+        (> days-from-last-upgrade my-upgrade-interval-days))))
 
 (defun my-auto-upgrade-packages ()
   "Auto upgrade packages.
