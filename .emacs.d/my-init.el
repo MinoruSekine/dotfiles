@@ -794,10 +794,7 @@ and existing file includes no hard tab."
     (setq typescript-ts-mode-indent-offset 2))
   (use-package treesit
     :config
-    (setq treesit-font-lock-level 4)
-    (setq treesit-major-mode-language-alist
-          '((typescript-ts-mode . typescript)
-            (tsx-ts-mode        . tsx))))
+    (setq treesit-font-lock-level 4))
   (use-package treesit-auto
     :ensure t
     :config
