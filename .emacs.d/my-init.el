@@ -743,8 +743,12 @@ and existing file includes no hard tab."
 
 (defun my-wakatime-setup ()
   "Setup \"wakatime-mode\" for Emacs if wakatime available."
-  (when (package-installed-p 'wakatime-mode)
-    (global-wakatime-mode t)))
+  (use-package wakatime-mode
+    :ensure nil
+    :config
+    (when (and (package-installed-p 'wakatime-mode)
+               (executable-find "wakatime-cli"))
+      (global-wakatime-mode t))))
 
 (defun my-adjust-font-size-setup ()
   "Set up hooks to adjust font size when necessary."
