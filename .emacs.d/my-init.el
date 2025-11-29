@@ -13,6 +13,28 @@
 
 ;;; Code:
 
+;; Cutomizable variables.
+(defcustom my-after-ede-setup-hook nil
+  "List of functions to call after setup for EDE."
+  :type 'hook
+  :group 'my-init)
+
+(defcustom my-init-emacs-wiki-download-error-level
+  (if (getenv "GITHUB_WORKFLOW")
+      :warning
+    :error)
+  "If non-nil, ignore error while downloading from Emacs Wiki.
+On GitHub Actions workflow, t is default.
+On other environments nil is default.
+Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
+  :type 'boolean
+  :group 'my-init)
+
+(defcustom my-upgrade-interval-days 7
+  "Interval num of days to notify upgrading packages installed by my-init.el."
+  :type 'integet
+  :group 'my-init)
+
 ;; Internal helper functions.
 (defun my-get-default-plantuml-jar-path ()
   "Get path to plantuml.jar on running environment."
@@ -108,16 +130,6 @@
 (defun my-setup-elisp-from-emacs-wiki ()
   "Install missing elisp from Emacs Wiki and set `load-path`."
   (let* ((my-elisp-from-emacs-wiki '("tempbuf")))
-    (defcustom my-init-emacs-wiki-download-error-level
-      (if (getenv "GITHUB_WORKFLOW")
-          :warning
-        :error)
-      "If non-nil, ignore error while downloading from Emacs Wiki.
-On GitHub Actions workflow, t is default.
-On other environments nil is default.
-Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
-      :type 'boolean
-      :group 'my-init)
     (dolist (p my-elisp-from-emacs-wiki)
       (let* ((this-elisp-dir (my-emacs-wiki-elisp-dir p)))
         (unless (my-emacs-wiki-elisp-installed-p p)
@@ -252,10 +264,6 @@ and they will be ignored if using curl."
        url newname ok-if-already-exists retry-times retry-interval-sec))))
 
 ;;; Functions for auto upgrade packages.
-(defcustom my-upgrade-interval-days 7
-  "Interval num of days to notify upgrading packages installed by my-init.el."
-  :type 'integet
-  :group 'my-init)
 (define-multisession-variable my-last-upgrade-time nil)
 
 (defsubst my-auto-upgrade-packages-interval-expired-p ()
@@ -515,11 +523,6 @@ This function works if interval expired, interactive, and network available."
     (unless (server-running-p)
       (server-start)))
   )
-
-(defcustom my-after-ede-setup-hook nil
-  "List of functions to call after setup for EDE."
-  :type 'hook
-  :group 'my-init)
 
 (defun my-ede-and-semantic-mode-setup ()
   "Setup ede and semantic mode."
