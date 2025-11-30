@@ -578,8 +578,8 @@ and existing file includes no hard tab."
 
 (defun my-backup-directory-setup ()
   "Setup directories for backup files."
-  (setq backup-directory-alist '((".*" . "~/.emacs-backup-files")))
-  )
+  (customize-set-variable 'backup-directory-alist
+                          '((".*" . "~/.emacs-backup-files"))))
 
 (defun my-default-directory-to-home-setup ()
   "Setup default directories."
@@ -659,7 +659,7 @@ and existing file includes no hard tab."
       (let* ((java-path-installed-by-brew
               "/usr/local/opt/openjdk/bin/java"))
         (when (executable-find java-path-installed-by-brew)
-          (setq plantuml-java-command java-path-installed-by-brew))))
+          (setq 'plantuml-java-command java-path-installed-by-brew))))
     (let* ((my-plantuml-jar-path (my-get-default-plantuml-jar-path)
                                  "Path of plantuml.jar."))
       (when (file-exists-p my-plantuml-jar-path)
@@ -798,15 +798,15 @@ and existing file includes no hard tab."
     :mode (("\\.tsx\\'" . tsx-ts-mode)
            ("\\.ts\\'" . typescript-ts-mode))
     :config
-    (setq typescript-ts-mode-indent-offset 2))
+    (customize-set-variable 'typescript-ts-mode-indent-offset 2))
   (use-package treesit
     :config
-    (setq treesit-font-lock-level 4))
+    (customize-set-variable 'treesit-font-lock-level 4))
   (use-package treesit-auto
     :ensure t
     :config
     (global-treesit-auto-mode)
-    (setq treesit-auto-install t))
+    (customize-set-variable 'treesit-auto-install t))
   (use-package tide
     :ensure t
     :hook ((typescript-ts-mode . setup-tide-mode)
@@ -816,7 +816,8 @@ and existing file includes no hard tab."
       (interactive)
       (tide-setup)
       (flycheck-mode +1)
-      (setq flycheck-check-syntax-automatically '(save mode-enabled))
+      (customize-set-variable 'flycheck-check-syntax-automatically
+                              '(save mode-enabled))
       (eldoc-mode +1)
       (tide-hl-identifier-mode +1))
     (setq company-tooltip-align-annotations t)))
