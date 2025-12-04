@@ -67,8 +67,7 @@ Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
                                       (list "scoop" "which" "plantuml")
                                       " ")))))
                 ((equal system-type 'gnu/linux)
-                 "/usr/share/plantuml/plantuml.jar")
-                )))
+                 "/usr/share/plantuml/plantuml.jar"))))
     (if (and my-plantuml-jar-path
              (file-readable-p my-plantuml-jar-path))
         my-plantuml-jar-path
@@ -305,8 +304,7 @@ This function works if interval expired, interactive, and network available."
                                   my-general-mode-line-setup
                                   my-font-lock-setup
                                   my-color-identifiers-mode-setup
-                                  my-adjust-font-size-setup
-                                  )))
+                                  my-adjust-font-size-setup)))
   (my-add-hooks 'after-init-hook my-after-init-func-list))
 
 (let* ((my-emacs-startup-func-list
@@ -358,8 +356,7 @@ This function works if interval expired, interactive, and network available."
 
   (custom-set-variables
    '(exec-path (append exec-path
-                       (parse-colon-path (getenv "PATH")))))
-  )
+                       (parse-colon-path (getenv "PATH"))))))
 
 (defun my-language-setup ()
   "Set up about language."
@@ -386,8 +383,7 @@ This function works if interval expired, interactive, and network available."
     (beacon-blink-duration 0.1)
     (blink-cursor-blinks 0)  ;; 0 means "blink ever".
     :config
-    (beacon-mode t))
-  )
+    (beacon-mode t)))
 
 (defun my-general-mode-line-setup ()
   "Set up modeline."
@@ -474,8 +470,7 @@ This function works if interval expired, interactive, and network available."
   (add-to-list 'default-frame-alist
                '(cursor-color . "forest green"))
   (when (find-font (font-spec :name "VL ゴシック"))
-    (add-to-list 'default-frame-alist '(font . "VL ゴシック-10"))
-    )
+    (add-to-list 'default-frame-alist '(font . "VL ゴシック-10")))
   (add-to-list 'default-frame-alist
                `(width . ,(* 0.3 (my-get-relative-frame-size-zoom-ratio))))
   (add-to-list 'default-frame-alist
@@ -487,8 +482,7 @@ This function works if interval expired, interactive, and network available."
   ;; Defer following settings if not GUI yet.
   (add-hook 'after-make-frame-functions
             'my-after-make-frame-func)
-  (my-after-make-frame-func (selected-frame))
-  )
+  (my-after-make-frame-func (selected-frame)))
 
 (defun my-switch-mode-for-header-file ()
   "Switch to detailed mode for .h files."
@@ -521,8 +515,7 @@ This function works if interval expired, interactive, and network available."
     :ensure t
     :config
     (unless (server-running-p)
-      (server-start)))
-  )
+      (server-start))))
 
 (defun my-ede-and-semantic-mode-setup ()
   "Setup ede and semantic mode."
@@ -540,8 +533,7 @@ This function works if interval expired, interactive, and network available."
     (global-semantic-idle-completions-mode 1)
     (global-semantic-idle-summary-mode 1)
     (global-semantic-highlight-func-mode)
-    (run-hooks 'my-after-ede-setup-hook))
-  )
+    (run-hooks 'my-after-ede-setup-hook)))
 
 (defsubst my-buffer-contains-hard-tab-p (bytes-to-check)
   "Check hard tab(s) in first BYTES-TO-CHECK bytes of current buffer."
@@ -584,15 +576,13 @@ and existing file includes no hard tab."
 (defun my-default-directory-to-home-setup ()
   "Setup default directories."
   (setq default-directory "~/")
-  (setq command-line-default-directory "~/")
-  )
+  (setq command-line-default-directory "~/"))
 
 (defun my-completion-case-sensitivity-setup ()
   "Setup case sensitivity on completion."
   (custom-set-variables
    '(read-buffer-completion-ignore-case t)
-   '(read-file-name-completion-ignore-case t))
-  )
+   '(read-file-name-completion-ignore-case t)))
 
 (defun my-compilation-mode-setup ()
   "Setup compilation mode."
@@ -604,8 +594,7 @@ and existing file includes no hard tab."
 (defun my-font-lock-setup ()
   "Setup font-lock."
   (custom-set-variables
-   '(jit-lock-defer-time 0.05))
-  )
+   '(jit-lock-defer-time 0.05)))
 
 (defun my-rainbow-delimiters-mode-setup ()
   "Setup \"rainbow-delimiters-mode\"."
@@ -627,8 +616,7 @@ and existing file includes no hard tab."
    '(flycheck-cppcheck-standards '("c++11"))
    '(flycheck-clang-language-standard "c++11")
    '(flycheck-gcc-language-standard "c++11"))
-  (global-flycheck-mode t)
-  )
+  (global-flycheck-mode t))
 
 (defun my-mocuur-setup ()
   "Setup moccur."
@@ -673,15 +661,12 @@ and existing file includes no hard tab."
   "Setup DIRED."
   (when (equal system-type 'darwin)
     (custom-set-variables
-     '(dired-use-ls-dired nil))
-    )
-  )
+     '(dired-use-ls-dired nil))))
 
 (defun my-color-identifiers-mode-setup ()
   "Setup \"color-identifiers-mode\"."
   (global-color-identifiers-mode t)
-  (run-with-idle-timer 1 t #'color-identifiers:refresh)
-  )
+  (run-with-idle-timer 1 t #'color-identifiers:refresh))
 
 (defun my-get-bash-aliases-with-file (&optional path)
   "Get bash aliases defined by PATH (if specified)."
