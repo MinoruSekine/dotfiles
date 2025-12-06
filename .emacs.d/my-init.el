@@ -35,6 +35,139 @@ Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
   :type 'integet
   :group 'my-init)
 
+;; Generic utility functions.
+(defun my-add-hooks (hook-to-add my-list)
+  "Add each function in MY-LIST into HOOK-TO-ADD ."
+  (dolist (itr my-list)
+    (add-hook hook-to-add itr)))
+
+(defun my-network-connection-available-p ()
+  "Get network connection is available or not."
+  ;; The local loop back device may always be included
+  ;; in return of network-interface-list.
+  (>= (length (network-interface-list)) 2))
+
+(defun my-join-path (dir file-name)
+  "Join FILE-NAME string into DIR with right path delimiter."
+  (concat (file-name-as-directory dir) file-name))
+
+(defsubst my-get-file-size (file-path)
+  "Get size of FILE-PATH."
+  (nth 7 (file-attributes file-path)))
+
+(defun my-get-elc-path (el-path)
+  "Get .elc path from .el path specified by EL-PATH."
+  (concat (file-name-sans-extension el-path) ".elc"))
+
+(defsubst my-buffer-contains-hard-tab-p (bytes-to-check)
+  "Check hard tab(s) in first BYTES-TO-CHECK bytes of current buffer."
+  (save-restriction
+    (widen)
+    (save-excursion
+      (goto-char (point-min))
+      (let ((limit (min (point-max) bytes-to-check)))
+        (re-search-forward "\t" limit t)))))
+
+;; url-copy-file from EmacsWiki sometime randomly fails
+;; on GitHub Actions runner.
+;; But the reason has not been clarified. So added retry.
+;; See https://github.com/MinoruSekine/dotfiles/issues/200 for details.
+(defsubst my-url-copy-file (url
+                            newname
+                            ok-if-already-exists
+                            retry-times
+                            retry-interval-sec)
+  "URL-COPY-FILE wrapper to download URL to NEWNAME.
+Overwrite existing NEWNAME file when OK-IF-ALREADY-EXISTS is non-nil.
+If error occured in url-copyfile,
+retry RETRY-TIMES times with RETRY-INTERVAL-SEC sec interval."
+  (let* ((remaining-retry-count retry-times)
+         (is-url-copy-file-succeeded nil))
+    (while (and (> remaining-retry-count 0)
+                (not is-url-copy-file-succeeded))
+      (let* ((is-url-copy-file-succeeded
+              (ignore-errors (url-copy-file
+                              url
+                              newname
+                              ok-if-already-exists))))
+        (setq remaining-retry-count (1- remaining-retry-count))
+        (when (not is-url-copy-file-succeeded)
+          (if (> remaining-retry-count 0)
+              (progn (display-warning
+                      'my-init
+                      (format
+                       "Downloading from %s failed. Retrying %s more time(s)"
+                       url remaining-retry-count))
+                     (sit-for retry-interval-sec))
+            (error
+             "url-copy-file for %s failed even with %s times retry"
+             url retry-times)))))))
+
+(defun my-curl-copy-file (url
+                          newname
+                          ok-if-already-exists
+                          retry-times
+                          retry-interval-sec)
+  "Download URL to NEWNAME.
+This function use curl if available,
+and fallback to use my-url-copy-file if curl is unavailable on system.
+OK-IF-ALREADY-EXISTS, RETRY-TIMES, and RETRY-INTERVAL-SEC is only used
+when fallback to my-url-copy-file,
+and they will be ignored if using curl."
+  (let* ((my-curl-path (executable-find "curl")))
+    (if my-curl-path
+        (progn (unless (file-exists-p newname)
+                 (message "curl found. Download %s by curl." url)
+                 (call-process-shell-command
+                  (mapconcat
+                   #'shell-quote-argument
+                   (list "curl" "-f" "-s" "-o" newname url)
+                   " "))))
+      (message "curl not found. Fall back to url-copy-file to download %s." url)
+      (my-url-copy-file
+       url newname ok-if-already-exists retry-times retry-interval-sec))))
+
+;; To use this function,
+;; add "Accesibility" and "Automation (System Events)" privilege
+;; in "System configurtion - Privacy and Security" to Emacs
+(defun my-toggle-input-method-darwin ()
+  "Toggle macOS input method by sending key stroke via AppleScript."
+  (interactive)
+  ;; This elisp funtion sends Cmd + SPC key stroke.
+  ;; If your environment has another key binding to toggle input method,
+  ;; you must modify this.
+  (call-process-shell-command
+   (mapconcat
+    #'shell-quote-argument
+    (list "osascript"
+          "-e" "tell application \"System Events\""
+          "-e" "key code 49 using command down"
+          "-e" "end tell")
+    " ")))
+
+;; Functions to adjust font size for display.
+(defun my-get-display-pixel-width ()
+  "Get width of display in pixel."
+  (nth 3
+       (cl-loop for itr in (display-monitor-attributes-list)
+                when (> (length (assoc 'frames itr)) 1)
+                return (assoc 'workarea itr))))
+
+(defun my-get-display-mm-width ()
+  "Get width of display in mm."
+  (nth 1
+       (cl-loop for itr in (display-monitor-attributes-list)
+                when (> (length (assoc 'frames itr)) 1)
+                return (assoc 'mm-size itr))))
+
+(defun my-get-display-inch-width ()
+  "Get width of display in inch."
+  (/ (my-get-display-mm-width) 25.4))
+
+(defun my-get-display-dpi ()
+  "Get DPI of display."
+  (/ (my-get-display-pixel-width) (my-get-display-inch-width)))
+
 ;; Internal helper functions.
 (defun my-get-default-plantuml-jar-path ()
   "Get path to plantuml.jar on running environment."
@@ -72,29 +205,6 @@ Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
              (file-readable-p my-plantuml-jar-path))
         my-plantuml-jar-path
       nil)))
-
-(defun my-add-hooks (hook-to-add my-list)
-  "Add each function in MY-LIST into HOOK-TO-ADD ."
-  (dolist (itr my-list)
-    (add-hook hook-to-add itr)))
-
-(defun my-network-connection-available-p ()
-  "Get network connection is available or not."
-  ;; The local loop back device may always be included
-  ;; in return of network-interface-list.
-  (>= (length (network-interface-list)) 2))
-
-(defun my-join-path (dir file-name)
-  "Join FILE-NAME string into DIR with right path delimiter."
-  (concat (file-name-as-directory dir) file-name))
-
-(defsubst my-get-file-size (file-path)
-  "Get size of FILE-PATH."
-  (nth 7 (file-attributes file-path)))
-
-(defun my-get-elc-path (el-path)
-  "Get .elc path from .el path specified by EL-PATH."
-  (concat (file-name-sans-extension el-path) ".elc"))
 
 (defsubst my-emacs-wiki-elisp-file-name (elisp-name)
   "Filename of ELISP-NAME installed from Emacs Wiki."
@@ -203,65 +313,6 @@ Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
       (dolist (p my-not-yet-installed-packages)
         (package-install p)))))
 
-;; url-copy-file from EmacsWiki sometime randomly fails
-;; on GitHub Actions runner.
-;; But the reason has not been clarified. So added retry.
-;; See https://github.com/MinoruSekine/dotfiles/issues/200 for details.
-(defsubst my-url-copy-file (url
-                            newname
-                            ok-if-already-exists
-                            retry-times
-                            retry-interval-sec)
-  "URL-COPY-FILE wrapper to download URL to NEWNAME.
-Overwrite existing NEWNAME file when OK-IF-ALREADY-EXISTS is non-nil.
-If error occured in url-copyfile,
-retry RETRY-TIMES times with RETRY-INTERVAL-SEC sec interval."
-  (let* ((remaining-retry-count retry-times)
-         (is-url-copy-file-succeeded nil))
-    (while (and (> remaining-retry-count 0)
-                (not is-url-copy-file-succeeded))
-      (let* ((is-url-copy-file-succeeded
-              (ignore-errors (url-copy-file
-                              url
-                              newname
-                              ok-if-already-exists))))
-        (setq remaining-retry-count (1- remaining-retry-count))
-        (when (not is-url-copy-file-succeeded)
-          (if (> remaining-retry-count 0)
-              (progn (display-warning
-                      'my-init
-                      (format
-                       "Downloading from %s failed. Retrying %s more time(s)"
-                       url remaining-retry-count))
-                     (sit-for retry-interval-sec))
-            (error
-             "url-copy-file for %s failed even with %s times retry"
-             url retry-times)))))))
-
-(defun my-curl-copy-file (url
-                          newname
-                          ok-if-already-exists
-                          retry-times
-                          retry-interval-sec)
-  "Download URL to NEWNAME.
-This function use curl if available,
-and fallback to use my-url-copy-file if curl is unavailable on system.
-OK-IF-ALREADY-EXISTS, RETRY-TIMES, and RETRY-INTERVAL-SEC is only used
-when fallback to my-url-copy-file,
-and they will be ignored if using curl."
-  (let* ((my-curl-path (executable-find "curl")))
-    (if my-curl-path
-        (progn (unless (file-exists-p newname)
-                 (message "curl found. Download %s by curl." url)
-                 (call-process-shell-command
-                  (mapconcat
-                   #'shell-quote-argument
-                   (list "curl" "-f" "-s" "-o" newname url)
-                   " "))))
-      (message "curl not found. Fall back to url-copy-file to download %s." url)
-      (my-url-copy-file
-       url newname ok-if-already-exists retry-times retry-interval-sec))))
-
 ;;; Functions for auto upgrade packages.
 (define-multisession-variable my-last-upgrade-time nil)
 
@@ -289,57 +340,6 @@ This function works if interval expired, interactive, and network available."
     (package-upgrade-all)
     (setf (multisession-value my-last-upgrade-time)
           (current-time))))
-
-;;; Main processes.
-(if (my-network-connection-available-p)
-    (progn (my-install-missing-packages)
-           (my-setup-elisp-from-emacs-wiki))
-  (display-warning 'my-init "Network connection may not be available."))
-
-(let* ((my-after-init-func-list '(my-gc-setup
-                                  my-environment-variable-setup
-                                  my-language-setup
-                                  my-general-visibility-setup
-                                  my-gui-setup
-                                  my-general-mode-line-setup
-                                  my-font-lock-setup
-                                  my-color-identifiers-mode-setup
-                                  my-adjust-font-size-setup)))
-  (my-add-hooks 'after-init-hook my-after-init-func-list))
-
-(let* ((my-emacs-startup-func-list
-        '(my-emacs-server-setup
-          my-backup-directory-setup
-          my-default-directory-to-home-setup
-          my-completion-case-sensitivity-setup
-          my-indent-tabs-mode-for-file-without-hard-tab-setup
-          my-ede-and-semantic-mode-setup
-          my-editorconfig-mode-setup
-          my-c++-mode-setup
-          my-compilation-mode-setup
-          my-rainbow-delimiters-mode-setup
-          my-flycheck-mode-setup
-          my-mocuur-setup
-          my-plantuml-mode-setup
-          my-dired-setup
-          my-eshell-setup
-          my-emacs-lisp-mode-setup
-          my-tempbuf-mode-setup
-          my-realgud-setup
-          my-ssh-agency-setup
-          my-global-set-key-toggle-input-method-setup
-          my-backslash-key-setup
-          my-javascript-setup
-          my-typescript-setup
-          my-wakatime-setup
-          my-magit-setup
-          my-whitespace-mode-setup
-          my-html-setup)))
-  (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list))
-
-(let* ((my-kill-emacs-func-list
-        '(my-auto-upgrade-packages)))
-  (my-add-hooks 'kill-emacs-hook my-kill-emacs-func-list))
 
 ;;; Functions for initializing Emacs.
 (defun my-gc-setup ()
@@ -400,6 +400,10 @@ This function works if interval expired, interactive, and network available."
     :config
     (minions-mode)))
 
+(defun my-get-relative-frame-size-zoom-ratio ()
+  "Get zoom ratio for frame size relative to display work area size."
+  (/ 1.0 (my-get-font-zoom-ratio-for-display)))
+
 (defun my-after-make-frame-func (frame)
   "Called just after making each frame with FRAME as made frame."
   (with-selected-frame frame
@@ -410,55 +414,6 @@ This function works if interval expired, interactive, and network available."
           (t
            (menu-bar-mode -1))))
   (blink-cursor-mode t))
-
-
-;; Functions to adjust font size for display.
-(defun my-get-display-pixel-width ()
-  "Get width of display in pixel."
-  (nth 3
-       (cl-loop for itr in (display-monitor-attributes-list)
-                when (> (length (assoc 'frames itr)) 1)
-                return (assoc 'workarea itr))))
-
-(defun my-get-display-mm-width ()
-  "Get width of display in mm."
-  (nth 1
-       (cl-loop for itr in (display-monitor-attributes-list)
-                when (> (length (assoc 'frames itr)) 1)
-                return (assoc 'mm-size itr))))
-
-(defun my-get-display-inch-width ()
-  "Get width of display in inch."
-  (/ (my-get-display-mm-width) 25.4))
-
-(defun my-get-display-dpi ()
-  "Get DPI of display."
-  (/ (my-get-display-pixel-width) (my-get-display-inch-width)))
-
-(defun my-enabled-adjust-font-size-setup-p ()
-  "Indicated necessary to adjust font size."
-  ;; NTEmacs seems to natively support high DPI awareness.
-  (and (not (equal system-type 'windows-nt))
-       (display-graphic-p)
-       (display-supports-face-attributes-p :height)))
-
-(defun my-get-font-zoom-ratio-for-display ()
-  "Get font zoom ratio for display."
-  (if (my-enabled-adjust-font-size-setup-p)
-      (max (/ (my-get-display-dpi) 72) 1)
-    1))
-
-(defun my-adjust-font-size (&optional frame)
-  "Adjust font size for current display which has FRAME."
-  (let* ((my-default-face-height 100)
-         (my-adjusted-face-height (truncate
-                                   (* my-default-face-height
-                                      (my-get-font-zoom-ratio-for-display)))))
-    (set-face-attribute 'default frame :height my-adjusted-face-height)))
-
-(defun my-get-relative-frame-size-zoom-ratio ()
-  "Get zoom ratio for frame size relative to display work area size."
-  (/ 1.0 (my-get-font-zoom-ratio-for-display)))
 
 (defun my-gui-setup ()
   "Setup if Emacs is running on GUI."
@@ -534,15 +489,6 @@ This function works if interval expired, interactive, and network available."
     (global-semantic-idle-summary-mode 1)
     (global-semantic-highlight-func-mode)
     (run-hooks 'my-after-ede-setup-hook)))
-
-(defsubst my-buffer-contains-hard-tab-p (bytes-to-check)
-  "Check hard tab(s) in first BYTES-TO-CHECK bytes of current buffer."
-  (save-restriction
-    (widen)
-    (save-excursion
-      (goto-char (point-min))
-      (let ((limit (min (point-max) bytes-to-check)))
-        (re-search-forward "\t" limit t)))))
 
 (defun my-set-indent-tabs-mode ()
   "Disable INDENT-TABS-MODE when .editorconfig is unavailable (PROPS is nil)
@@ -738,29 +684,32 @@ and existing file includes no hard tab."
                (executable-find "wakatime-cli"))
       (global-wakatime-mode t))))
 
+(defun my-enabled-adjust-font-size-setup-p ()
+  "Indicated necessary to adjust font size."
+  ;; NTEmacs seems to natively support high DPI awareness.
+  (and (not (equal system-type 'windows-nt))
+       (display-graphic-p)
+       (display-supports-face-attributes-p :height)))
+
+(defun my-get-font-zoom-ratio-for-display ()
+  "Get font zoom ratio for display."
+  (if (my-enabled-adjust-font-size-setup-p)
+      (max (/ (my-get-display-dpi) 72) 1)
+    1))
+
+(defun my-adjust-font-size (&optional frame)
+  "Adjust font size for current display which has FRAME."
+  (let* ((my-default-face-height 100)
+         (my-adjusted-face-height (truncate
+                                   (* my-default-face-height
+                                      (my-get-font-zoom-ratio-for-display)))))
+    (set-face-attribute 'default frame :height my-adjusted-face-height)))
+
 (defun my-adjust-font-size-setup ()
   "Set up hooks to adjust font size when necessary."
   (when (my-enabled-adjust-font-size-setup-p)
     (add-function :after after-focus-change-function #'my-adjust-font-size)
     (add-function :after after-focus-change-function #'my-adjust-font-size)))
-
-;; To use this function,
-;; add "Accesibility" and "Automation (System Events)" privilege
-;; in "System configurtion - Privacy and Security" to Emacs
-(defun my-toggle-input-method-darwin ()
-  "Toggle macOS input method by sending key stroke via AppleScript."
-  (interactive)
-  ;; This elisp funtion sends Cmd + SPC key stroke.
-  ;; If your environment has another key binding to toggle input method,
-  ;; you must modify this.
-  (call-process-shell-command
-   (mapconcat
-    #'shell-quote-argument
-    (list "osascript"
-          "-e" "tell application \"System Events\""
-          "-e" "key code 49 using command down"
-          "-e" "end tell")
-    " ")))
 
 (defun my-global-set-key-toggle-input-method-setup ()
   "Set C-¥ key binding as toggling system's input method."
@@ -837,6 +786,57 @@ and existing file includes no hard tab."
 (defun my-html-setup ()
   "Setup for HTML files."
   (add-hook 'html-ts-mode-hook (lambda () (semantic-mode -1))))
+
+;;; Main processes.
+(if (my-network-connection-available-p)
+    (progn (my-install-missing-packages)
+           (my-setup-elisp-from-emacs-wiki))
+  (display-warning 'my-init "Network connection may not be available."))
+
+(let* ((my-after-init-func-list '(my-gc-setup
+                                  my-environment-variable-setup
+                                  my-language-setup
+                                  my-general-visibility-setup
+                                  my-gui-setup
+                                  my-general-mode-line-setup
+                                  my-font-lock-setup
+                                  my-color-identifiers-mode-setup
+                                  my-adjust-font-size-setup)))
+  (my-add-hooks 'after-init-hook my-after-init-func-list))
+
+(let* ((my-emacs-startup-func-list
+        '(my-emacs-server-setup
+          my-backup-directory-setup
+          my-default-directory-to-home-setup
+          my-completion-case-sensitivity-setup
+          my-indent-tabs-mode-for-file-without-hard-tab-setup
+          my-ede-and-semantic-mode-setup
+          my-editorconfig-mode-setup
+          my-c++-mode-setup
+          my-compilation-mode-setup
+          my-rainbow-delimiters-mode-setup
+          my-flycheck-mode-setup
+          my-mocuur-setup
+          my-plantuml-mode-setup
+          my-dired-setup
+          my-eshell-setup
+          my-emacs-lisp-mode-setup
+          my-tempbuf-mode-setup
+          my-realgud-setup
+          my-ssh-agency-setup
+          my-global-set-key-toggle-input-method-setup
+          my-backslash-key-setup
+          my-javascript-setup
+          my-typescript-setup
+          my-wakatime-setup
+          my-magit-setup
+          my-whitespace-mode-setup
+          my-html-setup)))
+  (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list))
+
+(let* ((my-kill-emacs-func-list
+        '(my-auto-upgrade-packages)))
+  (my-add-hooks 'kill-emacs-hook my-kill-emacs-func-list))
 
 ;; Utility functions for users.
 (defun my-semanticdb-update-for-directory (dir-path)
