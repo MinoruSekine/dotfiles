@@ -312,7 +312,7 @@ This function works if interval expired, interactive, and network available."
           my-backup-directory-setup
           my-default-directory-to-home-setup
           my-completion-case-sensitivity-setup
-          my-indent-tabs-mode-for-file-without-hard-tab
+          my-indent-tabs-mode-for-file-without-hard-tab-setup
           my-ede-and-semantic-mode-setup
           my-editorconfig-mode-setup
           my-c++-mode-setup
@@ -327,7 +327,7 @@ This function works if interval expired, interactive, and network available."
           my-tempbuf-mode-setup
           my-realgud-setup
           my-ssh-agency-setup
-          my-global-set-key-toggle-input-method
+          my-global-set-key-toggle-input-method-setup
           my-backslash-key-setup
           my-javascript-setup
           my-typescript-setup
@@ -556,7 +556,7 @@ and existing file includes no hard tab."
                          my-hard-tab-check-bytes))))
       (setq indent-tabs-mode nil))))
 
-(defun my-indent-tabs-mode-for-file-without-hard-tab ()
+(defun my-indent-tabs-mode-for-file-without-hard-tab-setup ()
   "Set INDENT-TABS-MODE as nil for files without hard tab."
   (add-hook 'find-file-hook #'my-set-indent-tabs-mode)
   (add-hook 'after-change-major-mode-hook #'my-set-indent-tabs-mode))
@@ -762,7 +762,7 @@ and existing file includes no hard tab."
           "-e" "end tell")
     " ")))
 
-(defun my-global-set-key-toggle-input-method ()
+(defun my-global-set-key-toggle-input-method-setup ()
   "Set C-¥ key binding as toggling system's input method."
   (when (equal system-type 'darwin)
     (global-set-key (kbd "C-\\") nil)
