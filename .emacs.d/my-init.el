@@ -252,7 +252,8 @@ and they will be ignored if using curl."
               (lwarn 'my-init
                      my-init-emacs-wiki-download-error-level
                      "Downloading %s by `curl` is failed" p)))
-          (add-to-list 'load-path this-elisp-dir))))))
+          )
+        (add-to-list 'load-path this-elisp-dir)))))
 
 ;; Functions for my-init.el.
 (defun my-install-missing-packages ()
