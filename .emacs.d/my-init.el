@@ -345,7 +345,7 @@ This function works if interval expired, interactive, and network available."
 (defun my-gc-setup ()
   "Settings for garbage collection."
   (custom-set-variables
-   '(gc-cons-threshold (* 256 1024 1024))
+   '(gc-cons-threshold (* 32 1024 1024))
    '(garbage-collection-messages t))
   (run-with-idle-timer 120 nil #'garbage-collect))
 
