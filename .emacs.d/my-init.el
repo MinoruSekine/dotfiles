@@ -347,7 +347,10 @@ This function works if interval expired, interactive, and network available."
   (custom-set-variables
    '(gc-cons-threshold (* 32 1024 1024))
    '(garbage-collection-messages t))
-  (run-with-idle-timer 120 nil #'garbage-collect))
+  (add-function :after after-focus-change-function
+                (lambda ()
+                  (unless (frame-focus-state)
+                    (garbage-collect)))))
 
 (defun my-environment-variable-setup ()
   "Set up environment variables."
