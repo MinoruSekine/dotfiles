@@ -368,7 +368,9 @@ This function works if interval expired, interactive, and network available."
   (cond ((equal system-type 'windows-nt)
          (setq default-process-coding-system '(undecided-dos . utf-8-unix)))
         (t
-         (setq default-process-coding-system '(undecided . utf-8-unix)))))
+         (setq default-process-coding-system '(undecided . utf-8-unix))))
+  (add-to-list 'file-coding-system-alist '("\\.cmd\\'" . utf-8-dos))
+  (add-to-list 'file-coding-system-alist '("\\.bat\\'" . utf-8-dos)))
 
 (defun my-general-visibility-setup ()
   "Setup visibility for both -nw and GUI."
