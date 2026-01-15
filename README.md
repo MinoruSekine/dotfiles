@@ -21,7 +21,7 @@ This repository includes:
   - MELPA
   - Emacs Wiki
     - If `curl` exists on the system,
-	  use `curl` to download elisp files instead of `url-copy-file`
+      use `curl` to download elisp files instead of `url-copy-file`
 - Periodic upgrade packages at exiting Emacs
 
 #### Configurations
@@ -118,14 +118,14 @@ So environment dependent EDE setup like as `ede-cpp-root-project` can be hooked 
 
 ;; Settings only for this environment.
 (add-hook 'my-after-ede-setup-hook
-	  (lambda ()
-	    (ede-cpp-root-project "libfixedpointnumber"
-				  :file "~/work/libfixedpointnumber/Makefile"
-				  :include-path '("/include")
-				  :system-include-path '("/usr/local/include/gtest/"
-							 "/usr/local/include/gmock/")
-				  :compile-command "time nice make -k -j check run-test")
-	    ))
+      (lambda ()
+        (ede-cpp-root-project "libfixedpointnumber"
+                  :file "~/work/libfixedpointnumber/Makefile"
+                  :include-path '("/include")
+                  :system-include-path '("/usr/local/include/gtest/"
+                             "/usr/local/include/gmock/")
+                  :compile-command "time nice make -k -j check run-test")
+        ))
 ```
 
 # Supplemental scripts
