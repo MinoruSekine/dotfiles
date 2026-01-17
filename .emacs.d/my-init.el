@@ -261,6 +261,7 @@ and they will be ignored if using curl."
                         color-moccur
                         elisp-lint
                         flycheck
+                        git-modes
                         google-c-style
                         highlight-doxygen
                         magit
@@ -773,6 +774,14 @@ and existing file includes no hard tab."
     (custom-set-variables
      '(magit-refresh-status-buffer nil))))
 
+(defun my-git-modes-setup ()
+  "Setup for git-modes(gitattributes-mode, gitconfig-mode, and gitignore-mode)."
+  (use-package git-modes
+    ;; Don't force installation even if not available,
+    ;; because it will cause only simple (no syntax highlight) visual
+    ;; for git related files.
+    :ensure nil))
+
 (defun my-disable-whitespace-mode-if-non-file ()
   "Disable whitespace mode if current buffer is not file."
   (unless buffer-file-name
@@ -836,6 +845,7 @@ and existing file includes no hard tab."
           my-typescript-setup
           my-wakatime-setup
           my-magit-setup
+          my-git-modes-setup
           my-whitespace-mode-setup
           my-html-setup)))
   (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list))
