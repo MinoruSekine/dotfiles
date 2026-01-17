@@ -498,14 +498,15 @@ This function works if interval expired, interactive, and network available."
 (defun my-set-indent-tabs-mode ()
   "Disable INDENT-TABS-MODE when .editorconfig is unavailable (PROPS is nil)
 and existing file includes no hard tab."
-  (let* ((my-hard-tab-check-bytes 16384))
-    (when (and buffer-file-name
-               (not (and (fboundp 'editorconfig-core-get-properties)
-                         (editorconfig-core-get-properties)))
-               (or (not (file-exists-p buffer-file-name))
-                   (not (my-buffer-contains-hard-tab-p
-                         my-hard-tab-check-bytes))))
-      (setq indent-tabs-mode nil))))
+  (unless (derived-mode-p 'makefile-mode) ;; hard-tab is meaningful in Makefile.
+    (let* ((my-hard-tab-check-bytes 16384))
+      (when (and buffer-file-name
+                 (not (and (fboundp 'editorconfig-core-get-properties)
+                           (editorconfig-core-get-properties)))
+                 (or (not (file-exists-p buffer-file-name))
+                     (not (my-buffer-contains-hard-tab-p
+                           my-hard-tab-check-bytes))))
+        (setq indent-tabs-mode nil)))))
 
 (defun my-indent-tabs-mode-for-file-without-hard-tab-setup ()
   "Set INDENT-TABS-MODE as nil for files without hard tab."
