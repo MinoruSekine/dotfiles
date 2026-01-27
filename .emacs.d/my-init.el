@@ -601,8 +601,7 @@ and existing file includes no hard tab."
               "/usr/local/opt/openjdk/bin/java"))
         (when (executable-find java-path-installed-by-brew)
           (setq 'plantuml-java-command java-path-installed-by-brew))))
-    (let* ((my-plantuml-jar-path (my-get-default-plantuml-jar-path)
-                                 "Path of plantuml.jar."))
+    (let* ((my-plantuml-jar-path (my-get-default-plantuml-jar-path)))
       (when (file-exists-p my-plantuml-jar-path)
         (setq plantuml-jar-path my-plantuml-jar-path))
       ;; To avoid "No Java runtime present, requesting install." message
