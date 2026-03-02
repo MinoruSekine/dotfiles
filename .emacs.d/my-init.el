@@ -519,7 +519,9 @@ and existing file includes no hard tab."
   (use-package editorconfig
     :ensure t
     :config
-    (editorconfig-mode 1)))
+    (editorconfig-mode 1)
+    (add-to-list 'editorconfig-indentation-alist
+                 '(js-json-mode js-indent-level))))
 
 (defun my-backup-directory-setup ()
   "Setup directories for backup files."
