@@ -646,7 +646,8 @@ and existing file includes no hard tab."
     (add-to-list 'eshell-visual-subcommands
                  '("git" "diff" "help" "log" "show")))
   (with-eval-after-load 'em-alias
-    (my-eshell-import-bash-aliases)))
+    (when (executable-find "bash")
+      (my-eshell-import-bash-aliases))))
 
 (defun my-emacs-lisp-mode-setup ()
   "Setup Emacs Lisp mode."
