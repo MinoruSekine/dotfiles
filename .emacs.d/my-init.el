@@ -679,7 +679,7 @@ and existing file includes no hard tab."
 (defun my-ssh-agency-setup ()
   "Setup ssh-agency."
   (when (package-installed-p 'ssh-agency)
-    (with-eval-after-load 'ssh-agency
+    (with-eval-after-load 'magit
       (unless (my-ssh-key-exists-p)
         (remove-hook 'magit-credential-hook 'ssh-agency-ensure)))))
 
