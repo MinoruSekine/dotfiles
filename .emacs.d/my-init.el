@@ -695,15 +695,14 @@ and existing file includes no hard tab."
 
 (defun my-enabled-adjust-font-size-setup-p ()
   "Indicated necessary to adjust font size."
-  ;; NTEmacs seems to natively support high DPI awareness.
-  (and (not (equal system-type 'windows-nt))
-       (display-graphic-p)
+  (and (display-graphic-p)
        (display-supports-face-attributes-p :height)))
 
 (defun my-get-font-zoom-ratio-for-display ()
   "Get font zoom ratio for display."
   (if (my-enabled-adjust-font-size-setup-p)
-      (max (/ (my-get-display-dpi) 72) 1)
+      (let ((base-dpi (if (eq system-type 'windows-nt) 96.0 72.0)))
+        (max (/ (my-get-display-dpi) base-dpi) 1))
     1))
 
 (defun my-adjust-font-size (&optional frame)
