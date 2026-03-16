@@ -717,7 +717,6 @@ and existing file includes no hard tab."
 (defun my-adjust-font-size-setup ()
   "Set up hooks to adjust font size when necessary."
   (when (my-enabled-adjust-font-size-setup-p)
-    (add-function :after after-focus-change-function #'my-adjust-font-size)
     (add-function :after after-focus-change-function #'my-adjust-font-size)))
 
 (defun my-global-set-key-toggle-input-method-setup ()
