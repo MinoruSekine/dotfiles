@@ -272,6 +272,7 @@ and they will be ignored if using curl."
                         powershell
                         rainbow-delimiters
                         realgud
+                        uv-mode
                         yaml-mode))
   (when (executable-find "lldb")
     (add-to-list 'my-packages 'realgud-lldb))
@@ -802,6 +803,12 @@ and existing file includes no hard tab."
   "Setup for HTML files."
   (add-hook 'html-ts-mode-hook (lambda () (semantic-mode -1))))
 
+(defun my-python-mode-setup ()
+  "Setup for Python developments."
+  (use-package uv-mode
+    :ensure nil
+    :hook (python-ts-mode . uv-mode-auto-activate-hook)))
+
 ;;; Main processes.
 (if (my-network-connection-available-p)
     (progn (my-install-missing-packages)
@@ -847,7 +854,8 @@ and existing file includes no hard tab."
           my-magit-setup
           my-git-modes-setup
           my-whitespace-mode-setup
-          my-html-setup)))
+          my-html-setup
+          my-python-mode-setup)))
   (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list))
 
 (let* ((my-kill-emacs-func-list
