@@ -540,11 +540,40 @@ and existing file includes no hard tab."
    '(read-buffer-completion-ignore-case t)
    '(read-file-name-completion-ignore-case t)))
 
+(defun my-get-gnu-make-major-version (make-cmd)
+  "Get MAKE-CMD major version if MAKE-CMD is GNU make, return nil if not."
+  (let* ((gmake-version-string (shell-command-to-string
+                                (mapconcat
+                                 #'shell-quote-argument
+                                 (list make-cmd "--version")
+                                 " "))))
+    (if (string-match "^GNU Make \\([0-9]+\\)" gmake-version-string)
+        (string-to-number (match-string 1 gmake-version-string))
+      nil)))
+
+(defun my-make-cmd-supports-output-sync-p (make-cmd)
+  "Return t if MAKE-CMD supports `--output-sync` option."
+  (let* ((gmake-major-version (my-get-gnu-make-major-version make-cmd)))
+    (and gmake-major-version
+         (>= gmake-major-version 4))))
+
+(defun my-get-make-cmd ()
+  "Get an available command to process Makefile."
+  (if (executable-find "gmake")
+      "gmake"
+    "make"))
+
 (defun my-compilation-mode-setup ()
   "Setup compilation mode."
-  (custom-set-variables
-   '(compilation-scroll-output t)
-   '(compile-command "time nice make -k -j "))
+  (let* ((make-cmd (my-get-make-cmd))
+         (output-sync-opt (if (my-make-cmd-supports-output-sync-p make-cmd)
+                              "--output-sync"
+                            ""))
+         (my-compile-command
+          (concat "time nice " make-cmd " -k -j " output-sync-opt)))
+    (custom-set-variables
+     '(compilation-scroll-output t)
+     `(compile-command ,my-compile-command)))
   (add-hook 'compilation-filter-hook 'ansi-color-compilation-filter))
 
 (defun my-font-lock-setup ()
