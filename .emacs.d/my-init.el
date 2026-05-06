@@ -448,10 +448,16 @@ This function works if interval expired, interactive, and network available."
                `(width . ,(* 0.3 (my-get-relative-frame-size-zoom-ratio))))
   (add-to-list 'default-frame-alist
                `(height . ,(* 0.8 (my-get-relative-frame-size-zoom-ratio))))
-  (add-to-list 'default-frame-alist
-               `(top . 0.1))
-  (add-to-list 'default-frame-alist
-               `(left . 0.2 ))
+  (let* ((my-scaled-top (if (equal system-type 'windows-nt)
+                            (/ 0.1 (my-get-relative-frame-size-zoom-ratio))
+                          0.1))
+         (my-scaled-left (if (equal system-type 'windows-nt)
+                             (/ 0.2 (my-get-relative-frame-size-zoom-ratio))
+                           0.2)))
+    (add-to-list 'default-frame-alist
+                 `(top . ,my-scaled-top))
+    (add-to-list 'default-frame-alist
+                 `(left . ,my-scaled-left)))
   ;; Defer following settings if not GUI yet.
   (add-hook 'after-make-frame-functions
             'my-after-make-frame-func)
