@@ -300,6 +300,13 @@ and they will be ignored if using curl."
       (package-install 'gnu-elpa-keyring-update)
       (setq package-check-signature prev-package-check-signature)))
 
+  ;; compat-31 is necessary to install magit.
+  (unless (package-installed-p 'compat '(31))
+    (message "Upgrading compat ...")
+    (let ((package-check-signature nil))
+      (package-refresh-contents)
+      (package-upgrade 'compat)))
+
   (let* ((my-not-yet-installed-packages
           (cl-remove-if (lambda (p) (package-installed-p p))
                         my-packages)))
