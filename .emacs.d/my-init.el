@@ -449,9 +449,9 @@ This function works if interval expired, interactive, and network available."
   (add-to-list 'default-frame-alist
                `(height . ,(* 0.8 (my-get-relative-frame-size-zoom-ratio))))
   (add-to-list 'default-frame-alist
-               `(top . 0.1))
+               `(top . ,(/ 0.1 (my-get-relative-frame-size-zoom-ratio))))
   (add-to-list 'default-frame-alist
-               `(left . 0.2 ))
+               `(left . ,(/ 0.2 (my-get-relative-frame-size-zoom-ratio))))
   ;; Defer following settings if not GUI yet.
   (add-hook 'after-make-frame-functions
             'my-after-make-frame-func)
