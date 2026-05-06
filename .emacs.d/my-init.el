@@ -281,6 +281,10 @@ and they will be ignored if using curl."
   (when (equal system-type 'windows-nt)
     (add-to-list 'my-packages 'ssh-agency))
 
+  ;; On Windows, absolute path in default package-gnupghome-dir
+  ;; doesn't work fine with gpg.
+  (when (equal system-type 'windows-nt)
+    (setq package-gnupghome-dir "elpa/gnupg"))
   (require 'package)
   (add-to-list
    'package-archives
