@@ -583,11 +583,14 @@ and existing file includes no hard tab."
 (defun my-compilation-mode-setup ()
   "Setup compilation mode."
   (let* ((make-cmd (my-get-make-cmd))
-         (output-sync-opt (if (my-make-cmd-supports-output-sync-p make-cmd)
-                              "--output-sync"
-                            ""))
+         (cmds-list `(,@(when (executable-find "time") '("time"))
+                      ,@(when (executable-find "nice") '("nice"))
+                      ,make-cmd
+                      "-k" "-j"
+                      ,@(when (my-make-cmd-supports-output-sync-p make-cmd)
+                          '("--output-sync"))))
          (my-compile-command
-          (concat "time nice " make-cmd " -k -j " output-sync-opt)))
+          (mapconcat 'identity cmds-list " ")))
     (custom-set-variables
      '(compilation-scroll-output t)
      `(compile-command ,my-compile-command)))
