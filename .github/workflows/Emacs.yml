@@ -66,6 +66,8 @@ jobs:
 
     strategy:
       matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+        plantuml: [true, false]
         include:
           - os: ubuntu-latest
             pkg_install_cmd: sudo apt install -y
@@ -82,14 +84,11 @@ jobs:
       - name: Install Emacs
         uses: ./.github/actions/install_emacs
 
-      - name: Unit tests for Emacs Lisp (without PlantUML)
-        shell: bash
-        run: make -k -j test
-
       - name: Install PlantUML
+        if: ${{ matrix.plantuml == true }}
         shell: bash
         run: ${{ matrix.pkg_install_cmd }} plantuml
 
-      - name: Unit tests for Emacs Lisp (with PlantUML)
+      - name: Unit tests for Emacs Lisp
         shell: bash
         run: make -k -j test
