@@ -825,7 +825,10 @@ and existing file includes no hard tab."
      '(magit-refresh-status-buffer nil))))
 
 (defun my-git-modes-setup ()
-  "Setup for git-modes(gitattributes-mode, gitconfig-mode, and gitignore-mode)."
+  "Setup for `git-modes'.
+
+This includes settings for
+`gitattributes-mode', `gitconfig-mode', and `gitignore-mode'."
   (use-package git-modes
     ;; Don't force installation even if not available,
     ;; because it will cause only simple (no syntax highlight) visual
