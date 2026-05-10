@@ -292,10 +292,19 @@ and they will be ignored if using curl."
   (add-to-list
    'package-archives
    '("melpa-stable" . "https://stable.melpa.org/packages/"))
-  (package-initialize)
 
-  (unless package-archive-contents
-    (package-refresh-contents))
+  ;; Skip these operations for package-quickstart.
+  ;; (package-initialize)
+  ;; (unless package-archive-contents
+  ;;   (package-refresh-contents))
+
+  (when (or (not (boundp 'package-quickstart))
+            (not package-quickstart))
+    (display-warning 'my-init
+                     (concat "package-quickstart is NIL. "
+                             "Optimization may be disabled. "
+                             "Check my-early-init.el is loaded.")
+                     :warning))
 
   (unless (package-installed-p 'gnu-elpa-keyring-update)
     (let (prev-package-check-signature package-check-signature)
@@ -882,6 +891,7 @@ This includes settings for
     :hook (python-ts-mode . uv-mode-auto-activate-hook)))
 
 ;;; Main processes.
+
 (if (my-network-connection-available-p)
     (progn (my-install-missing-packages)
            (my-setup-elisp-from-emacs-wiki))
