@@ -19,6 +19,11 @@
   :type 'hook
   :group 'my-init)
 
+(defcustom my-gc-cons-threshold (* 32 1024 1024)
+  "GC-CONS-THRESHOLD after launching Emacs."
+  :type 'integer
+  :group 'my-init)
+
 (defcustom my-init-emacs-wiki-download-error-level
   (if (getenv "GITHUB_WORKFLOW")
       :warning
@@ -367,8 +372,9 @@ This function works if interval expired, interactive, and network available."
 (defun my-gc-setup ()
   "Settings for garbage collection."
   (custom-set-variables
-   '(gc-cons-threshold (* 32 1024 1024))
+   '(gc-cons-threshold my-gc-cons-threshold)
    '(garbage-collection-messages t))
+  (garbage-collect)
   (add-function :after after-focus-change-function
                 (lambda ()
                   (unless (frame-focus-state)
