@@ -393,9 +393,11 @@ This function works if interval expired, interactive, and network available."
    '(show-paren-when-point-inside-paren t)
    '(show-paren-when-point-in-periphery t))
   (use-package highlight-doxygen
+    :defer t
     :hook ((c-mode c++-mode java-mode python-mode) . highlight-doxygen-mode))
   (use-package beacon
     :ensure t
+    :defer 1
     :custom
     (beacon-color "yellow")
     (beacon-blink-duration 0.1)
@@ -415,6 +417,7 @@ This function works if interval expired, interactive, and network available."
               (setq mode-name "Elisp")))
   (use-package minions
     :ensure t
+    :defer 1
     :config
     (minions-mode)))
 
@@ -485,6 +488,7 @@ This function works if interval expired, interactive, and network available."
   "Setup c++ mode."
   (use-package cc-mode
     :ensure t
+    :defer t
     :mode (("\\.h\\'" . my-switch-mode-for-header-file)
            ("\\.mm\\'" . objc++-mode))))
 
@@ -492,6 +496,7 @@ This function works if interval expired, interactive, and network available."
   "Setup Emacs server."
   (use-package server
     :ensure t
+    :demand t
     :config
     (unless (server-running-p)
       (server-start))))
@@ -503,6 +508,7 @@ This function works if interval expired, interactive, and network available."
   (global-ede-mode t)
   (use-package semantic
     :ensure t
+    :defer 1
     :config
     (semantic-mode 1)
     (when (file-directory-p "/usr/local/include/")
@@ -536,6 +542,7 @@ and existing file includes no hard tab."
   "Setup for .editorconfig file."
   (use-package editorconfig
     :ensure t
+    :defer 1
     :config
     (editorconfig-mode 1)
     (add-to-list 'editorconfig-indentation-alist
@@ -605,6 +612,7 @@ and existing file includes no hard tab."
   "Setup \"rainbow-delimiters-mode\"."
   (use-package rainbow-delimiters
     :ensure t
+    :defer t
     :requires (cl-lib color)
     :hook (prog-mode . rainbow-delimiters-mode)
     :config
@@ -627,6 +635,7 @@ and existing file includes no hard tab."
   "Setup moccur."
   (use-package color-moccur
     :ensure t
+    :defer 1
     :config
     (add-to-list 'dmoccur-exclusion-mask "\\.o$")
     (add-to-list 'dmoccur-exclusion-mask "\\.[a-z]?obj$")
@@ -637,6 +646,7 @@ and existing file includes no hard tab."
   "Setup \"plantuml-mode\"."
   (use-package plantuml-mode
     :ensure t
+    :defer t
     :mode ("\\.pu\\'" "\\.puml\\'" "\\.plantuml\\'")
     :custom
     (plantuml-default-exec-mode 'jar)
@@ -707,8 +717,8 @@ and existing file includes no hard tab."
   "Setup tempbuf-mode."
   (use-package tempbuf
     :ensure nil
+    :defer t
     :if (locate-library "tempbuf")
-    :demand t
     :custom
     (tempbuf-kill-message nil)
     (tempbuf-minimum-timeout 300)
@@ -720,7 +730,9 @@ and existing file includes no hard tab."
   "Setup realgud."
   (when (and (executable-find "lldb") (package-installed-p 'realgud-lldb))
     (use-package realgud-lldb
-      :ensure t)))
+      :ensure t
+      :defer t
+      :commands (realgud-lldb))))
 
 (defsubst my-ssh-key-exists-p ()
   "Check current user's ssh key(s) exists or not."
@@ -738,6 +750,7 @@ and existing file includes no hard tab."
   "Setup \"wakatime-mode\" for Emacs if wakatime available."
   (use-package wakatime-mode
     :ensure nil
+    :defer 1
     :config
     (when (and (package-installed-p 'wakatime-mode)
                (executable-find "wakatime-cli"))
@@ -786,20 +799,24 @@ and existing file includes no hard tab."
 (defun my-typescript-setup ()
   "Setup for TypeScript."
   (use-package typescript-ts-mode
+    :defer t
     :mode (("\\.tsx\\'" . tsx-ts-mode)
            ("\\.ts\\'" . typescript-ts-mode))
     :config
     (customize-set-variable 'typescript-ts-mode-indent-offset 2))
   (use-package treesit
+    :defer 1
     :config
     (customize-set-variable 'treesit-font-lock-level 4))
   (use-package treesit-auto
     :ensure t
+    :defer 1
     :config
     (global-treesit-auto-mode)
     (customize-set-variable 'treesit-auto-install t))
   (use-package tide
     :ensure t
+    :defer t
     :hook ((typescript-ts-mode . setup-tide-mode)
            (tsx-ts-mode        . setup-tide-mode))
     :config
@@ -833,7 +850,8 @@ This includes settings for
     ;; Don't force installation even if not available,
     ;; because it will cause only simple (no syntax highlight) visual
     ;; for git related files.
-    :ensure nil))
+    :ensure nil
+    :defer 1))
 
 (defun my-disable-whitespace-mode-if-non-file ()
   "Disable whitespace mode if current buffer is not file."
@@ -844,6 +862,7 @@ This includes settings for
   "Setup for whitespace mode."
   (use-package whitespace
     :ensure t
+    :defer 1
     :custom
     (whitespace-style '(face trailing tabs))
     :config
@@ -859,6 +878,7 @@ This includes settings for
   "Setup for Python developments."
   (use-package uv-mode
     :ensure nil
+    :defer t
     :hook (python-ts-mode . uv-mode-auto-activate-hook)))
 
 ;;; Main processes.
