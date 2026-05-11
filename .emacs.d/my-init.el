@@ -37,7 +37,7 @@ Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
 
 (defcustom my-upgrade-interval-days 7
   "Interval num of days to notify upgrading packages installed by my-init.el."
-  :type 'integet
+  :type 'integer
   :group 'my-init)
 
 ;; Generic utility functions.
