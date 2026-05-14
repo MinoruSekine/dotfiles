@@ -320,10 +320,14 @@ and they will be ignored if using curl."
 
   ;; compat-31 is necessary to install magit.
   (unless (package-installed-p 'compat '(31))
-    (message "Upgrading compat ...")
     (let ((package-check-signature nil))
       (package-refresh-contents)
-      (package-upgrade 'compat)))
+      (if (package-installed-p 'compat)
+          (progn
+            (message "Upgrading compat ...")
+            (package-upgrade 'compat))
+        (message "Installing compat ...")
+        (package-install 'compat))))
 
   (let* ((my-not-yet-installed-packages
           (cl-remove-if (lambda (p) (package-installed-p p))
