@@ -22,7 +22,7 @@ runs:
     - name: Restore cache if available
       id: restore_cache
       if: runner.os == 'Windows'
-      uses: actions/cache@v3
+      uses: actions/cache@v5
       with:
         path: ${{ inputs.to_cache_dir }}
         key: cache_version_${{ inputs.cache_version }}-${{ runner.os }}-${{ hashFiles(inputs.cache_hash_seed_file_path) }}
