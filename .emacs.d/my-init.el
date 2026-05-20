@@ -289,7 +289,7 @@ and they will be ignored if using curl."
   ;; On Windows, absolute path in default package-gnupghome-dir
   ;; doesn't work fine with gpg.
   (when (equal system-type 'windows-nt)
-    (setq package-gnupghome-dir "elpa/gnupg"))
+    (setq package-gnupghome-dir "~/.emacs.d/elpa/gnupg/"))
   (require 'package)
   (add-to-list
    'package-archives
