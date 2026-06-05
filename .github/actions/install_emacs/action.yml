@@ -9,7 +9,7 @@ inputs:
     default: v2
   to_cache_dir:
     required: true
-    default: '~/scoop'
+    default: 'scoop'
 
 runs:
   using: 'composite'
