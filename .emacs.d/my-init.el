@@ -41,10 +41,10 @@ Please see also https://github.com/MinoruSekine/dotfiles/issues/200 ."
   :group 'my-init)
 
 ;; Generic utility functions.
-(defun my-add-hooks (hook-to-add my-list)
+(defun my-add-hooks (hook-to-add my-list &optional my-append)
   "Add each function in MY-LIST into HOOK-TO-ADD ."
   (dolist (itr my-list)
-    (add-hook hook-to-add itr)))
+    (add-hook hook-to-add itr my-append)))
 
 (defun my-network-connection-available-p ()
   "Get network connection is available or not."
@@ -907,8 +907,7 @@ This includes settings for
            (my-setup-elisp-from-emacs-wiki))
   (display-warning 'my-init "Network connection may not be available."))
 
-(let* ((my-after-init-func-list '(my-gc-setup
-                                  my-environment-variable-setup
+(let* ((my-after-init-func-list '(my-environment-variable-setup
                                   my-language-setup
                                   my-general-visibility-setup
                                   my-gui-setup
@@ -916,7 +915,7 @@ This includes settings for
                                   my-font-lock-setup
                                   my-color-identifiers-mode-setup
                                   my-adjust-font-size-setup)))
-  (my-add-hooks 'after-init-hook my-after-init-func-list))
+  (my-add-hooks 'after-init-hook my-after-init-func-list t))
 
 (let* ((my-emacs-startup-func-list
         '(my-emacs-server-setup
@@ -947,12 +946,13 @@ This includes settings for
           my-git-modes-setup
           my-whitespace-mode-setup
           my-html-setup
-          my-python-mode-setup)))
-  (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list))
+          my-python-mode-setup
+          my-gc-setup)))
+  (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list t))
 
 (let* ((my-kill-emacs-func-list
         '(my-auto-upgrade-packages)))
-  (my-add-hooks 'kill-emacs-hook my-kill-emacs-func-list))
+  (my-add-hooks 'kill-emacs-hook my-kill-emacs-func-list t))
 
 ;; Utility functions for users.
 (defun my-semanticdb-update-for-directory (dir-path)
