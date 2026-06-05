@@ -197,7 +197,7 @@ and they will be ignored if using curl."
                                   -1)))))
                 ((equal system-type 'windows-nt)
                  (expand-file-name (replace-regexp-in-string
-                                    "plantuml.\\(cmd\\|jar\\)\n"
+                                    "plantuml.\\(bat\\|cmd\\|jar\\)\n"
                                     "plantuml.jar"
                                     (shell-command-to-string
                                      (mapconcat
