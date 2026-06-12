@@ -7,9 +7,12 @@ inputs:
   cache_version:
     required: true
     default: v2
+  job_id:
+    required: true
+    default: ${{ github.run_id }}-${{ github.job }}
   to_cache_dir:
     required: true
-    default: 'scoop'
+    default: '~/scoop'
 
 runs:
   using: 'composite'
@@ -25,7 +28,23 @@ runs:
       uses: actions/cache@v5
       with:
         path: ${{ inputs.to_cache_dir }}
-        key: cache_version_${{ inputs.cache_version }}-${{ runner.os }}-${{ hashFiles(inputs.cache_hash_seed_file_path) }}
+        key: cache_version_${{ inputs.cache_version }}-${{ runner.os }}-${{ hashFiles(inputs.cache_hash_seed_file_path) }}-${{ inputs.job_id }}
+        restore-keys: |
+          cache_version_${{ inputs.cache_version }}-${{ runner.os }}-${{ hashFiles(inputs.cache_hash_seed_file_path) }}-
+
+    # Check that cache has been restored or not,
+    # because `steps.restore_cache.cache-hit` indicates `false`
+    # both for restored by matched `restore-keys` or can't be restored.
+    - name: Check if cache is restored
+      id: check_cache_restored
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        if (Test-Path "${{ inputs.to_cache_dir }}") {
+          echo "restored=true" >> $env:GITHUB_OUTPUT
+        } else {
+          echo "restored=false" >> $env:GITHUB_OUTPUT
+        }
 
     - name: Install Emacs (Ubuntu)
       if: runner.os == 'Linux'
@@ -46,7 +65,7 @@ runs:
 
     - name: Install scoop (Windows)
       uses: MinoruSekine/setup-scoop@main
-      if: runner.os == 'Windows' && steps.restore_cache.outputs.cache-hit != 'true'
+      if: ${{ runner.os == 'Windows' && steps.check_cache_restored.outputs.restored != 'true' }}
       with:
         install_scoop: 'true'
         buckets: extras
@@ -57,7 +76,7 @@ runs:
 
     - name: Setup scoop PATH (Windows)
       uses: MinoruSekine/setup-scoop@main
-      if: runner.os == 'Windows' && steps.restore_cache.outputs.cache-hit == 'true'
+      if: ${{ runner.os == 'Windows' && steps.check_cache_restored.outputs.restored == 'true' }}
       with:
         install_scoop: 'false'
         scoop_update: 'false'
@@ -65,7 +84,7 @@ runs:
         update_path: 'true'
 
     - name: Clear scoop cache (Windows)
-      if: runner.os == 'Windows' && steps.restore_cache.outputs.cache-hit != 'true'
+      if: ${{ runner.os == 'Windows' && steps.check_cache_restored.outputs.restored != 'true' }}
       shell: pwsh
       run: |
         scoop cache rm "*"
