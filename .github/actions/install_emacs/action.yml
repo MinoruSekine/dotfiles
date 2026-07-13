@@ -64,7 +64,7 @@ runs:
         brew install --cask emacs-app
 
     - name: Install scoop (Windows)
-      uses: MinoruSekine/setup-scoop@main
+      uses: MinoruSekine/setup-scoop@v5
       if: ${{ runner.os == 'Windows' && steps.check_cache_restored.outputs.restored != 'true' }}
       with:
         install_scoop: 'true'
@@ -75,7 +75,7 @@ runs:
         apps: extras/emacs
 
     - name: Setup scoop PATH (Windows)
-      uses: MinoruSekine/setup-scoop@main
+      uses: MinoruSekine/setup-scoop@v5
       if: ${{ runner.os == 'Windows' && steps.check_cache_restored.outputs.restored == 'true' }}
       with:
         install_scoop: 'false'
