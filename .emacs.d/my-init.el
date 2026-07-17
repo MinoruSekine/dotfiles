@@ -262,8 +262,10 @@ and they will be ignored if using curl."
 ;; Functions for my-init.el.
 (defun my-install-missing-packages ()
   "Install missing packages."
-  (defvar my-packages '(color-identifiers-mode
+  (defvar my-packages '(cape
+                        color-identifiers-mode
                         color-moccur
+                        corfu
                         elisp-lint
                         flycheck
                         git-modes
@@ -900,6 +902,28 @@ This includes settings for
     :defer t
     :hook (python-ts-mode . uv-mode-auto-activate-hook)))
 
+(defun my-corfu-cape-setup ()
+  "Setup for corfu and cape."
+  (use-package corfu
+    :ensure nil
+    :init
+    (global-corfu-mode)
+    :custom
+    (corfu-auto t)
+    (corfu-auto-prefix 2))
+  (use-package cape
+    :ensure nil
+    :after corfu
+    :config
+    (defun my/setup-cape-capfs ()
+      "Setup cape hooks."
+      (add-hook 'completion-at-point-functions #'cape-dabbrev nil t)
+      (add-hook 'completion-at-point-functions #'cape-file nil t))
+
+    (add-hook 'prog-mode-hook #'my/setup-cape-capfs)
+    (add-hook 'yaml-mode-hook #'my/setup-cape-capfs)
+    (add-hook 'yaml-ts-mode-hook #'my/setup-cape-capfs)))
+
 ;;; Main processes.
 
 (if (my-network-connection-available-p)
@@ -947,6 +971,7 @@ This includes settings for
           my-whitespace-mode-setup
           my-html-setup
           my-python-mode-setup
+          my-corfu-cape-setup
           my-gc-setup)))
   (my-add-hooks 'emacs-startup-hook my-emacs-startup-func-list t))
 
