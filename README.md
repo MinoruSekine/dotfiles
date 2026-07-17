@@ -38,6 +38,7 @@ This repository includes:
 - Sharing configuration for both GUI and CUI Emacs
 - Support .editorconfig file
 - Tab configuration for files without tabs
+- Completion by corfu and cape
 
 #### Configurations for modes
 
