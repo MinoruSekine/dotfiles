@@ -9,11 +9,11 @@ This repository includes:
 - Makefile to validate their syntax (lint)
 - Files for GitHub Actions
 
-# Summary of contents in this repository
+## Summary of contents in this repository
 
-## For Emacs
+### For Emacs
 
-### `.emacs.d/my-init.el`
+#### `.emacs.d/my-init.el`
 
 - Configurations
 - Installing packages automatically
@@ -24,7 +24,7 @@ This repository includes:
       use `curl` to download elisp files instead of `url-copy-file`
 - Periodic upgrade packages at exiting Emacs
 
-#### Configurations
+##### Configurations
 
 - Garbage collection threshold
 - Backup files
@@ -40,7 +40,7 @@ This repository includes:
 - Tab configuration for files without tabs
 - Completion by corfu and cape
 
-#### Configurations for modes
+##### Configurations for modes
 
 - CEDET (semantic)
 - dired
@@ -56,32 +56,32 @@ This repository includes:
 - treesit
 - whitespace-mode
 
-### `supplemental/windows/emacsdaemon.bat`
+#### `supplemental/windows/emacsdaemon.bat`
 
 - BAT file to launch Emacs as daemon on Windows
 
-## Supplemental scripts for login scripts
+### Supplemental scripts for login scripts
 
-### `.profile/emacs_daemon.sh`
+#### `.profile/emacs_daemon.sh`
 
 - Run Emacs as daemon only if not available
 
-### `.profile/keychain_init.sh`
+#### `.profile/keychain_init.sh`
 
 - Initialize `keychain` for ssh
   - For `keychain` command, not for Keychain on macOS
 
-# Use settings for Emacs
+## Use settings for Emacs
 
-## Features
+### Features
 
 - Install necessary packages with packages.el if not available
 - Independent from tools outside of Emacs
   - On Windows, it is not necessary to install cygwin, mingw, or compatible something
 
-## How to use
+### How to use
 
-### Check out with anyway which you like
+#### Check out with anyway which you like
 
 In this chapter,
 check out to `~/dotfiles` for example.
@@ -92,7 +92,7 @@ $ cd ~/dotfiles
 $ git clone URL_of_this_repository
 ```
 
-### How to use settings for Emacs
+#### How to use settings for Emacs
 
 Add the next line into `~/.emacs.d/init.el`.
 
@@ -108,9 +108,9 @@ you can link to it instead of your own `~/.emacs.d/init.el`.
 $ ln -s ~/dotfiles/.emacs.d/my-init.el ~/.emacs.d/init.el
 ```
 
-## Hook
+### Hook
 
-### `my-after-ede-setup-hook`
+#### `my-after-ede-setup-hook`
 This is called after called `(global-ede-mode t)`.
 So environment dependent EDE setup like as `ede-cpp-root-project` can be hooked to here.
 
@@ -129,13 +129,13 @@ So environment dependent EDE setup like as `ede-cpp-root-project` can be hooked 
         ))
 ```
 
-# Supplemental scripts
+## Supplemental scripts
 
-## For `.profile`
+### For `.profile`
 
 - Scripts in `.profile` support configuration in `~/.profile`
 
-### How to use each script
+#### How to use each script
 
 
 - Add the following line into your `.profile`
@@ -146,10 +146,10 @@ So environment dependent EDE setup like as `ede-cpp-root-project` can be hooked 
 . "$HOME/dotfiles/.profile/keychain_init.sh"
 ```
 
-### `.profile/emacs_daemon.sh`
+#### `.profile/emacs_daemon.sh`
 
 - Launch Emacs as daemon mode only if not launched yet
 
-### `.profile/keychain_init.sh`
+#### `.profile/keychain_init.sh`
 
 - Initialize [keychain](https://www.funtoo.org/Keychain) for ssh
