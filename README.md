@@ -13,6 +13,11 @@ This repository includes:
 
 ### For Emacs
 
+#### `.emacs.d/my-early-init.el`
+
+- Enable `package-quickstart`
+- GC configuration for boost Emacs launch performance
+
 #### `.emacs.d/my-init.el`
 
 - Configurations
@@ -93,6 +98,12 @@ git clone URL_of_this_repository
 ```
 
 #### How to use settings for Emacs
+
+Add the next line into `~/.emacs.d/early-init.el`.
+
+```elisp
+(load-file "~/dotfiles/.emacs.d/my-early-init.el")
+```
 
 Add the next line into `~/.emacs.d/init.el`.
 
