@@ -87,9 +87,9 @@ In this chapter,
 check out to `~/dotfiles` for example.
 
 ```sh
-$ mkdir -p ~/dotfiles
-$ cd ~/dotfiles
-$ git clone URL_of_this_repository
+mkdir -p ~/dotfiles
+cd ~/dotfiles
+git clone URL_of_this_repository
 ```
 
 #### How to use settings for Emacs
@@ -105,7 +105,7 @@ and your environment supports symbolic link,
 you can link to it instead of your own `~/.emacs.d/init.el`.
 
 ```sh
-$ ln -s ~/dotfiles/.emacs.d/my-init.el ~/.emacs.d/init.el
+ln -s ~/dotfiles/.emacs.d/my-init.el ~/.emacs.d/init.el
 ```
 
 ### Hook
