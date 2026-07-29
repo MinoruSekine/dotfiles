@@ -111,6 +111,7 @@ $ ln -s ~/dotfiles/.emacs.d/my-init.el ~/.emacs.d/init.el
 ### Hook
 
 #### `my-after-ede-setup-hook`
+
 This is called after called `(global-ede-mode t)`.
 So environment dependent EDE setup like as `ede-cpp-root-project` can be hooked to here.
 
@@ -136,7 +137,6 @@ So environment dependent EDE setup like as `ede-cpp-root-project` can be hooked 
 - Scripts in `.profile` support configuration in `~/.profile`
 
 #### How to use each script
-
 
 - Add the following line into your `.profile`
   - As case of `keychain_init.sh`
