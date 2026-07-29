@@ -86,7 +86,7 @@ This repository includes:
 In this chapter,
 check out to `~/dotfiles` for example.
 
-```
+```sh
 $ mkdir -p ~/dotfiles
 $ cd ~/dotfiles
 $ git clone URL_of_this_repository
@@ -96,7 +96,7 @@ $ git clone URL_of_this_repository
 
 Add the next line into `~/.emacs.d/init.el`.
 
-```
+```elisp
 (load-file "~/dotfiles/.emacs.d/my-init.el")
 ```
 
@@ -104,7 +104,7 @@ If you don't need any additonal settings except in `~/dotfiles/.emacs.d/my-init.
 and your environment supports symbolic link,
 you can link to it instead of your own `~/.emacs.d/init.el`.
 
-```
+```sh
 $ ln -s ~/dotfiles/.emacs.d/my-init.el ~/.emacs.d/init.el
 ```
 
@@ -114,7 +114,7 @@ $ ln -s ~/dotfiles/.emacs.d/my-init.el ~/.emacs.d/init.el
 This is called after called `(global-ede-mode t)`.
 So environment dependent EDE setup like as `ede-cpp-root-project` can be hooked to here.
 
-```
+```elisp
 (load-file "~/dotfiles/.emacs.d/my-init.el")
 
 ;; Settings only for this environment.
@@ -142,7 +142,7 @@ So environment dependent EDE setup like as `ede-cpp-root-project` can be hooked 
   - As case of `keychain_init.sh`
     and this repository checked out to `~/`...
 
-```
+```sh
 . "$HOME/dotfiles/.profile/keychain_init.sh"
 ```
 
