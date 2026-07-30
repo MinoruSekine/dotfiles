@@ -92,9 +92,8 @@ In this chapter,
 check out to `~/dotfiles` for example.
 
 ```sh
-mkdir -p ~/dotfiles
-cd ~/dotfiles
-git clone URL_of_this_repository
+cd ~
+git clone https://github.com/MinoruSekine/dotfiles.git
 ```
 
 #### How to use settings for Emacs
