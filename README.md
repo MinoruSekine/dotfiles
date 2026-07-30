@@ -159,7 +159,7 @@ can be hooked to here.
 
 #### `.profile/emacs_daemon.sh`
 
-- Launch Emacs as daemon mode only if not launched yet
+- Launch Emacs as a daemon when an Emacs server is not already available
 
 #### `.profile/keychain_init.sh`
 
