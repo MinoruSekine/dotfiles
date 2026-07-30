@@ -86,7 +86,7 @@ This repository includes:
 
 ### How to use
 
-#### Check out with anyway which you like
+#### Check out in any way which you like
 
 In this chapter,
 check out to `~/dotfiles` for example.
@@ -111,7 +111,7 @@ Add the next line into `~/.emacs.d/init.el`.
 (load-file "~/dotfiles/.emacs.d/my-init.el")
 ```
 
-If you don't need any additonal settings except in `~/dotfiles/.emacs.d/my-init.el`
+If you don't need any additional settings except in `~/dotfiles/.emacs.d/my-init.el`
 and your environment supports symbolic link,
 you can link to it instead of your own `~/.emacs.d/init.el`.
 
