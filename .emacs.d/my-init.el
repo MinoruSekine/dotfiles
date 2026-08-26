@@ -347,6 +347,7 @@ and they will be ignored if using curl."
         (package-install p)))))
 
 ;;; Functions for auto upgrade packages.
+(require 'multisession)
 (define-multisession-variable my-last-upgrade-time nil)
 
 (defsubst my-auto-upgrade-packages-interval-expired-p ()
