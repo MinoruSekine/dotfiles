@@ -10,7 +10,7 @@ runs:
   steps:
     - name: Install Emacs by setup-scoop (cache supported version) (Windows)
       if: runner.os == 'Windows'
-      uses: MinoruSekine/setup-scoop@feat/170/cache
+      uses: MinoruSekine/setup-scoop@main
       with:
         install_scoop: 'true'
         buckets: extras
