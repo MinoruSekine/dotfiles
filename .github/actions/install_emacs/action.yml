@@ -25,9 +25,9 @@ runs:
       if: runner.os == 'Linux'
       shell: bash
       run: |
-        sudo add-apt-repository ppa:ubuntuhandbook1/emacs
-        sudo apt update
-        sudo apt install --no-install-recommends emacs emacs-common
+        sudo systemctl status snapd || true  # Confirm snapd is working.
+        sudo snap refresh --hold
+        sudo snap install emacs --classic
 
     - name: Install Emacs (macOS)
       if: runner.os == 'macOS'
