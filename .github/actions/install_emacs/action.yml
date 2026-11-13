@@ -23,11 +23,9 @@ runs:
 
     - name: Install Emacs (Ubuntu)
       if: runner.os == 'Linux'
-      shell: bash
-      run: |
-        sudo systemctl status snapd || true  # Confirm snapd is working.
-        sudo snap refresh --hold
-        sudo snap install emacs --classic
+      uses: purcell/setup-emacs@master
+      with:
+        version: 'snapshot'
 
     - name: Install Emacs (macOS)
       if: runner.os == 'macOS'
